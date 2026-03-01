@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RxPerform Pro — Pharmacy Performance System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════
@@ -721,6 +721,121 @@ table.ptbl {
   border-color:rgba(0,200,150,0.25);
 }
 .btn-excel:hover { background:rgba(0,200,150,0.18); color:var(--emerald); }
+
+/* ── DAY MODE ── */
+body.day-mode {
+  --ink:#f0f4f8; --ink1:#ffffff; --ink2:#e8edf3; --ink3:#dce3ec;
+  --ink4:#c8d2de; --ink5:#b0bfcc;
+  --line:rgba(0,100,180,0.1); --line2:rgba(0,100,180,0.18); --line3:rgba(0,100,180,0.3);
+  --cyan:#0078cc; --cyan2:#005fa3; --cyan3:rgba(0,120,204,0.1);
+  --text:#1a2b3c; --text2:#3d5166; --text3:#7a8fa6; --white:#0d1a2a;
+  --glow:0 0 40px rgba(0,120,204,0.04); --glow2:0 0 20px rgba(0,120,204,0.08);
+  --amber:#d97706; --rose:#dc2626; --emerald:#059669;
+}
+body.day-mode .score-cell { color:#1a2b3c; }
+
+/* ── RTL / ARABIC ── */
+body.lang-ar {
+  direction:rtl;
+  font-family:'Cairo','Instrument Sans',system-ui,sans-serif;
+}
+body.lang-ar .topbar { flex-direction:row-reverse; }
+body.lang-ar .toolbar { direction:rtl; }
+body.lang-ar .sidebar { border-right:none; border-left:1px solid var(--line); }
+body.lang-ar .sb-item { flex-direction:row-reverse; }
+body.lang-ar .sb-item::before { left:auto; right:0; border-radius:2px 0 0 2px; }
+body.lang-ar .col-hdr { flex-direction:row-reverse; }
+body.lang-ar .card-head { flex-direction:row-reverse; }
+body.lang-ar .m-actions { flex-direction:row-reverse; }
+body.lang-ar .modal { text-align:right; }
+body.lang-ar input, body.lang-ar textarea, body.lang-ar select { text-align:right; }
+
+/* ── TOPBAR UTILITY BUTTONS (lang / mode) ── */
+.tb-ctrl {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border-radius:20px;
+  border:1px solid var(--line2); background:var(--ink2);
+  color:var(--text2); font-size:11px; font-weight:600;
+  cursor:pointer; font-family:inherit; transition:var(--trans);
+  white-space:nowrap; flex-shrink:0; letter-spacing:0.4px;
+}
+.tb-ctrl:hover { background:var(--ink3); color:var(--white); border-color:var(--line3); }
+.tb-ctrl.ctrl-active { background:var(--cyan3); color:var(--cyan); border-color:var(--line3); }
+
+/* ── NOTES VIEW ── */
+.notes-2col {
+  display:grid; grid-template-columns:1fr 1fr; gap:18px; flex:1; min-height:0;
+}
+@media(max-width:700px){ .notes-2col{grid-template-columns:1fr;} }
+.notes-col {
+  background:var(--ink1); border:1px solid var(--line);
+  border-radius:var(--r2); display:flex; flex-direction:column;
+  overflow:hidden; min-height:0;
+}
+.notes-col-head {
+  padding:13px 16px; border-bottom:1px solid var(--line); flex-shrink:0;
+  display:flex; align-items:center; gap:8px;
+}
+.notes-col-title { font-size:13px; font-weight:700; }
+.notes-col-badge {
+  font-family:'Geist Mono',monospace; font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:10px; margin-left:auto;
+}
+.notes-list {
+  flex:1; overflow-y:auto; padding:10px;
+  display:flex; flex-direction:column; gap:7px;
+}
+.note-card {
+  background:var(--ink2); border:1px solid var(--line);
+  border-radius:10px; padding:10px 12px;
+  position:relative; transition:var(--trans);
+}
+.note-card:hover { background:var(--ink3); }
+.note-card-who {
+  font-size:11px; font-weight:600; margin-bottom:3px;
+}
+.note-card-text { font-size:13px; line-height:1.55; color:var(--text); }
+.note-card-meta { font-size:10px; color:var(--text3); margin-top:5px; }
+.note-del {
+  position:absolute; top:8px; right:8px; opacity:0;
+  background:none; border:none; color:var(--text3);
+  cursor:pointer; font-size:13px; padding:2px 6px;
+  border-radius:5px; transition:var(--trans);
+}
+body.lang-ar .note-del { right:auto; left:8px; }
+.note-card:hover .note-del { opacity:1; }
+.note-del:hover { color:var(--rose); background:rgba(255,77,109,0.1); }
+.notes-empty-msg {
+  display:flex; align-items:center; justify-content:center;
+  flex:1; color:var(--text3); font-size:12px; padding:20px; text-align:center;
+}
+.notes-add-box {
+  padding:10px; border-top:1px solid var(--line); flex-shrink:0;
+  display:flex; flex-direction:column; gap:7px;
+}
+.notes-add-row { display:flex; gap:7px; }
+.notes-add-row select, .notes-add-row input[type=text] {
+  flex:1; min-width:0; background:var(--ink2); border:1px solid var(--line2);
+  border-radius:var(--r); padding:8px 10px; color:var(--text);
+  font-size:12px; font-family:inherit; outline:none; transition:var(--trans);
+}
+.notes-add-row select:focus, .notes-add-row input:focus { border-color:var(--cyan); }
+.notes-textarea {
+  width:100%; background:var(--ink2); border:1px solid var(--line2);
+  border-radius:var(--r); padding:8px 11px; color:var(--text);
+  font-size:13px; font-family:inherit; outline:none;
+  transition:var(--trans); resize:vertical; min-height:56px;
+}
+.notes-textarea:focus { border-color:var(--cyan); background:var(--ink3); }
+.notes-submit-btn {
+  width:100%; padding:8px 14px; border-radius:var(--r);
+  font-size:12px; font-weight:600; cursor:pointer;
+  font-family:inherit; transition:var(--trans); border:1px solid;
+}
+.pos-submit { background:rgba(0,200,150,0.1); color:var(--emerald); border-color:rgba(0,200,150,0.25); }
+.pos-submit:hover { background:rgba(0,200,150,0.2); }
+.neg-submit { background:rgba(255,77,109,0.1); color:var(--rose); border-color:rgba(255,77,109,0.2); }
+.neg-submit:hover { background:rgba(255,77,109,0.2); }
 </style>
 </head>
 <body>
@@ -784,6 +899,8 @@ table.ptbl {
     <div class="topbar-logo">Rx<span>Perform</span></div>
     <div class="topbar-sep"></div>
     <div class="topbar-date" id="topDate"></div>
+    <button class="tb-ctrl" id="langBtn" onclick="toggleLang()" title="Switch language">EN | ع</button>
+    <button class="tb-ctrl" id="modeBtn" onclick="toggleMode()">☀ Day Mode</button>
     <div class="user-chip" onclick="logoutConfirm()" title="Sign out">
       <div class="user-ava" id="userAva" style="background:var(--ink4)">A</div>
       <span class="user-name" id="userName">Admin</span>
@@ -797,6 +914,7 @@ table.ptbl {
     <button class="t-btn" id="tb-stats" onclick="setView('stats')">Statistics</button>
     <button class="t-btn" id="tb-charts" onclick="setView('charts')">Charts</button>
     <button class="t-btn" id="tb-filter" onclick="setView('filter')">Filter</button>
+    <button class="t-btn" id="tb-notes" onclick="setView('notes')">Team Notes</button>
     <button class="t-btn" id="tb-compare" onclick="setView('compare')" style="display:none">
       Compare <span id="cmpCount" style="margin-left:4px;background:var(--cyan);color:var(--ink);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700"></span>
     </button>
@@ -904,6 +1022,57 @@ table.ptbl {
           <div class="card">
             <div class="card-head"><div class="card-title">Filter Results</div></div>
             <div style="overflow-x:auto"><table class="rtbl" id="filterTbl"></table></div>
+          </div>
+        </div>
+
+
+        <!-- NOTES VIEW -->
+        <div class="view" id="view-notes">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:2px">
+            <div>
+              <div id="notesViewTitle" style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)">Team Notes</div>
+              <div id="notesViewSub" style="font-size:12px;color:var(--text3);margin-top:2px">Collective observations — positive strengths &amp; areas to improve</div>
+            </div>
+            <button class="btn btn-sm btn-excel" onclick="exportNotesExcel()" id="notesExportBtn">Export Notes to Excel</button>
+          </div>
+          <div class="notes-2col">
+
+            <!-- POSITIVE -->
+            <div class="notes-col" style="border-top:3px solid var(--emerald)">
+              <div class="notes-col-head">
+                <span style="font-size:16px">✅</span>
+                <span class="notes-col-title" style="color:var(--emerald)" id="posTitleEl">Positive Points</span>
+                <span class="notes-col-badge" style="background:rgba(0,200,150,0.12);color:var(--emerald)" id="posCnt">0</span>
+              </div>
+              <div class="notes-list" id="posNotesList"></div>
+              <div class="notes-add-box admin-only">
+                <div class="notes-add-row">
+                  <select id="posColSel"><option value="">All Team</option></select>
+                  <input type="text" id="posDateInp" placeholder="Date (optional)" style="max-width:130px">
+                </div>
+                <textarea class="notes-textarea" id="posTextInp" placeholder="Enter a positive observation…" rows="2"></textarea>
+                <button class="notes-submit-btn pos-submit" onclick="addNote('positive')" id="posSubmitBtn">+ Add Positive Note</button>
+              </div>
+            </div>
+
+            <!-- NEGATIVE / IMPROVEMENT -->
+            <div class="notes-col" style="border-top:3px solid var(--rose)">
+              <div class="notes-col-head">
+                <span style="font-size:16px">⚠️</span>
+                <span class="notes-col-title" style="color:var(--rose)" id="negTitleEl">Points to Improve</span>
+                <span class="notes-col-badge" style="background:rgba(255,77,109,0.12);color:var(--rose)" id="negCnt">0</span>
+              </div>
+              <div class="notes-list" id="negNotesList"></div>
+              <div class="notes-add-box admin-only">
+                <div class="notes-add-row">
+                  <select id="negColSel"><option value="">All Team</option></select>
+                  <input type="text" id="negDateInp" placeholder="Date (optional)" style="max-width:130px">
+                </div>
+                <textarea class="notes-textarea" id="negTextInp" placeholder="Enter an area for improvement…" rows="2"></textarea>
+                <button class="notes-submit-btn neg-submit" onclick="addNote('negative')" id="negSubmitBtn">+ Add Improvement Note</button>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1046,7 +1215,9 @@ const CAT_COLORS = {
   Communication:'#a78bfa', Teamwork:'#ffb340', Documentation:'#60a5fa', Other:'#94a3b8'
 };
 
-let db = { colleagues: [], criteria: [], scores: {} };
+let db = { colleagues: [], criteria: [], scores: {}, notes: { positive: [], negative: [] } };
+let appLang = localStorage.getItem('rxp_lang') || 'en';
+let appMode = localStorage.getItem('rxp_mode') || 'night';
 let role = 'viewer'; // 'admin' | 'viewer'
 let selRole = 'admin';
 let curColId = null;
@@ -1102,7 +1273,15 @@ function seedData() {
   save();
 }
 function save() { try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e){} }
-function load() { try { const s=localStorage.getItem('rxp_db'); if(s) db=JSON.parse(s); } catch(e){} }
+function load() {
+  try {
+    const s = localStorage.getItem('rxp_db');
+    if(s) {
+      db = JSON.parse(s);
+      if(!db.notes) db.notes = { positive:[], negative:[] };
+    }
+  } catch(e) {}
+}
 
 /* ════════════════════════════════════════════
    AUTH
@@ -1190,7 +1369,7 @@ function initApp() {
    VIEW SWITCHING
 ════════════════════════════════════════════ */
 function setView(v) {
-  ['entry','stats','charts','filter','compare'].forEach(x=>{
+  ['entry','stats','charts','filter','notes','compare'].forEach(x=>{
     const el=document.getElementById(`view-${x}`);
     if(el) el.classList.toggle('v-on', x===v);
     const tb=document.getElementById(`tb-${x}`);
@@ -1199,6 +1378,7 @@ function setView(v) {
   if(v==='stats') renderStats();
   if(v==='charts') renderAllCharts();
   if(v==='filter') populateFilterDropdowns();
+  if(v==='notes') renderNotesView();
   if(v==='compare') renderCompareView();
 }
 
@@ -2159,27 +2339,64 @@ function exportAllExcel() {
   toast('Full team data exported to Excel');
 }
 
-function downloadAsXlsx(rows, filename, sheetName) {
-  // Convert 2D array to CSV with UTF-8 BOM so Excel opens correctly with formatting
-  const bom = '\uFEFF';
-  const csv = rows.map(row =>
-    row.map(cell => {
-      const s = String(cell ?? '');
-      // Quote cells that contain commas, quotes, or newlines
-      return (s.includes(',') || s.includes('"') || s.includes('\n'))
-        ? `"${s.replace(/"/g, '""')}"`
-        : s;
-    }).join(',')
-  ).join('\r\n');
+function downloadAsXlsx(rows, filename) {
+  // Generates a styled HTML table that Excel opens natively (.xls)
+  const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-  const blob = new Blob([bom + csv], {type:'text/csv;charset=utf-8;'});
+  let tbl = `<table border="1" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;font-size:10pt">`;
+  rows.forEach((row, ri) => {
+    if(!row || row.length === 0) {
+      tbl += `<tr><td colspan="99" style="height:6px;border:none"></td></tr>`;
+      return;
+    }
+    const isTitle  = ri === 0;
+    const isHeader = row[0]==='Criterion' || row[0]==='TYPE' || row[0]==='Criterion / Day' || row[0]==='Notes';
+    const isDayAvg = row[0]==='Daily Average';
+    const isSep    = String(row[0]).startsWith('═');
+
+    let rowStyle = '';
+    if(isTitle)  rowStyle = 'background:#1e3a5f;color:#ffffff;font-size:12pt;font-weight:bold;';
+    else if(isSep) rowStyle = 'background:#c0cfe0;font-weight:bold;';
+    else if(isHeader) rowStyle = 'background:#2a5298;color:#ffffff;font-weight:bold;';
+    else if(isDayAvg) rowStyle = 'background:#d4edda;font-weight:bold;color:#155724;';
+
+    tbl += `<tr style="${rowStyle}">`;
+    row.forEach((cell, ci) => {
+      const val = String(cell ?? '');
+      const num = parseFloat(val);
+      let cellStyle = 'padding:4px 8px;border:1px solid #b0c4de;';
+
+      // Colour numeric score cells (columns after criterion/cat/weight = ci >= 3)
+      if(!isHeader && !isTitle && !isSep && !isNaN(num) && num > 0 && ci >= 3) {
+        const bg = num>=8?'#c3e6cb': num>=6?'#fff3cd': '#f5c6cb';
+        const fg = num>=8?'#155724': num>=6?'#856404': '#721c24';
+        cellStyle += `background:${bg};color:${fg};font-weight:bold;text-align:center;`;
+      } else if(!isHeader && !isTitle && !isSep) {
+        cellStyle += 'text-align:left;';
+      }
+      const tag = isHeader ? 'th' : 'td';
+      tbl += `<${tag} style="${cellStyle}">${esc(val)}</${tag}>`;
+    });
+    tbl += `</tr>`;
+  });
+  tbl += `</table>`;
+
+  const xlsContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+<x:ExcelWorksheet><x:Name>Data</x:Name>
+<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+</head><body>${tbl}</body></html>`;
+
+  const blob = new Blob(['\uFEFF' + xlsContent], {type:'application/vnd.ms-excel;charset=utf-8'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = filename.replace('.xlsx','.csv');
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
+  a.download = filename.replace('.xlsx','.xls').replace('.csv','.xls');
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(a.href);
 }
 
 function doPrint() { window.print(); }
@@ -2233,11 +2450,243 @@ function toast(msg,color) {
   setTimeout(()=>{ el.classList.remove('t-show'); setTimeout(()=>el.remove(),400); },2600);
 }
 
+
+/* ════════════════════════════════════════════
+   LANGUAGE TOGGLE  (EN ↔ AR)
+════════════════════════════════════════════ */
+const AR = {
+  langBtn:'ع | EN', modeDay:'وضع النهار', modeNight:'وضع الليل',
+  teamMembers:'أعضاء الفريق', search:'ابحث عن زميل…',
+  addColleague:'إضافة زميل',
+  entry:'إدخال البيانات', stats:'الإحصاءات', charts:'الرسوم البيانية',
+  filter:'تصفية', notes:'ملاحظات الفريق', compare:'مقارنة',
+  print:'طباعة', exportExcel:'تصدير إكسل',
+  backupData:'نسخ احتياطي', importData:'استيراد',
+  viewOnly:'وضع العرض فقط',
+  notesTitle:'ملاحظات الفريق',
+  notesSub:'الملاحظات الجماعية — نقاط القوة والتحسين',
+  posTitle:'النقاط الإيجابية', negTitle:'نقاط التحسين',
+  posBtn:'+ إضافة ملاحظة إيجابية', negBtn:'+ إضافة نقطة تحسين',
+  posPlaceholder:'أدخل ملاحظة إيجابية…', negPlaceholder:'أدخل مجال للتحسين…',
+  datePlaceholder:'التاريخ (اختياري)', allTeam:'الفريق كله',
+  noNotes:'لا توجد ملاحظات بعد.', exportNotes:'تصدير الملاحظات إكسل',
+  signIn:'تسجيل الدخول',
+};
+const EN = {
+  langBtn:'EN | ع', modeDay:'☀ Day Mode', modeNight:'☾ Night Mode',
+  teamMembers:'Team Members', search:'Search colleague…',
+  addColleague:'Add Colleague',
+  entry:'Data Entry', stats:'Statistics', charts:'Charts',
+  filter:'Filter', notes:'Team Notes', compare:'Compare',
+  print:'Print', exportExcel:'Export to Excel',
+  backupData:'Backup Data', importData:'Import Data',
+  viewOnly:'View Only Mode',
+  notesTitle:'Team Notes',
+  notesSub:'Collective observations — positive strengths & areas to improve',
+  posTitle:'Positive Points', negTitle:'Points to Improve',
+  posBtn:'+ Add Positive Note', negBtn:'+ Add Improvement Note',
+  posPlaceholder:'Enter a positive observation…', negPlaceholder:'Enter an area for improvement…',
+  datePlaceholder:'Date (optional)', allTeam:'All Team',
+  noNotes:'No notes yet. Add the first one.', exportNotes:'Export Notes to Excel',
+  signIn:'Sign In',
+};
+
+function toggleLang() {
+  appLang = appLang==='en' ? 'ar' : 'en';
+  try{ localStorage.setItem('rxp_lang', appLang); }catch(e){}
+  applyLang();
+}
+function applyLang() {
+  const t = appLang==='ar' ? AR : EN;
+  const isAr = appLang==='ar';
+  document.documentElement.lang = appLang;
+  document.body.classList.toggle('lang-ar', isAr);
+
+  // Topbar buttons
+  const lb = document.getElementById('langBtn');
+  if(lb) lb.textContent = t.langBtn;
+  const mb = document.getElementById('modeBtn');
+  if(mb) mb.textContent = appMode==='day' ? t.modeNight : t.modeDay;
+
+  // Toolbar nav buttons (by id → key mapping)
+  const tbMap = { 'tb-entry':t.entry,'tb-stats':t.stats,'tb-charts':t.charts,
+                  'tb-filter':t.filter,'tb-notes':t.notes };
+  Object.entries(tbMap).forEach(([id,txt])=>{ const el=document.getElementById(id); if(el) el.textContent=txt; });
+
+  // Toolbar action buttons (by their EN text)
+  const actMap = { 'Print':t.print, 'Export to Excel':t.exportExcel,
+                   'Backup Data':t.backupData, 'Import Data':t.importData };
+  document.querySelectorAll('.toolbar .t-btn').forEach(btn=>{
+    const cur = btn.textContent.trim();
+    if(actMap[cur]) btn.textContent = actMap[cur];
+    // reverse: if AR was set, map back
+    const enKey = Object.entries(actMap).find(([k])=> Object.values(AR).includes(cur));
+  });
+
+  // Viewer note
+  const vn = document.getElementById('viewerNote');
+  if(vn) vn.textContent = t.viewOnly;
+
+  // Sidebar
+  const sbTitle = document.querySelector('.sb-title');
+  if(sbTitle) sbTitle.textContent = t.teamMembers;
+  const sbSrch = document.getElementById('sbSearch');
+  if(sbSrch) sbSrch.placeholder = t.search;
+  const sbAdd = document.querySelector('.sb-add-btn');
+  if(sbAdd) sbAdd.textContent = t.addColleague;
+
+  // Notes view static text
+  const nTitle = document.getElementById('notesViewTitle');
+  if(nTitle) nTitle.textContent = t.notesTitle;
+  const nSub = document.getElementById('notesViewSub');
+  if(nSub) nSub.textContent = t.notesSub;
+  const pTitle = document.getElementById('posTitleEl');
+  if(pTitle) pTitle.textContent = t.posTitle;
+  const nNeg = document.getElementById('negTitleEl');
+  if(nNeg) nNeg.textContent = t.negTitle;
+  const pBtn = document.getElementById('posSubmitBtn');
+  if(pBtn) pBtn.textContent = t.posBtn;
+  const nBtn = document.getElementById('negSubmitBtn');
+  if(nBtn) nBtn.textContent = t.negBtn;
+  const pTxt = document.getElementById('posTextInp');
+  if(pTxt) pTxt.placeholder = t.posPlaceholder;
+  const nTxt = document.getElementById('negTextInp');
+  if(nTxt) nTxt.placeholder = t.negPlaceholder;
+  const pDate = document.getElementById('posDateInp');
+  if(pDate) pDate.placeholder = t.datePlaceholder;
+  const nDate = document.getElementById('negDateInp');
+  if(nDate) nDate.placeholder = t.datePlaceholder;
+  const xBtn = document.getElementById('notesExportBtn');
+  if(xBtn) xBtn.textContent = t.exportNotes;
+
+  // Repopulate colleague selects in notes
+  populateNoteSelects();
+}
+
+/* ════════════════════════════════════════════
+   DAY / NIGHT MODE TOGGLE
+════════════════════════════════════════════ */
+function toggleMode() {
+  appMode = appMode==='night' ? 'day' : 'night';
+  try{ localStorage.setItem('rxp_mode', appMode); }catch(e){}
+  applyMode();
+}
+function applyMode() {
+  const isDay = appMode==='day';
+  document.body.classList.toggle('day-mode', isDay);
+  const t = appLang==='ar' ? AR : EN;
+  const btn = document.getElementById('modeBtn');
+  if(btn) btn.textContent = isDay ? t.modeNight : t.modeDay;
+  btn?.classList.toggle('ctrl-active', isDay);
+}
+
+/* ════════════════════════════════════════════
+   TEAM NOTES
+════════════════════════════════════════════ */
+function populateNoteSelects() {
+  const t = appLang==='ar' ? AR : EN;
+  ['posColSel','negColSel'].forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const prev = sel.value;
+    sel.innerHTML = `<option value="">${t.allTeam}</option>` +
+      db.colleagues.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+    if(prev) sel.value = prev;
+  });
+}
+
+function renderNotesView() {
+  populateNoteSelects();
+  renderNotesList('positive');
+  renderNotesList('negative');
+}
+
+function renderNotesList(type) {
+  const isPos = type === 'positive';
+  const listEl = document.getElementById(isPos ? 'posNotesList' : 'negNotesList');
+  const cntEl  = document.getElementById(isPos ? 'posCnt' : 'negCnt');
+  if(!listEl) return;
+  const notes = (db.notes && db.notes[type]) ? db.notes[type] : [];
+  if(cntEl) cntEl.textContent = notes.length;
+  const t = appLang==='ar' ? AR : EN;
+  if(!notes.length) {
+    listEl.innerHTML = `<div class="notes-empty-msg">${t.noNotes}</div>`;
+    return;
+  }
+  const accentColor = isPos ? 'var(--emerald)' : 'var(--rose)';
+  const isAdmin = role === 'admin';
+  listEl.innerHTML = [...notes].reverse().map((n, ri) => {
+    const realIdx = notes.length - 1 - ri;
+    const colleague = n.colId ? db.colleagues.find(c=>c.id===n.colId) : null;
+    const colName  = colleague ? colleague.name : t.allTeam;
+    const colColor = colleague ? colleague.color : 'var(--text3)';
+    const safeText = n.text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<div class="note-card" style="border-left:3px solid ${accentColor}">
+      ${isAdmin ? `<button class="note-del" onclick="deleteNote('${type}',${realIdx})" title="Delete">✕</button>` : ''}
+      <div class="note-card-who" style="color:${colColor}">${colName}</div>
+      <div class="note-card-text">${safeText}</div>
+      ${n.date ? `<div class="note-card-meta">${n.date}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function addNote(type) {
+  if(role !== 'admin') return;
+  const isPos = type === 'positive';
+  const colId = document.getElementById(isPos ? 'posColSel' : 'negColSel').value || null;
+  const date  = document.getElementById(isPos ? 'posDateInp' : 'negDateInp').value.trim();
+  const text  = document.getElementById(isPos ? 'posTextInp' : 'negTextInp').value.trim();
+  if(!text) { toast('Please enter a note', '#ffb340'); return; }
+  if(!db.notes) db.notes = { positive:[], negative:[] };
+  if(!db.notes[type]) db.notes[type] = [];
+  db.notes[type].push({ colId, text, date, ts: Date.now() });
+  save();
+  document.getElementById(isPos ? 'posTextInp' : 'negTextInp').value = '';
+  document.getElementById(isPos ? 'posDateInp' : 'negDateInp').value = '';
+  renderNotesList(type);
+  toast(isPos ? 'Positive note added' : 'Improvement note added');
+}
+
+function deleteNote(type, idx) {
+  if(role !== 'admin') return;
+  if(!confirm('Delete this note?')) return;
+  db.notes[type].splice(idx, 1);
+  save();
+  renderNotesList(type);
+}
+
+function exportNotesExcel() {
+  const pos = (db.notes && db.notes.positive) ? db.notes.positive : [];
+  const neg = (db.notes && db.notes.negative) ? db.notes.negative : [];
+  if(!pos.length && !neg.length) { toast('No notes to export', '#ffb340'); return; }
+
+  const rows = [
+    ['RxPerform Pro — Team Notes Report'],
+    ['Exported', new Date().toLocaleString()],
+    [],
+    ['Type', 'Colleague', 'Date', 'Note']
+  ];
+  const allNotes = [
+    ...pos.map(n=>({...n, type:'Positive'})),
+    ...neg.map(n=>({...n, type:'Improvement'}))
+  ].sort((a,b)=>(b.ts||0)-(a.ts||0));
+
+  allNotes.forEach(n => {
+    const c = n.colId ? db.colleagues.find(x=>x.id===n.colId) : null;
+    rows.push([n.type, c ? c.name : 'All Team', n.date||'', n.text]);
+  });
+
+  downloadAsXlsx(rows, `RxPerform_Notes_${new Date().toISOString().slice(0,10)}.xls`);
+  toast('Notes exported');
+}
+
 /* ════════════════════════════════════════════
    BOOT
 ════════════════════════════════════════════ */
 load();
 if(!db.colleagues.length) seedData();
+applyMode();
+applyLang();
 </script>
 </body>
 </html>
