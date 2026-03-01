@@ -135,6 +135,19 @@ body {
 }
 .fi:focus { border-color:var(--cyan); background:var(--ink3); box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
 .fi-hint { font-size:11px; color:var(--text3); margin-top:6px; }
+/* Role cards on login */
+.role-card {
+  width:100%; display:flex; align-items:center; gap:14px;
+  padding:14px 16px; border-radius:var(--r);
+  border:1px solid var(--line2); background:var(--ink2);
+  color:var(--text); cursor:pointer; font-family:inherit;
+  text-align:left; transition:var(--trans);
+}
+.role-card:hover { background:var(--ink3); border-color:var(--line3); transform:translateY(-1px); }
+.role-card-icon { width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.role-card-title { font-size:14px;font-weight:600;color:var(--white); }
+.role-card-desc { font-size:11px;color:var(--text3);margin-top:2px; }
+.role-card-arrow { margin-left:auto;font-size:18px;color:var(--text3); }
 .login-btn {
   width:100%; padding:14px;
   background:linear-gradient(135deg,var(--cyan2),var(--cyan));
@@ -441,11 +454,16 @@ table.ptbl {
 .sc-dot:hover { border-color:var(--cyan); color:var(--cyan); transform:scale(1.1); }
 .sc-dot.readonly { cursor:default; }
 .sc-dot.readonly:hover { transform:none; border-color:transparent; }
-.sc-5 { background:rgba(0,200,150,0.18); color:#00c896; }
-.sc-4 { background:rgba(0,200,150,0.1); color:#38d9a9; }
-.sc-3 { background:rgba(255,179,64,0.15); color:#ffb340; }
-.sc-2 { background:rgba(255,120,50,0.15); color:#ff7832; }
-.sc-1 { background:rgba(255,77,109,0.2); color:#ff4d6d; }
+.sc-dot.s10{ background:rgba(0,200,150,0.22); color:#00c896; }
+.sc-dot.s9 { background:rgba(45,196,160,0.2);  color:#2dc4a0; }
+.sc-dot.s8 { background:rgba(94,200,138,0.18);  color:#5ec88a; }
+.sc-dot.s7 { background:rgba(158,212,104,0.18); color:#9ed468; }
+.sc-dot.s6 { background:rgba(212,200,64,0.18);  color:#d4c840; }
+.sc-dot.s5 { background:rgba(255,179,64,0.18);  color:#ffb340; }
+.sc-dot.s4 { background:rgba(255,149,32,0.18);  color:#ff9520; }
+.sc-dot.s3 { background:rgba(255,120,50,0.18);  color:#ff7832; }
+.sc-dot.s2 { background:rgba(255,96,87,0.18);   color:#ff6057; }
+.sc-dot.s1 { background:rgba(255,77,109,0.22);  color:#ff4d6d; }
 .sc-dot.has-note::after {
   content:''; position:absolute; top:3px; right:3px;
   width:4px; height:4px; border-radius:50%; background:var(--cyan);
@@ -644,6 +662,65 @@ table.ptbl {
   .ptbl td.ptbl-cr-cell { background:#fff; }
   .card { border:1px solid #ddd; break-inside:avoid; }
 }
+
+/* ── CHECKBOXES & COMPARE ── */
+.sb-cb {
+  width:16px; height:16px; border-radius:4px;
+  border:1.5px solid var(--line2); background:var(--ink2);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  transition:var(--trans); cursor:pointer;
+}
+.sb-cb.cb-chk { background:var(--cyan); border-color:var(--cyan); }
+.sb-cb.cb-chk::after { content:'✓'; font-size:10px; font-weight:700; color:var(--ink); }
+.compare-bar {
+  padding:10px 12px; border-top:1px solid var(--line);
+  background:rgba(0,212,255,0.04); flex-shrink:0;
+  display:none; flex-direction:column; gap:8px;
+}
+.compare-bar.cb-vis { display:flex; }
+.compare-bar-title {
+  font-size:10px; font-weight:600; text-transform:uppercase;
+  letter-spacing:1.5px; color:var(--cyan);
+}
+.compare-bar-names { display:flex; flex-wrap:wrap; gap:5px; }
+.compare-chip {
+  font-size:11px; padding:3px 8px; border-radius:6px;
+  border:1px solid var(--line2); background:var(--ink3);
+  color:var(--text2); display:flex; align-items:center; gap:4px;
+}
+.compare-btns { display:flex; gap:6px; }
+
+/* ── COMPARE VIEW ── */
+.cmp-grid {
+  display:grid; gap:16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+}
+.cmp-card {
+  background:var(--ink1); border:1px solid var(--line);
+  border-radius:var(--r2); overflow:hidden;
+}
+.cmp-card-head {
+  padding:12px 16px; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid var(--line);
+}
+.cmp-ava {
+  width:32px; height:32px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; font-family:'Syne',sans-serif;
+}
+.cmp-name { font-size:13px; font-weight:600; color:var(--white); }
+.cmp-role { font-size:10px; color:var(--text3); }
+.cmp-avg-badge {
+  margin-left:auto; font-family:'Geist Mono',monospace;
+  font-size:14px; font-weight:700; padding:4px 10px; border-radius:8px;
+}
+
+/* ── EXCEL EXPORT ── */
+.btn-excel {
+  background:rgba(0,200,150,0.1); color:var(--emerald);
+  border-color:rgba(0,200,150,0.25);
+}
+.btn-excel:hover { background:rgba(0,200,150,0.18); color:var(--emerald); }
 </style>
 </head>
 <body>
@@ -654,18 +731,47 @@ table.ptbl {
   <div class="login-panel">
     <div class="login-wordmark">Rx<span>Perform</span> Pro</div>
     <div class="login-tagline">Pharmacy Performance Management</div>
-    <div class="role-tabs">
-      <button class="role-tab active" id="tabAdmin" onclick="selectRole('admin')">⚙ Administrator</button>
-      <button class="role-tab" id="tabViewer" onclick="selectRole('viewer')">👁 View Only</button>
+
+    <!-- Role choice cards -->
+    <div id="roleChoose">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px;text-align:center">Choose how you want to sign in</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="role-card" onclick="enterAsViewer()">
+          <div class="role-card-icon" style="background:rgba(0,212,255,0.12);color:var(--cyan)">👁</div>
+          <div>
+            <div class="role-card-title">View Only</div>
+            <div class="role-card-desc">Browse performance data — no password needed</div>
+          </div>
+          <div class="role-card-arrow">→</div>
+        </button>
+        <button class="role-card" onclick="showAdminLogin()">
+          <div class="role-card-icon" style="background:rgba(255,179,64,0.12);color:var(--amber)">⚙</div>
+          <div>
+            <div class="role-card-title">Administrator</div>
+            <div class="role-card-desc">Full access — edit, add and manage all data</div>
+          </div>
+          <div class="role-card-arrow">→</div>
+        </button>
+      </div>
     </div>
-    <label class="fi-label" id="loginRoleHint">Administrator access — full edit rights</label>
-    <div class="fi-wrap">
-      <span class="fi-icon">🔑</span>
-      <input class="fi" type="password" id="loginPass" placeholder="Enter password…" autocomplete="current-password">
+
+    <!-- Admin password panel (hidden initially) -->
+    <div id="adminLoginPanel" style="display:none">
+      <button onclick="backToRoles()" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;margin-bottom:20px;display:flex;align-items:center;gap:6px;padding:0">← Back</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,179,64,0.12);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:18px">⚙</div>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--white)">Administrator Login</div>
+          <div style="font-size:11px;color:var(--text3)">Enter your admin password to continue</div>
+        </div>
+      </div>
+      <div class="fi-wrap">
+        <span class="fi-icon">🔑</span>
+        <input class="fi" type="password" id="loginPass" placeholder="Admin password…" autocomplete="current-password">
+      </div>
+      <button class="login-btn" onclick="doAdminLogin()">Sign In as Administrator</button>
+      <div class="login-err" id="loginErr">⚠ Incorrect password. Please try again.</div>
     </div>
-    <div class="fi-hint" id="loginHint">Admin: <b style="color:var(--amber)">admin123</b> &nbsp;|&nbsp; Viewer: <b style="color:var(--cyan)">view456</b></div>
-    <button class="login-btn" onclick="doLogin()" style="margin-top:18px">Sign In →</button>
-    <div class="login-err" id="loginErr">⚠ Incorrect password. Please try again.</div>
   </div>
 </div>
 
@@ -687,23 +793,19 @@ table.ptbl {
 
   <!-- TOOL BAR -->
   <div class="toolbar no-print">
-    <button class="t-btn t-active" id="tb-entry" onclick="setView('entry')">
-      <span class="t-ico">📋</span><span class="t-btn-label">Data Entry</span>
-    </button>
-    <button class="t-btn" id="tb-stats" onclick="setView('stats')">
-      <span class="t-ico">📊</span><span class="t-btn-label">Statistics</span>
-    </button>
-    <button class="t-btn" id="tb-charts" onclick="setView('charts')">
-      <span class="t-ico">📈</span><span class="t-btn-label">Charts</span>
-    </button>
-    <button class="t-btn" id="tb-filter" onclick="setView('filter')">
-      <span class="t-ico">🔍</span><span class="t-btn-label">Filter</span>
+    <button class="t-btn t-active" id="tb-entry" onclick="setView('entry')">Data Entry</button>
+    <button class="t-btn" id="tb-stats" onclick="setView('stats')">Statistics</button>
+    <button class="t-btn" id="tb-charts" onclick="setView('charts')">Charts</button>
+    <button class="t-btn" id="tb-filter" onclick="setView('filter')">Filter</button>
+    <button class="t-btn" id="tb-compare" onclick="setView('compare')" style="display:none">
+      Compare <span id="cmpCount" style="margin-left:4px;background:var(--cyan);color:var(--ink);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700"></span>
     </button>
     <div class="t-divider"></div>
-    <button class="t-btn" onclick="doPrint()"><span class="t-ico">🖨</span><span class="t-btn-label">Print</span></button>
-    <button class="t-btn admin-only" onclick="doExport()"><span class="t-ico">⬇</span><span class="t-btn-label">Export</span></button>
-    <button class="t-btn admin-only" onclick="doImport()"><span class="t-ico">⬆</span><span class="t-btn-label">Import</span></button>
-    <div id="viewerNote" class="viewer-note" style="display:none">👁 Preview Mode — Read Only</div>
+    <button class="t-btn" onclick="doPrint()">Print</button>
+    <button class="t-btn btn-excel" onclick="exportExcel()">Export to Excel</button>
+    <button class="t-btn admin-only" onclick="doExport()">Backup Data</button>
+    <button class="t-btn admin-only" onclick="doImport()">Import Data</button>
+    <div id="viewerNote" class="viewer-note" style="display:none">View Only Mode</div>
   </div>
 
   <!-- BODY -->
@@ -711,16 +813,27 @@ table.ptbl {
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
       <div class="sb-head">
-        <div class="sb-title">Team Members</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="sb-title" style="margin-bottom:0">Team Members</div>
+          <button id="cmpToggleBtn" onclick="toggleCompareMode()" style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--line2);background:var(--ink3);color:var(--text3);cursor:pointer;font-family:inherit;transition:var(--trans)" title="Toggle comparison checkboxes">Compare</button>
+        </div>
         <div class="sb-search-wrap">
           <span class="sb-search-icon">🔎</span>
           <input class="sb-search" type="text" placeholder="Search colleague…" id="sbSearch" oninput="filterSb(this.value)">
         </div>
       </div>
       <div class="sb-list" id="sbList"></div>
+      <div class="compare-bar" id="compareBar">
+        <div class="compare-bar-title">Comparing</div>
+        <div class="compare-bar-names" id="compareNames"></div>
+        <div class="compare-btns">
+          <button class="btn btn-sm btn-primary" onclick="launchCompare()">Compare</button>
+          <button class="btn btn-sm" onclick="clearCompare()">Clear</button>
+        </div>
+      </div>
       <div class="sb-foot admin-only">
         <button class="sb-add-btn" onclick="openColleagueModal(null)">
-          <span>＋</span> Add Colleague
+          Add Colleague
         </button>
       </div>
     </div>
@@ -791,6 +904,22 @@ table.ptbl {
           <div class="card">
             <div class="card-head"><div class="card-title">Filter Results</div></div>
             <div style="overflow-x:auto"><table class="rtbl" id="filterTbl"></table></div>
+          </div>
+        </div>
+
+        <!-- COMPARE VIEW -->
+        <div class="view" id="view-compare">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)">Side-by-Side Comparison</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <label class="fg-label" style="margin:0">Month:</label>
+              <select class="fg-sel" id="cmpMonth" onchange="renderCompareView()" style="min-width:120px"></select>
+            </div>
+          </div>
+          <div class="cmp-grid" id="cmpGrid"></div>
+          <div class="card" id="cmpChartCard" style="display:none">
+            <div class="card-head"><div class="card-title">Score Comparison Chart</div></div>
+            <div style="padding:20px"><div style="height:260px;position:relative"><canvas id="cmpChart"></canvas></div></div>
           </div>
         </div>
 
@@ -871,9 +1000,9 @@ table.ptbl {
       <input class="form-in" id="mScNote" type="text" placeholder="Add observation…">
     </div>
     <div class="m-actions">
-      <button class="btn btn-sm btn-danger" onclick="clearScore()">Clear</button>
+      <button class="btn btn-sm btn-danger" onclick="clearScore()">Clear Score</button>
       <button class="btn btn-sm" onclick="closeModal('mScore')">Cancel</button>
-      <button class="btn btn-sm btn-primary" onclick="confirmScore()">Save</button>
+      <button class="btn btn-sm btn-primary" onclick="confirmScore()">Save Score</button>
     </div>
   </div>
 </div>
@@ -910,7 +1039,8 @@ const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct
 const COLORS_PALETTE = [
   '#00d4ff','#00e5c4','#ffb340','#ff4d6d','#a78bfa','#34d399','#fb923c','#60a5fa','#f472b6','#4ade80'
 ];
-const SCORE_COLORS = { 1:'#ff4d6d', 2:'#ff7832', 3:'#ffb340', 4:'#38d9a9', 5:'#00c896' };
+const SCORE_COLORS = { 1:'#ff4d6d',2:'#ff6057',3:'#ff7832',4:'#ff9520',5:'#ffb340',6:'#d4c840',7:'#9ed468',8:'#5ec88a',9:'#2dc4a0',10:'#00c896' };
+const MAX_SCORE = 10;
 const CAT_COLORS = {
   Clinical:'#00d4ff', Service:'#00e5c4', Compliance:'#ff4d6d',
   Communication:'#a78bfa', Teamwork:'#ffb340', Documentation:'#60a5fa', Other:'#94a3b8'
@@ -927,6 +1057,8 @@ let editColId = null;
 let editCrId = null;
 let selColor = COLORS_PALETTE[0];
 let charts = {};
+let compareMode = false;
+let compareSet = new Set(); // ids of checked colleagues
 
 /* ─── SEED DATA ─── */
 function seedData() {
@@ -959,8 +1091,8 @@ function seedData() {
         db.scores[c.id][m][cr.id] = {};
         for(let day=1; day<=maxDay; day++) {
           if(Math.random() > 0.1) {
-            const base = c.id==='c1' ? 4 : c.id==='c4' ? 3 : 3.5;
-            const sc = Math.max(1,Math.min(5,Math.round(base + (Math.random()-0.3)*2)));
+            const base = c.id==='c1' ? 8 : c.id==='c4' ? 6 : 7;
+            const sc = Math.max(1,Math.min(10,Math.round(base + (Math.random()-0.3)*3)));
             db.scores[c.id][m][cr.id][day] = { score:sc, note:'' };
           }
         }
@@ -975,33 +1107,45 @@ function load() { try { const s=localStorage.getItem('rxp_db'); if(s) db=JSON.pa
 /* ════════════════════════════════════════════
    AUTH
 ════════════════════════════════════════════ */
-function selectRole(r) {
-  selRole = r;
-  document.getElementById('tabAdmin').classList.toggle('active', r==='admin');
-  document.getElementById('tabViewer').classList.toggle('active', r==='viewer');
-  document.getElementById('loginRoleHint').textContent =
-    r==='admin' ? 'Administrator — full edit & manage rights' : 'Viewer — read-only preview mode';
-  document.getElementById('loginPass').value = '';
+function enterAsViewer() {
+  role = 'viewer';
+  launchApp();
 }
-function doLogin() {
+function showAdminLogin() {
+  document.getElementById('roleChoose').style.display='none';
+  document.getElementById('adminLoginPanel').style.display='block';
+  setTimeout(()=>document.getElementById('loginPass').focus(),100);
+}
+function backToRoles() {
+  document.getElementById('adminLoginPanel').style.display='none';
+  document.getElementById('roleChoose').style.display='block';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+function doAdminLogin() {
   const pass = document.getElementById('loginPass').value;
   const err = document.getElementById('loginErr');
-  if(pass === PASSWORDS[selRole]) {
-    role = selRole;
+  if(pass === PASSWORDS.admin) {
+    role = 'admin';
     err.style.display='none';
-    document.getElementById('loginScreen').style.opacity='0';
-    document.getElementById('loginScreen').style.transition='opacity 0.4s';
-    setTimeout(()=>{ document.getElementById('loginScreen').style.display='none'; },400);
-    document.getElementById('app').style.display='flex';
-    initApp();
+    launchApp();
   } else {
     err.style.display='flex';
     document.getElementById('loginPass').focus();
   }
 }
+function launchApp() {
+  const scr = document.getElementById('loginScreen');
+  scr.style.transition='opacity 0.4s';
+  scr.style.opacity='0';
+  setTimeout(()=>{ scr.style.display='none'; },400);
+  document.getElementById('app').style.display='flex';
+  initApp();
+}
 document.addEventListener('keydown', e => {
   if(e.key==='Enter') {
-    if(document.getElementById('loginScreen').style.display!=='none') doLogin();
+    const panel = document.getElementById('adminLoginPanel');
+    if(panel && panel.style.display!=='none') doAdminLogin();
   }
 });
 function logoutConfirm() {
@@ -1046,13 +1190,16 @@ function initApp() {
    VIEW SWITCHING
 ════════════════════════════════════════════ */
 function setView(v) {
-  ['entry','stats','charts','filter'].forEach(x=>{
-    document.getElementById(`view-${x}`).classList.toggle('v-on', x===v);
-    document.getElementById(`tb-${x}`)?.classList.toggle('t-active', x===v);
+  ['entry','stats','charts','filter','compare'].forEach(x=>{
+    const el=document.getElementById(`view-${x}`);
+    if(el) el.classList.toggle('v-on', x===v);
+    const tb=document.getElementById(`tb-${x}`);
+    if(tb) tb.classList.toggle('t-active', x===v);
   });
   if(v==='stats') renderStats();
   if(v==='charts') renderAllCharts();
   if(v==='filter') populateFilterDropdowns();
+  if(v==='compare') renderCompareView();
 }
 
 /* ════════════════════════════════════════════
@@ -1063,9 +1210,14 @@ function renderSidebar(q='') {
   const cols = db.colleagues.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
   list.innerHTML = cols.map(c => {
     const avg = colMonthAvg(c.id, curMonth);
-    const sc = avg===0 ? 'na' : avg>=4 ? 'hi' : avg>=3 ? 'md' : 'lo';
+    const sc = avg===0 ? 'na' : avg>=8 ? 'hi' : avg>=6 ? 'md' : 'lo';
     const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<div class="sb-item${c.id===curColId?' sb-active':''}" onclick="selectColleague('${c.id}')">
+    const checked = compareSet.has(c.id);
+    const cbHtml = compareMode
+      ? `<div class="sb-cb${checked?' cb-chk':''}" onclick="event.stopPropagation();toggleCompareItem('${c.id}')"></div>`
+      : '';
+    return `<div class="sb-item${c.id===curColId&&!compareMode?' sb-active':''}" onclick="${compareMode?`toggleCompareItem('${c.id}')`:`selectColleague('${c.id}')`}">
+      ${cbHtml}
       <div class="sb-ava" style="background:${c.color}22;color:${c.color}">${ini}</div>
       <div class="sb-info">
         <div class="sb-name">${c.name}</div>
@@ -1076,6 +1228,139 @@ function renderSidebar(q='') {
   }).join('');
 }
 function filterSb(q) { renderSidebar(q); }
+
+function toggleCompareMode() {
+  compareMode = !compareMode;
+  if(!compareMode) compareSet.clear();
+  const btn = document.getElementById('cmpToggleBtn');
+  if(btn) {
+    btn.style.color = compareMode ? 'var(--cyan)' : 'var(--text3)';
+    btn.style.borderColor = compareMode ? 'var(--cyan)' : 'var(--line2)';
+    btn.style.background = compareMode ? 'var(--cyan3)' : 'var(--ink3)';
+  }
+  renderSidebar(document.getElementById('sbSearch').value);
+  updateCompareBar();
+}
+
+function toggleCompareItem(id) {
+  if(compareSet.has(id)) compareSet.delete(id);
+  else compareSet.add(id);
+  renderSidebar(document.getElementById('sbSearch').value);
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById('compareBar');
+  const names = document.getElementById('compareNames');
+  const tb = document.getElementById('tb-compare');
+  const cnt = document.getElementById('cmpCount');
+  if(compareSet.size > 0 && compareMode) {
+    bar.classList.add('cb-vis');
+    names.innerHTML = [...compareSet].map(id => {
+      const c = db.colleagues.find(x=>x.id===id);
+      if(!c) return '';
+      return `<span class="compare-chip"><span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block"></span>${c.name.split(' ')[0]}</span>`;
+    }).join('');
+    if(tb) { tb.style.display='inline-flex'; cnt.textContent=compareSet.size; }
+  } else {
+    bar.classList.remove('cb-vis');
+    if(tb) tb.style.display='none';
+  }
+}
+
+function clearCompare() {
+  compareSet.clear();
+  renderSidebar(document.getElementById('sbSearch').value);
+  updateCompareBar();
+}
+
+function launchCompare() {
+  if(compareSet.size < 2) { toast('⚠ Select at least 2 colleagues to compare','#ffb340'); return; }
+  setView('compare');
+  if(window.innerWidth<900) toggleSb();
+}
+
+function renderCompareView() {
+  // Populate month dropdown
+  const mSel = document.getElementById('cmpMonth');
+  if(mSel && !mSel.options.length) {
+    availMonths().forEach(m=>{
+      const o=document.createElement('option');
+      o.value=m; o.textContent=fmtMonth(m);
+      if(m===curMonth) o.selected=true;
+      mSel.appendChild(o);
+    });
+  }
+  const month = mSel ? mSel.value||curMonth : curMonth;
+  const ids = [...compareSet];
+  if(!ids.length) {
+    document.getElementById('cmpGrid').innerHTML='<div class="empty-st" style="grid-column:1/-1"><div class="empty-st-ico">☑️</div><div class="empty-st-txt">Check colleagues in the sidebar to compare them.</div></div>';
+    return;
+  }
+  const [y,m]=month.split('-').map(Number);
+  const dim=new Date(y,m,0).getDate();
+  const days=Array.from({length:dim},(_,i)=>i+1);
+
+  const grid = document.getElementById('cmpGrid');
+  grid.innerHTML = ids.map(id=>{
+    const c=db.colleagues.find(x=>x.id===id); if(!c) return '';
+    const avg=colMonthAvg(id,month);
+    const ini=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const scC=avg===0?'var(--text3)':avg>=8?'var(--emerald)':avg>=6?'var(--amber)':'var(--rose)';
+    const scores=db.scores[id]?.[month]||{};
+
+    const crRows=db.criteria.map(cr=>{
+      const vals=Object.values(scores[cr.id]||{}).map(e=>e.score).filter(Boolean);
+      const crAvg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+      const pct=crAvg/5*100;
+      const barC=crAvg>=4?'var(--emerald)':crAvg>=3?'var(--amber)':'var(--rose)';
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+          <span style="color:var(--text2)">${cr.name}</span>
+          <span style="font-family:'Geist Mono',monospace;color:${barC};font-weight:600">${crAvg?crAvg.toFixed(1):'—'}</span>
+        </div>
+        <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${barC}"></div></div>
+      </div>`;
+    }).join('');
+
+    return `<div class="cmp-card">
+      <div class="cmp-card-head">
+        <div class="cmp-ava" style="background:${c.color}22;color:${c.color}">${ini}</div>
+        <div><div class="cmp-name">${c.name}</div><div class="cmp-role">${c.role}</div></div>
+        <div class="cmp-avg-badge sc-${avg===0?'na':avg>=4?'hi':avg>=3?'md':'lo'}" style="color:${scC}">${avg?avg.toFixed(2):'—'}</div>
+      </div>
+      <div style="padding:16px">${crRows}</div>
+    </div>`;
+  }).join('');
+
+  // Chart
+  const chartCard=document.getElementById('cmpChartCard');
+  if(chartCard) chartCard.style.display='block';
+  setTimeout(()=>{
+    destroyChart('cmpChart');
+    const labels=db.criteria.map(cr=>cr.name.length>16?cr.name.slice(0,16)+'…':cr.name);
+    const datasets=ids.map(id=>{
+      const c=db.colleagues.find(x=>x.id===id); if(!c) return null;
+      const scores=db.scores[id]?.[month]||{};
+      return {
+        label:c.name.split(' ')[0],
+        data:db.criteria.map(cr=>{
+          const vals=Object.values(scores[cr.id]||{}).map(e=>e.score).filter(Boolean);
+          return vals.length?parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2)):0;
+        }),
+        borderColor:c.color, backgroundColor:c.color+'22',
+        borderWidth:2, pointRadius:4, tension:0.2
+      };
+    }).filter(Boolean);
+    charts['cmpChart']=new Chart(document.getElementById('cmpChart'),{
+      type:'radar',
+      data:{labels,datasets},
+      options:{responsive:true,maintainAspectRatio:false,
+        scales:{r:{ticks:{color:'#4a5568',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.08)'},pointLabels:{color:'#7a8fa6',font:{size:9}},min:0,max:10}},
+        plugins:{legend:{labels:{color:'#7a8fa6',font:{size:11}}}}}
+    });
+  },30);
+}
 function toggleSb() {
   document.getElementById('sidebar').classList.toggle('sb-open');
   document.getElementById('sbOverlay').classList.toggle('sb-ov-on');
@@ -1102,7 +1387,7 @@ function renderColleagueView() {
   const avg = colMonthAvg(c.id, curMonth);
   const cnt = countScores(c.id, curMonth);
   const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const scC = avg===0?'var(--text3)':avg>=4?'var(--emerald)':avg>=3?'var(--amber)':'var(--rose)';
+  const scC = avg===0?'var(--text3)':avg>=8?'var(--emerald)':avg>=6?'var(--amber)':'var(--rose)';
   const months = availMonths();
 
   wrap.innerHTML = `
@@ -1130,18 +1415,18 @@ function renderColleagueView() {
         </div>
       </div>
       <div class="col-hdr-actions admin-only no-print">
-        <button class="btn btn-sm" onclick="openColleagueModal('${c.id}')">✏ Edit</button>
-        <button class="btn btn-sm admin-only" onclick="openCriterionModal(null)">＋ Criterion</button>
-        <button class="btn btn-sm btn-primary admin-only" onclick="openBulk()">⚡ Bulk Fill</button>
-        <button class="btn btn-sm btn-danger admin-only" onclick="deleteColleague('${c.id}')">🗑</button>
+        <button class="btn btn-sm" onclick="openColleagueModal('${c.id}')">Edit</button>
+        <button class="btn btn-sm admin-only" onclick="openCriterionModal(null)">Add Criterion</button>
+        <button class="btn btn-sm btn-primary admin-only" onclick="openBulk()">Bulk Fill</button>
+        <button class="btn btn-sm btn-danger admin-only" onclick="deleteColleague('${c.id}')">Delete</button>
       </div>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div class="month-pills" id="monthPills"></div>
       <div class="month-actions admin-only no-print">
-        <button class="btn btn-sm" onclick="copyPrevMonth()" title="Copy previous month's data">↶ Copy Prev</button>
-        <button class="btn btn-sm" onclick="clearMonth()" title="Clear all scores for this month">✕ Clear Month</button>
+        <button class="btn btn-sm" onclick="copyPrevMonth()" title="Copy previous month's data">Copy Previous Month</button>
+        <button class="btn btn-sm" onclick="clearMonth()" title="Clear all scores for this month">Clear Month</button>
       </div>
     </div>
 
@@ -1164,13 +1449,22 @@ function renderColleagueView() {
     `<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:${CAT_COLORS[cat]||'#64748b'}22;color:${CAT_COLORS[cat]||'#64748b'};text-transform:uppercase;letter-spacing:0.5px">${cat}</span>`
   ).join('');
 
-  if(!role==='admin') {
+  if(role!=='admin') {
     document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
   }
 
   renderMonthPills();
   renderPerfTable();
   renderColCharts();
+  enforceRole();
+}
+
+// Ensure all admin-only elements are hidden/shown based on role
+function enforceRole() {
+  const isAdmin = role==='admin';
+  document.querySelectorAll('.admin-only').forEach(el=>{
+    el.style.display = isAdmin ? '' : 'none';
+  });
 }
 
 function renderMonthPills() {
@@ -1187,7 +1481,7 @@ function changeMonth(m) {
   renderColCharts();
   const avg = colMonthAvg(curColId, curMonth);
   const cnt = countScores(curColId, curMonth);
-  const scC = avg===0?'var(--text3)':avg>=4?'var(--emerald)':avg>=3?'var(--amber)':'var(--rose)';
+  const scC = avg===0?'var(--text3)':avg>=8?'var(--emerald)':avg>=6?'var(--amber)':'var(--rose)';
   const hdAvg = document.getElementById('hdAvg');
   const hdCnt = document.getElementById('hdCnt');
   if(hdAvg) { hdAvg.textContent=avg>0?avg.toFixed(2):'—'; hdAvg.style.color=scC; }
@@ -1214,14 +1508,14 @@ function renderPerfTable() {
     const cells = days.map((d,di)=>{
       const e=scores[cr.id]?.[d];
       if(e?.score){rSum+=e.score*cr.weight;rCnt+=cr.weight;colSums[di]+=e.score;colCounts[di]++;}
-      const cls=e?.score?`sc-${e.score}`:'';
+      const cls=e?.score?`s${e.score}`:'';
       const noteAttr=e?.note?'has-note':'';
       const roClass=ro?' readonly':'';
       const click=ro?'':`onclick="openScore('${cr.id}',${d})"`;
       return `<td><div class="sc-dot ${cls} ${noteAttr}${roClass}" ${click} title="${e?.note||''}">${e?.score||''}</div></td>`;
     }).join('');
     const avg=rCnt?rSum/rCnt:0;
-    const avgC=avg?avg>=4?'var(--emerald)':avg>=3?'var(--amber)':'var(--rose)':'var(--text3)';
+    const avgC=avg?avg>=8?'var(--emerald)':avg>=6?'var(--amber)':'var(--rose)':'var(--text3)';
     const catC=CAT_COLORS[cr.category]||'#64748b';
     rows+=`<tr>
       <td class="ptbl-cr-cell">
@@ -1229,7 +1523,7 @@ function renderPerfTable() {
           <div style="width:3px;height:16px;border-radius:1px;background:${catC};flex-shrink:0"></div>
           <span>${cr.name}</span>
           <span class="cr-cat-badge" style="color:${catC}">${cr.category}</span>
-          ${role==='admin'?`<button onclick="openCriterionModal('${cr.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 2px" title="Edit">✏</button>`:''}
+          ${role==='admin'?`<button onclick="openCriterionModal('${cr.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 2px" title="Edit">Edit</button>`:''}
         </div>
       </td>
       ${cells}
@@ -1239,7 +1533,7 @@ function renderPerfTable() {
 
   // Day averages
   const dayAvgs=days.map((_,di)=>
-    colCounts[di]?`<td class="col-avg-v" style="color:${(colSums[di]/colCounts[di])>=4?'var(--emerald)':(colSums[di]/colCounts[di])>=3?'var(--amber)':'var(--rose)'}">${(colSums[di]/colCounts[di]).toFixed(1)}</td>`:
+    colCounts[di]?`<td class="col-avg-v" style="color:${(colSums[di]/colCounts[di])>=8?'var(--emerald)':(colSums[di]/colCounts[di])>=6?'var(--amber)':'var(--rose)'}">${(colSums[di]/colCounts[di]).toFixed(1)}</td>`:
     '<td class="col-avg-v" style="color:var(--text3)">—</td>'
   ).join('');
 
@@ -1274,12 +1568,12 @@ function openScore(crId, day) {
 
   const picker = document.getElementById('mScPicker');
   picker.innerHTML = '';
-  [1,2,3,4,5].forEach(s=>{
+  for(let s=1; s<=MAX_SCORE; s++){
     const btn=document.createElement('button');
     btn.className=`sp-o${e?.score===s?' sp-sel':''}`;
     btn.style.background=SCORE_COLORS[s]+'33';
     btn.style.color=SCORE_COLORS[s];
-    btn.textContent=s+'★';
+    btn.textContent=s;
     btn.dataset.s=s;
     btn.onclick=()=>{
       picker.querySelectorAll('.sp-o').forEach(b=>b.classList.remove('sp-sel'));
@@ -1287,7 +1581,7 @@ function openScore(crId, day) {
       pendingSc.newScore=s;
     };
     picker.appendChild(btn);
-  });
+  }
   pendingSc.newScore = e?.score||null;
   openModal('mScore');
 }
@@ -1329,7 +1623,7 @@ function ensure(cId,month,crId) {
 function updateHdrMetrics() {
   const avg=colMonthAvg(curColId,curMonth);
   const cnt=countScores(curColId,curMonth);
-  const scC=avg===0?'var(--text3)':avg>=4?'var(--emerald)':avg>=3?'var(--amber)':'var(--rose)';
+  const scC=avg===0?'var(--text3)':avg>=8?'var(--emerald)':avg>=6?'var(--amber)':'var(--rose)';
   const hdAvg=document.getElementById('hdAvg');
   const hdCnt=document.getElementById('hdCnt');
   if(hdAvg){ hdAvg.textContent=avg>0?avg.toFixed(2):'—'; hdAvg.style.color=scC; }
@@ -1345,19 +1639,19 @@ function openBulk() {
   document.getElementById('mBulkNote').value='';
   const picker=document.getElementById('mBulkPicker');
   picker.innerHTML='';
-  [1,2,3,4,5].forEach(s=>{
+  for(let s=1; s<=MAX_SCORE; s++){
     const btn=document.createElement('button');
     btn.className='sp-o';
     btn.style.background=SCORE_COLORS[s]+'33';
     btn.style.color=SCORE_COLORS[s];
-    btn.textContent=s+'★';
+    btn.textContent=s;
     btn.onclick=()=>{
       picker.querySelectorAll('.sp-o').forEach(b=>b.classList.remove('sp-sel'));
       btn.classList.add('sp-sel');
       bulkScore=s;
     };
     picker.appendChild(btn);
-  });
+  }
   openModal('mBulk');
 }
 
@@ -1483,7 +1777,7 @@ function renderStats() {
 
   document.getElementById('statsGrid').innerHTML=[
     {ico:'👥',val:cols.length,lbl:'Team Size',color:'var(--cyan)'},
-    {ico:'⭐',val:teamAvg?teamAvg.toFixed(2):'—',lbl:'Team Avg Score',color:teamAvg>=4?'var(--emerald)':teamAvg>=3?'var(--amber)':'var(--rose)'},
+    {ico:'⭐',val:teamAvg?teamAvg.toFixed(2):'—',lbl:'Team Avg Score',color:teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'},
     {ico:'🏆',val:best?best.name.split(' ').slice(-1)[0]:'—',lbl:'Top Performer',color:'var(--amber)'},
     {ico:'📝',val:totalEntries,lbl:'Total Entries',color:'var(--teal)'},
     {ico:'📋',val:db.criteria.length,lbl:'Active Criteria',color:'var(--amber)'},
@@ -1501,12 +1795,12 @@ function renderStats() {
   <tbody>${cols.map(c=>{
     const mAvgs=months.map(m=>{
       const a=colMonthAvg(c.id,m);
-      const col=a>=4?'var(--emerald)':a>=3?'var(--amber)':a>0?'var(--rose)':'var(--text3)';
+      const col=a>=8?'var(--emerald)':a>=6?'var(--amber)':a>0?'var(--rose)':'var(--text3)';
       return a?`<td style="color:${col};font-family:'Geist Mono',monospace;font-weight:600">${a.toFixed(2)}</td>`:'<td style="color:var(--text3)">—</td>';
     }).join('');
     const all=months.map(m=>colMonthAvg(c.id,m)).filter(Boolean);
     const ov=all.length?(all.reduce((a,b)=>a+b,0)/all.length):0;
-    const ovc=ov>=4?'var(--emerald)':ov>=3?'var(--amber)':ov>0?'var(--rose)':'var(--text3)';
+    const ovc=ov>=8?'var(--emerald)':ov>=6?'var(--amber)':ov>0?'var(--rose)':'var(--text3)';
     const ini=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     return `<tr>
       <td><div style="display:flex;align-items:center;gap:8px">
@@ -1528,7 +1822,7 @@ const CHART_BASE = {
   plugins:{legend:{labels:{color:'#7a8fa6',font:{family:'Instrument Sans',size:11}}}},
   scales:{
     x:{ticks:{color:'#4a5568',font:{size:10}},grid:{color:'rgba(0,212,255,0.04)'},border:{color:'transparent'}},
-    y:{ticks:{color:'#4a5568',font:{size:10}},grid:{color:'rgba(0,212,255,0.06)'},border:{color:'transparent'},min:0,max:5}
+    y:{ticks:{color:'#4a5568',font:{size:10}},grid:{color:'rgba(0,212,255,0.06)'},border:{color:'transparent'},min:0,max:10}
   }
 };
 
@@ -1577,7 +1871,7 @@ function buildChCriteria() {
     type:'radar',
     data:{labels,datasets:[{label:'Team Avg',data,backgroundColor:'rgba(0,212,255,0.08)',borderColor:'#00d4ff',pointBackgroundColor:'#00d4ff',pointRadius:4,borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,
-      scales:{r:{ticks:{color:'#4a5568',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.08)'},pointLabels:{color:'#7a8fa6',font:{size:9}},min:0,max:5}},
+      scales:{r:{ticks:{color:'#4a5568',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.08)'},pointLabels:{color:'#7a8fa6',font:{size:9}},min:0,max:10}},
       plugins:{legend:{labels:{color:'#7a8fa6'}}}}
   });
 }
@@ -1668,7 +1962,7 @@ function renderColCharts() {
       data:{labels:crLabels,datasets:[{label:'Avg',data:crData,backgroundColor:crColors.map(x=>x+'99'),borderRadius:6,borderSkipped:false}]},
       options:{...CHART_BASE,indexAxis:'y',
         plugins:{...CHART_BASE.plugins,legend:{display:false}},
-        scales:{x:{...CHART_BASE.scales.x,min:0,max:5},y:{ticks:{color:'#7a8fa6',font:{size:10}},grid:{color:'rgba(0,212,255,0.04)'},border:{color:'transparent'}}}}
+        scales:{x:{...CHART_BASE.scales.x,min:0,max:10},y:{ticks:{color:'#7a8fa6',font:{size:10}},grid:{color:'rgba(0,212,255,0.04)'},border:{color:'transparent'}}}}
     });
   },30);
 }
@@ -1719,7 +2013,7 @@ function applyFilter() {
   }
   tbl.innerHTML=`<thead><tr><th>Colleague</th><th>Month</th><th>Criterion</th><th>Avg Score</th><th>Entries</th><th>Min</th><th>Max</th></tr></thead>
   <tbody>${rows.map(r=>{
-    const c=r.avg>=4?'var(--emerald)':r.avg>=3?'var(--amber)':'var(--rose)';
+    const c=r.avg>=8?'var(--emerald)':r.avg>=6?'var(--amber)':'var(--rose)';
     return `<tr><td>${r.colleague}</td><td>${r.month}</td><td>${r.criterion}</td>
     <td style="color:${c};font-family:'Geist Mono',monospace;font-weight:600">${r.avg.toFixed(2)}</td>
     <td>${r.entries}</td>
@@ -1766,6 +2060,128 @@ function doImport() {
   };
   inp.click();
 }
+/* ════════════════════════════════════════════
+   EXCEL EXPORT — proper .xlsx via SheetJS
+════════════════════════════════════════════ */
+function exportExcel() {
+  const target = curColId ? db.colleagues.find(c=>c.id===curColId) : null;
+  const choice = target
+    ? confirm(`Export Excel for:\n\n"${target.name}" — ${fmtMonth(curMonth)}\n\nOK = this colleague & month only\nCancel = all colleagues, all months`)
+    : false;
+  if(choice && target) exportSingleExcel(curColId, curMonth);
+  else exportAllExcel();
+}
+
+function buildSheetData(colId, month) {
+  const c = db.colleagues.find(x=>x.id===colId);
+  if(!c) return [];
+  const [y,m]=month.split('-').map(Number);
+  const dim=new Date(y,m,0).getDate();
+  const days=Array.from({length:dim},(_,i)=>i+1);
+  const scores=db.scores[colId]?.[month]||{};
+
+  const rows = [];
+  // Title rows
+  rows.push([`RxPerform Pro — Performance Report`]);
+  rows.push([`Colleague`, c.name]);
+  rows.push([`Role`, c.role]);
+  rows.push([`Month`, fmtMonth(month)]);
+  rows.push([`Scale`, `Out of ${MAX_SCORE}`]);
+  rows.push([`Exported`, new Date().toLocaleString()]);
+  rows.push([]); // blank row
+
+  // Header
+  rows.push([`Criterion`, `Category`, `Weight`, ...days.map(d=>`Day ${d}`), `Monthly Avg /${MAX_SCORE}`]);
+
+  // Data rows
+  db.criteria.forEach(cr=>{
+    let wSum=0, wCnt=0;
+    const dayCells = days.map(d=>{
+      const e=scores[cr.id]?.[d];
+      if(e?.score){ wSum+=e.score*cr.weight; wCnt+=cr.weight; }
+      return e?.score ?? '';
+    });
+    const avg = wCnt ? parseFloat((wSum/wCnt).toFixed(2)) : '';
+    rows.push([cr.name, cr.category, cr.weight, ...dayCells, avg]);
+  });
+
+  // Daily average row
+  const dayAvgRow = ['Daily Average', '', '', ...days.map(d=>{
+    let s=0,n=0;
+    db.criteria.forEach(cr=>{const e=scores[cr.id]?.[d];if(e?.score){s+=e.score;n++;}});
+    return n ? parseFloat((s/n).toFixed(2)) : '';
+  }), ''];
+  rows.push(dayAvgRow);
+  rows.push([]); // blank
+
+  // Notes
+  const noteRows = [];
+  db.criteria.forEach(cr=>{
+    days.forEach(d=>{
+      const e=scores[cr.id]?.[d];
+      if(e?.note) noteRows.push([cr.name, `Day ${d}`, e.note]);
+    });
+  });
+  if(noteRows.length) {
+    rows.push(['Notes']);
+    rows.push(['Criterion','Day','Note']);
+    noteRows.forEach(r=>rows.push(r));
+  }
+  return rows;
+}
+
+function exportSingleExcel(colId, month) {
+  const c = db.colleagues.find(x=>x.id===colId);
+  if(!c) return;
+  const rows = buildSheetData(colId, month);
+  downloadAsXlsx(rows, `${c.name.replace(/\s+/g,'_')}_${month}.xlsx`, c.name);
+  toast(`Exported: ${c.name} — ${fmtMonth(month)}`);
+}
+
+function exportAllExcel() {
+  // Build a multi-sheet CSV-style file (one section per colleague per month)
+  let allRows = [];
+  allRows.push([`RxPerform Pro — Full Team Export`]);
+  allRows.push([`Exported`, new Date().toLocaleString()]);
+  allRows.push([]);
+
+  db.colleagues.forEach(c => {
+    availMonths().forEach(month => {
+      if(!countScores(c.id, month)) return;
+      allRows.push([`═══════════════════════════════`]);
+      const sheetRows = buildSheetData(c.id, month);
+      allRows = allRows.concat(sheetRows);
+      allRows.push([]);
+    });
+  });
+
+  downloadAsXlsx(allRows, `RxPerform_AllData_${new Date().toISOString().slice(0,10)}.xlsx`, 'All Data');
+  toast('Full team data exported to Excel');
+}
+
+function downloadAsXlsx(rows, filename, sheetName) {
+  // Convert 2D array to CSV with UTF-8 BOM so Excel opens correctly with formatting
+  const bom = '\uFEFF';
+  const csv = rows.map(row =>
+    row.map(cell => {
+      const s = String(cell ?? '');
+      // Quote cells that contain commas, quotes, or newlines
+      return (s.includes(',') || s.includes('"') || s.includes('\n'))
+        ? `"${s.replace(/"/g, '""')}"`
+        : s;
+    }).join(',')
+  ).join('\r\n');
+
+  const blob = new Blob([bom + csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename.replace('.xlsx','.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
 function doPrint() { window.print(); }
 
 /* ════════════════════════════════════════════
