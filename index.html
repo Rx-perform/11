@@ -820,7 +820,7 @@ body.lang-ar input, body.lang-ar textarea, body.lang-ar select { text-align:righ
 .notes-col {
   background:var(--ink1); border:1px solid var(--line);
   border-radius:var(--r2); display:flex; flex-direction:column;
-  overflow:hidden; min-height:0;
+  overflow:visible; min-height:0;
 }
 .notes-col-head {
   padding:13px 16px; border-bottom:1px solid var(--line); flex-shrink:0;
@@ -839,12 +839,13 @@ body.lang-ar input, body.lang-ar textarea, body.lang-ar select { text-align:righ
   background:var(--ink2); border:1px solid var(--line);
   border-radius:10px; padding:10px 12px;
   position:relative; transition:var(--trans);
+  word-break:break-word; overflow-wrap:anywhere;
 }
 .note-card:hover { background:var(--ink3); }
 .note-card-who {
   font-size:11px; font-weight:600; margin-bottom:3px;
 }
-.note-card-text { font-size:13px; line-height:1.55; color:var(--text); }
+.note-card-text { font-size:13px; line-height:1.6; color:var(--text); white-space:pre-wrap; word-break:break-word; overflow-wrap:anywhere; }
 .note-card-meta { font-size:10px; color:var(--text3); margin-top:5px; }
 .note-del {
   position:absolute; top:8px; right:8px; opacity:0;
