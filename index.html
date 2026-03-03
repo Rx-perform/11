@@ -1639,7 +1639,13 @@ function logoutConfirm() {
 ════════════════════════════════════════════ */
 function initApp() {
   const now = new Date();
-  curMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const _cs = getCycleStart();
+  const _d  = now.getDate();
+  // If today is before the cycle start day, we're still in last month's period
+  const _periodMonth = (_d < _cs)
+    ? new Date(now.getFullYear(), now.getMonth()-1, 1)
+    : new Date(now.getFullYear(), now.getMonth(),   1);
+  curMonth = `${_periodMonth.getFullYear()}-${String(_periodMonth.getMonth()+1).padStart(2,'0')}`;
 
   // User chip
   const isAdmin = role==='admin';
@@ -3138,9 +3144,18 @@ function periodLabel(periodKey) {
    UTILS
 ════════════════════════════════════════════ */
 function availMonths() {
-  const now=new Date(), months=[];
-  for(let i=5;i>=0;i--){
-    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+  const now = new Date();
+  const cs  = getCycleStart();
+  const months = [];
+  // Find the period that contains today
+  const todayDay = now.getDate();
+  // Base period: if today < cs, current period started last calendar month
+  const baseMonth = (todayDay < cs)
+    ? new Date(now.getFullYear(), now.getMonth()-1, 1)
+    : new Date(now.getFullYear(), now.getMonth(),   1);
+  // Generate 6 consecutive period keys going back from base
+  for(let i=5; i>=0; i--) {
+    const d = new Date(baseMonth.getFullYear(), baseMonth.getMonth()-i, 1);
     months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
   }
   return months;
