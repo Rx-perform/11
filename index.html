@@ -657,9 +657,9 @@ table.ptbl {
 .ptbl-day { font-size:11px; font-weight:700; color:var(--cyan); width:46px; min-width:46px; max-width:46px; text-align:center; }
 .ptbl-day-cell { font-size:12px; font-weight:600; color:var(--text2); text-align:center !important; padding:4px 3px !important; width:46px; min-width:46px; max-width:46px; }
 .ptbl-cr-hdr {
-  font-size:9px; padding:6px 5px !important;
+  font-size:12px; padding:8px 6px !important;
   /* ── FIXED BOUNDARY: criterion columns never overflow ── */
-  width:90px; min-width:90px; max-width:90px;
+  width:110px; min-width:110px; max-width:110px;
   overflow:hidden; vertical-align:top;
   border-right:1px solid var(--line2);
   box-sizing:border-box;
@@ -668,7 +668,7 @@ table.ptbl {
   display:none; /* category hidden from table header */
 }
 .ptbl-cr-hdr .cr-name-lbl {
-  font-size:9px; font-weight:700; color:var(--white); line-height:1.4;
+  font-size:13px; font-weight:700; color:var(--white); line-height:1.4;
   /* Exactly 2 lines, then clip */
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
   overflow:hidden; word-break:break-word; white-space:normal;
@@ -697,7 +697,7 @@ table.ptbl {
   .card { border:1px solid #ccc!important; break-inside:avoid; box-shadow:none!important; }
   .ptbl { width:100%; border-collapse:collapse; font-size:8pt; }
   .ptbl th, .ptbl td { border:1px solid #999!important; padding:3px 4px!important; }
-  .ptbl-cr-hdr { min-width:40px!important; max-width:70px!important; font-size:7pt!important; }
+  .ptbl-cr-hdr { min-width:80px!important; max-width:110px!important; font-size:8pt!important; }
   .ptbl-cr-hdr .cr-name-lbl { color:#000!important; }
   .ptbl-cr-hdr .cr-edit-btn, .cr-edit-btn { display:none!important; }
   .sc-dot { border:1px solid #999!important; font-size:8pt!important; }
@@ -767,6 +767,9 @@ table.ptbl {
   background:rgba(0,200,150,0.1); color:var(--emerald);
   border-color:rgba(0,200,150,0.25);
 }
+.btn-save { background:rgba(0,212,255,0.18); color:var(--cyan); border-color:rgba(0,212,255,0.4); font-weight:700; }
+.btn-save:hover { background:rgba(0,212,255,0.28); }
+.btn-save.syncing { opacity:0.7; cursor:wait; }
 .btn-excel:hover { background:rgba(0,200,150,0.18); color:var(--emerald); }
 
 /* ── DAY MODE ── */
@@ -966,11 +969,12 @@ body.lang-ar .note-del { right:auto; left:8px; }
       Compare <span id="cmpCount" style="margin-left:4px;background:var(--cyan);color:var(--ink);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700"></span>
     </button>
     <div class="t-divider"></div>
-    <button class="t-btn" id="btn_print" onclick="doPrint()">Print</button>
-    <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">Export to Excel</button>
-    <button class="t-btn admin-only" id="btn_backup" onclick="doExport()">Backup Data</button>
-    <button class="t-btn admin-only" id="btn_import" onclick="doImport()">Import Data</button>
+    <button class="t-btn" id="btn_print" onclick="doPrint()">🖨 Print</button>
+    <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">📊 Export Excel</button>
+    <button class="t-btn btn-save admin-only" id="btn_savedata" onclick="saveDataNow()" title="Save data to Google Sheets (online)">☁ Save Online</button><span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap" title="Sync status"></span>
+    <button class="t-btn admin-only" id="btn_import" onclick="doImport()" title="Load a backup file">📂 Load Backup</button>
     <div id="viewerNote" class="viewer-note" style="display:none">View Only Mode</div>
+    <button class="t-btn admin-only" onclick="openSettings()" title="Evaluation cycle settings">⚙ Settings</button>
   </div>
 
   <!-- BODY -->
@@ -1178,18 +1182,7 @@ body.lang-ar .note-del { right:auto; left:8px; }
       <label class="form-lbl" id="lbl_crName">Criterion Name</label>
       <input class="form-in" id="mCrName" type="text" placeholder="e.g. Medication Dispensing Accuracy">
     </div>
-    <div class="form-g">
-      <label class="form-lbl" id="lbl_crCat">Category</label>
-      <select class="form-sel" id="mCrCat">
-        <option value="Clinical">Clinical</option>
-        <option value="Service">Service Quality</option>
-        <option value="Compliance">Compliance & Safety</option>
-        <option value="Communication">Communication</option>
-        <option value="Teamwork">Teamwork</option>
-        <option value="Documentation">Documentation</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
+    <input type="hidden" id="mCrCat" value="General">
     <div class="form-g">
       <label class="form-lbl" id="lbl_crWeight">Weight</label>
       <select class="form-sel" id="mCrWeight">
@@ -1208,6 +1201,85 @@ body.lang-ar .note-del { right:auto; left:8px; }
       <button class="btn" onclick="closeModal('mCriterion')" id="btn_crCancel">Cancel</button>
       <button class="btn btn-danger admin-only" id="mCrDeleteBtn" onclick="deleteCriterion()" style="display:none">Delete</button>
       <button class="btn btn-primary" onclick="saveCriterion()" id="btn_crSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PRINT SELECT ═══ -->
+<div class="modal-bg" id="mPrintSelect">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title">🖨 Print Options</div>
+
+    <div class="form-lbl" style="margin-bottom:8px">Who to print</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer">
+        <input type="radio" name="printScope" value="current" id="ps_current" checked style="accent-color:var(--cyan);width:15px;height:15px;flex-shrink:0">
+        <div><div style="font-size:13px;font-weight:600;color:var(--white)" id="ps_current_label">Current colleague</div>
+        <div style="font-size:11px;color:var(--text3)" id="ps_current_sub">Selected colleague, current period</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer">
+        <input type="radio" name="printScope" value="all_month" style="accent-color:var(--cyan);width:15px;height:15px;flex-shrink:0">
+        <div><div style="font-size:13px;font-weight:600;color:var(--white)">All colleagues — current period</div>
+        <div style="font-size:11px;color:var(--text3)">One report per colleague</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer">
+        <input type="radio" name="printScope" value="all_all" style="accent-color:var(--cyan);width:15px;height:15px;flex-shrink:0">
+        <div><div style="font-size:13px;font-weight:600;color:var(--white)">All colleagues — all periods</div>
+        <div style="font-size:11px;color:var(--text3)">Complete history</div></div>
+      </label>
+    </div>
+
+    <div class="form-lbl" style="margin-bottom:8px">What to include</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--white)">
+        <input type="checkbox" id="pOpt_scores" checked style="accent-color:var(--cyan);width:14px;height:14px"> 📊 Performance scores
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--white)">
+        <input type="checkbox" id="pOpt_charts" checked style="accent-color:var(--cyan);width:14px;height:14px"> 📈 Charts &amp; trends
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--white)">
+        <input type="checkbox" id="pOpt_compare" style="accent-color:var(--cyan);width:14px;height:14px"> 🔀 Team comparison
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);cursor:pointer;font-size:12px;color:var(--white)">
+        <input type="checkbox" id="pOpt_notes" checked style="accent-color:var(--cyan);width:14px;height:14px"> 📝 Team notes
+      </label>
+    </div>
+
+    <div class="form-g">
+      <label class="form-lbl">Paper size</label>
+      <select class="form-sel" id="ps_paper">
+        <option value="A4 portrait">A4 Portrait</option>
+        <option value="A4 landscape">A4 Landscape</option>
+        <option value="A3 landscape">A3 Landscape</option>
+      </select>
+    </div>
+    <div class="m-actions">
+      <button class="btn" onclick="closeModal('mPrintSelect')">Cancel</button>
+      <button class="btn btn-primary" onclick="executePrint()">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: SETTINGS ═══ -->
+<div class="modal-bg" id="mSettings">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">⚙ Settings</div>
+    <div class="form-g">
+      <label class="form-lbl">Evaluation Cycle Start Day</label>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Set to 16 if your evaluation period runs from the 16th of each month to the 15th of the next.</div>
+      <select class="form-sel" id="mCycleStart">
+        <option value="1">1st — Full calendar month</option>
+        <option value="16" selected>16th → 15th of next month (default)</option>
+        <option value="21">21st → 20th of next month</option>
+        <option value="26">26th → 25th of next month</option>
+      </select>
+    </div>
+    <div style="padding:10px 14px;background:var(--ink3);border-radius:8px;border:1px solid var(--line);font-size:11px;color:var(--text2)">
+      ⚠ Changing this only affects date labels — your score data is not affected.
+    </div>
+    <div class="m-actions">
+      <button class="btn" onclick="closeModal('mSettings')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save</button>
     </div>
   </div>
 </div>
@@ -1269,7 +1341,7 @@ const CAT_COLORS = {
   Communication:'#a78bfa', Teamwork:'#ffb340', Documentation:'#60a5fa', Other:'#94a3b8'
 };
 
-let db = { colleagues: [], criteria: [], scores: {}, notes: { positive: [], negative: [] } };
+let db = { colleagues: [], criteria: [], scores: {}, notes: { positive: [], negative: [] }, settings: { cycleStart: 16 } };
 let appLang = localStorage.getItem('rxp_lang') || 'en';
 let appMode = localStorage.getItem('rxp_mode') || 'night';
 let role = 'viewer'; // 'admin' | 'viewer'
@@ -1294,14 +1366,16 @@ function seedData() {
     {id:'c4',name:'Karim Youssef',role:'Pharmacy Technician',color:'#ffb340'},
   ];
   db.criteria = [
-    {id:'cr1',name:'Patient Consultation Quality',category:'Clinical',weight:2,scope:'global'},
-    {id:'cr2',name:'Dispensing Accuracy',category:'Clinical',weight:2,scope:'global'},
-    {id:'cr3',name:'Prescription Processing Speed',category:'Service',weight:1,scope:'global'},
-    {id:'cr4',name:'Documentation & Records',category:'Documentation',weight:1,scope:'global'},
-    {id:'cr5',name:'Team Communication',category:'Communication',weight:1,scope:'global'},
-    {id:'cr6',name:'Regulatory Compliance',category:'Compliance',weight:1.5,scope:'global'},
-    {id:'cr7',name:'Customer Satisfaction',category:'Service',weight:1,scope:'global'},
-    {id:'cr8',name:'Inventory Management',category:'Compliance',weight:1,scope:'global'},
+    {id:'cr1',name:'Prescription Dispensing Accuracy',weight:2,scope:'global'},
+    {id:'cr2',name:'Patient Counselling Quality',weight:2,scope:'global'},
+    {id:'cr3',name:'Medication Safety & Error Reporting',weight:2,scope:'global'},
+    {id:'cr4',name:'Workflow & Time Management',weight:1,scope:'global'},
+    {id:'cr5',name:'Documentation & Record Keeping',weight:1,scope:'global'},
+    {id:'cr6',name:'Team Collaboration & Communication',weight:1,scope:'global'},
+    {id:'cr7',name:'Regulatory & Policy Compliance',weight:1.5,scope:'global'},
+    {id:'cr8',name:'Customer Service & Satisfaction',weight:1,scope:'global'},
+    {id:'cr9',name:'Inventory & Stock Management',weight:1,scope:'global'},
+    {id:'cr10',name:'Professional Development',weight:1,scope:'global'},
   ];
   const now = new Date();
   for(let back=2; back>=0; back--) {
@@ -1326,15 +1400,170 @@ function seedData() {
   }
   save();
 }
-function save() { try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e){} }
+/* ════════════════════════════════════════════
+   GOOGLE SHEETS SYNC
+   Set SCRIPT_URL to your deployed Apps Script Web App URL.
+   Leave blank → app works offline only (localStorage).
+════════════════════════════════════════════ */
+const SCRIPT_URL = ''; // ← PASTE YOUR APPS SCRIPT URL HERE
+
+let _syncTimer  = null;   // debounce handle
+let _syncDirty  = false;  // unsaved changes flag
+let _syncBusy   = false;  // in-flight request flag
+
+function setSyncStatus(icon, msg, color) {
+  const el = document.getElementById('syncStatus');
+  if(el) { el.textContent = icon + ' ' + msg; el.style.color = color||'var(--text2)'; }
+}
+
+// Called every time data changes — immediate localStorage write,
+// then debounce the network push by 2 s so rapid edits don't spam the sheet.
+function save() {
+  try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
+  _syncDirty = true;
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(pushToSheets, 2000);
+}
+
+// Explicit "Save Online" button — skip debounce, push immediately
+function saveDataNow() {
+  try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
+  _syncDirty = true;
+  clearTimeout(_syncTimer);
+  pushToSheets();
+}
+
+// Push DB to Google Sheets via Apps Script
+function pushToSheets() {
+  if(!SCRIPT_URL) {
+    setSyncStatus('💾','Saved locally (no cloud URL set)','var(--amber)');
+    _syncDirty = false;
+    return;
+  }
+  if(_syncBusy) { _syncTimer = setTimeout(pushToSheets, 1500); return; }
+  _syncBusy = true;
+  setSyncStatus('⏳','Saving…','var(--cyan)');
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',   // Apps Script requires no-cors
+    headers: {'Content-Type':'text/plain'},
+    body: JSON.stringify({ action:'save', data: JSON.stringify(db) })
+  })
+  .then(() => {
+    _syncBusy  = false;
+    _syncDirty = false;
+    const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    setSyncStatus('✅', 'Saved online ' + t, 'var(--emerald)');
+  })
+  .catch(err => {
+    _syncBusy = false;
+    setSyncStatus('⚠', 'Cloud save failed — data kept locally', 'var(--rose)');
+    console.warn('RxPerform sync error:', err);
+  });
+}
+
+// Pull latest DB from Google Sheets (called on app load)
+async function pullFromSheets() {
+  if(!SCRIPT_URL) return false;
+  setSyncStatus('⏳','Loading from cloud…','var(--cyan)');
+  try {
+    const res  = await fetch(SCRIPT_URL + '?action=load', { cache:'no-store' });
+    const json = await res.json();
+    if(json && json.data) {
+      const remote = JSON.parse(json.data);
+      if(remote && remote.colleagues && remote.criteria) {
+        // Merge: take whichever version has more scores
+        const localRaw = localStorage.getItem('rxp_db');
+        let useRemote  = true;
+        if(localRaw) {
+          try {
+            const local   = JSON.parse(localRaw);
+            const lScores = JSON.stringify(local.scores||{}).length;
+            const rScores = JSON.stringify(remote.scores||{}).length;
+            // prefer whichever has more data (simple heuristic)
+            useRemote = rScores >= lScores;
+          } catch(e) {}
+        }
+        if(useRemote) {
+          db = remote;
+          if(!db.notes)    db.notes    = { positive:[], negative:[] };
+          if(!db.settings) db.settings = { cycleStart:16 };
+          try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
+        }
+        const t = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        setSyncStatus('✅', 'Synced ' + t, 'var(--emerald)');
+        return true;
+      }
+    }
+  } catch(e) {
+    setSyncStatus('⚠','Could not reach cloud — using local data','var(--amber)');
+    console.warn('RxPerform pull error:', e);
+  }
+  return false;
+}
+
+
 function load() {
   try {
+    // 1. URL hash (import via shared link)
+    if(location.hash && location.hash.length > 2) {
+      try {
+        const d = JSON.parse(atob(location.hash.slice(1)));
+        if(d.colleagues && d.criteria) {
+          db = d;
+          if(!db.notes)    db.notes    = { positive:[], negative:[] };
+          if(!db.settings) db.settings = { cycleStart:16 };
+          localStorage.setItem('rxp_db', JSON.stringify(db));
+          history.replaceState(null, '', location.pathname + location.search);
+          return;
+        }
+      } catch(e) {}
+    }
+    // 2. localStorage cache (instant, offline)
     const s = localStorage.getItem('rxp_db');
     if(s) {
       db = JSON.parse(s);
-      if(!db.notes) db.notes = { positive:[], negative:[] };
+      if(!db.notes)    db.notes    = { positive:[], negative:[] };
+      if(!db.settings) db.settings = { cycleStart:16 };
     }
   } catch(e) {}
+  // 3. Cloud pull happens after app launches (see loadAndInit)
+}
+
+async function loadAndInit() {
+  // Show local data instantly for fast startup
+  load();
+  if(!db.colleagues.length) seedData();
+  applyMode();
+  applyLang();
+  // Then pull fresh data from Google Sheets in background
+  if(SCRIPT_URL) {
+    const synced = await pullFromSheets();
+    if(synced) {
+      // Refresh the UI with cloud data
+      if(typeof applyLang === 'function') applyLang();
+      if(typeof renderSidebar === 'function') renderSidebar();
+      if(typeof renderStats === 'function') renderStats();
+      if(curColId && typeof renderColleagueView === 'function') renderColleagueView();
+    }
+  } else {
+    setSyncStatus('💾','Local only — add Script URL to enable cloud sync','var(--amber)');
+  }
+}
+function generateShareLink() {
+  try {
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(db))));
+    const url = location.origin + location.pathname + '#' + encoded;
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(()=>{
+        toast('📋 Share link copied! Open it on another device to load your data.');
+      }).catch(()=>{ prompt('Copy this URL and open it on the other device:', url); });
+    } else {
+      prompt('Copy this URL and open it on the other device:', url);
+    }
+  } catch(e) {
+    toast('⚠ Data too large for link — use Backup/Import instead','#ffb340');
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -1668,7 +1897,7 @@ function renderColleagueView() {
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-title" id="tblTitle">Performance Matrix — ${fmtMonth(curMonth)}</div>
+          <div class="card-title" id="tblTitle">Performance Matrix — ${periodLabel(curMonth)}</div>
           <div class="card-sub">Click any cell to enter/edit score${role==='admin'?' • Cyan dot = has note':''}</div>
         </div>
       </div>
@@ -1678,11 +1907,7 @@ function renderColleagueView() {
     <div class="chart-grid" id="colCharts" style="margin-top:0"></div>
   `;
 
-  // Category tags
-  const cats = [...new Set(getActiveCriteria(curColId).map(cr=>cr.category))];
-  document.getElementById('crTagsRow').innerHTML = cats.map(cat =>
-    `<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:${CAT_COLORS[cat]||'#64748b'}22;color:${CAT_COLORS[cat]||'#64748b'};text-transform:uppercase;letter-spacing:0.5px">${cat}</span>`
-  ).join('');
+  document.getElementById('crTagsRow').innerHTML = '';
 
   if(role!=='admin') {
     document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');
@@ -1722,7 +1947,7 @@ function changeMonth(m) {
   if(hdAvg) { hdAvg.textContent=avg>0?avg.toFixed(2):'—'; hdAvg.style.color=scC; }
   if(hdCnt) hdCnt.textContent=cnt;
   const t = document.getElementById('tblTitle');
-  if(t) t.textContent=`Performance Matrix — ${fmtMonth(curMonth)}`;
+  if(t) t.textContent=`Performance Matrix — ${periodLabel(curMonth)}`;
   renderSidebar();
 }
 
@@ -1730,13 +1955,19 @@ function renderPerfTable() {
   const wrap = document.getElementById('perfScroll');
   if(!wrap) return;
   const [y,m] = curMonth.split('-').map(Number);
-  const dim = new Date(y,m,0).getDate();
+  const dim = periodDayCount(curMonth);
   const days = Array.from({length:dim},(_,i)=>i+1);
   const scores = db.scores[curColId]?.[curMonth]||{};
   const ro = role!=='admin';
   const activeCriteria = getActiveCriteria(curColId);
   const now = new Date();
-  const todayDay = (curMonth===`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`) ? now.getDate() : -1;
+  const cs = getCycleStart();
+  const todayDay = (() => {
+    const start = new Date(y,m-1,cs);
+    const end   = new Date(y, cs===1?m:m, cs===1?0:cs-1);
+    if(now>=start && now<=end) return Math.floor((now-start)/86400000)+1;
+    return -1;
+  })();
   const t = appLang==='ar' ? AR : EN;
 
   // Per-criterion monthly averages (for footer row)
@@ -1777,9 +2008,11 @@ function renderPerfTable() {
     const dayAvgC = dayAvg>=8?'var(--emerald)':dayAvg>=6?'var(--amber)':dayAvg>0?'var(--rose)':'var(--text3)';
     const isToday = d===todayDay;
     const locale = appLang==='ar' ? 'ar-SA' : 'en-US';
-    const dayName = new Date(y,m-1,d).toLocaleDateString(locale,{weekday:'short'});
+    const calDate = periodDayToDate(curMonth, d);
+    const dayName = calDate.toLocaleDateString(locale,{weekday:'short'});
+    const dateLabel = cs===1 ? d : calDate.getDate();
     return `<tr${isToday?' class="today-row"':''}>
-      <td class="ptbl-day-cell">${d}<div style="font-size:8px;color:var(--text3);font-weight:400">${dayName}</div></td>
+      <td class="ptbl-day-cell">${dateLabel}<div style="font-size:8px;color:var(--text3);font-weight:400">${dayName}</div></td>
       ${cells}
       <td class="ptbl-cr-avg" style="color:${dayAvgC}">${dayAvg?dayAvg.toFixed(1):'—'}</td>
     </tr>`;
@@ -2014,15 +2247,14 @@ function openCriterionModal(id) {
 }
 function saveCriterion() {
   const name=document.getElementById('mCrName').value.trim();
-  const category=document.getElementById('mCrCat').value;
   const weight=parseFloat(document.getElementById('mCrWeight').value);
   const scope=document.getElementById('mCrScope').value || 'global';
   if(!name){ toast('⚠ Name required','#ffb340'); return; }
   if(editCrId) {
     const cr=db.criteria.find(x=>x.id===editCrId);
-    cr.name=name; cr.category=category; cr.weight=weight; cr.scope=scope;
+    cr.name=name; cr.weight=weight; cr.scope=scope;
   } else {
-    db.criteria.push({id:'cr'+Date.now(),name,category,weight,scope});
+    db.criteria.push({id:'cr'+Date.now(),name,weight,scope});
   }
   save(); closeModal('mCriterion');
   if(curColId) renderPerfTable();
@@ -2232,7 +2464,8 @@ function renderColCharts() {
       const vals=Object.values(s).map(e=>e.score).filter(Boolean);
       return vals.length?parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2)):0;
     });
-    const crColors=_activeCr.map(cr=>CAT_COLORS[cr.category]||'#64748b');
+    const PALETTE=['#00d4ff','#00e5c4','#a78bfa','#ffb340','#ff4d6d','#60a5fa','#f472b6','#34d399','#fb923c','#818cf8'];
+    const crColors=_activeCr.map((_,i)=>PALETTE[i%PALETTE.length]);
 
     charts['cCrit']=new Chart(document.getElementById('cCrit'),{
       type:'bar',
@@ -2309,6 +2542,8 @@ function resetFilter() {
 /* ════════════════════════════════════════════
    EXPORT / IMPORT / PRINT
 ════════════════════════════════════════════ */
+// saveDataNow() defined in GOOGLE SHEETS SYNC block
+
 function doExport() {
   const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -2368,7 +2603,7 @@ function buildSheetData(colId, month) {
   rows.push([]); // blank row
 
   // Header
-  rows.push([`Criterion`, `Category`, `Weight`, ...days.map(d=>`Day ${d}`), `Monthly Avg /${MAX_SCORE}`]);
+  rows.push([`Criterion`, `Weight`, ...days.map(d=>`Day ${d}`), `Monthly Avg /${MAX_SCORE}`]);
 
   // Data rows
   getActiveCriteria(colId).forEach(cr=>{
@@ -2379,7 +2614,7 @@ function buildSheetData(colId, month) {
       return e?.score ?? '';
     });
     const avg = wCnt ? parseFloat((wSum/wCnt).toFixed(2)) : '';
-    rows.push([cr.name, cr.category, cr.weight, ...dayCells, avg]);
+    rows.push([cr.name, cr.weight, ...dayCells, avg]);
   });
 
   // Daily average row
@@ -2437,303 +2672,395 @@ function exportAllExcel() {
 }
 
 function downloadAsXlsx(rows, filename) {
-  // CSV export — works universally on desktop AND mobile
-  // iOS Numbers, Android Excel/Sheets, desktop Excel all open .csv natively
-  const csvEsc = v => {
-    const s = String(v ?? '');
-    return (s.includes(',') || s.includes('"') || s.includes('\n'))
-      ? '"' + s.replace(/"/g, '""') + '"' : s;
-  };
-  const csvLines = rows.map(row => (!row || row.length===0) ? '' : row.map(csvEsc).join(','));
-  // UTF-8 BOM so Excel on Windows shows Arabic and special chars correctly
-  const csvContent = '\uFEFF' + csvLines.join('\r\n');
-  const csvFilename = filename.replace(/\.xlsx?$/, '.csv');
+  // HTML table format — opens in Excel as a proper formatted table
+  const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-  // Blob URL for desktop, data: URI fallback for mobile (iOS Safari, Android Chrome)
+  let tbl = '<table border="1" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;font-size:10pt">';
+  rows.forEach((row, ri) => {
+    if(!row||row.length===0){ tbl+='<tr><td style="height:4px;border:none" colspan="99"></td></tr>'; return; }
+    const isTitleRow = ri===0;
+    const isHeader   = row[0]==='Criterion'||row[0]==='Type';
+    const isDayAvg   = row[0]==='Daily Average';
+    const isSep      = String(row[0]).startsWith('═');
+    const isMeta     = ['Colleague','Role','Month','Scale','Exported'].includes(String(row[0]));
+    let rowStyle='';
+    if(isTitleRow)  rowStyle='background:#0f2244;color:#ffffff;font-size:12pt;font-weight:bold;';
+    else if(isSep)  rowStyle='background:#b8cce4;font-weight:bold;';
+    else if(isHeader) rowStyle='background:#1e4fa0;color:#ffffff;font-weight:bold;';
+    else if(isDayAvg) rowStyle='background:#e2f0d9;color:#1a5c2a;font-weight:bold;';
+    else if(isMeta)   rowStyle='background:#dce6f1;color:#1a3050;';
+    tbl+=`<tr style="${rowStyle}">`;
+    row.forEach((cell,ci)=>{
+      const val=String(cell??''); const num=parseFloat(val);
+      let cs='padding:5px 9px;border:1px solid #9dc3e6;';
+      if(!isHeader&&!isTitleRow&&!isSep&&!isNaN(num)&&num>0&&ci>=3){
+        const bg=num>=8?'#c6efce':num>=6?'#ffeb9c':'#ffc7ce';
+        const fg=num>=8?'#276221':num>=6?'#9c5700':'#9c0006';
+        cs+=`background:${bg};color:${fg};font-weight:bold;text-align:center;`;
+      } else { cs+='text-align:left;'; }
+      const tag=isHeader?'th':'td';
+      tbl+=`<${tag} style="${cs}">${esc(val)}</${tag}>`;
+    });
+    tbl+='</tr>';
+  });
+  tbl+='</table>';
+
+  const xlsDoc=`<html xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+<x:ExcelWorksheet><x:Name>RxPerform</x:Name>
+<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+</head><body>${tbl}</body></html>`;
+
+  const fn  = filename.replace(/\.xlsx?$/,'.xls').replace(/\.csv$/,'.xls');
+  const bom = '\uFEFF';
   try {
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = csvFilename; a.style.display = 'none';
+    const blob = new Blob([bom+xlsDoc],{type:'application/vnd.ms-excel;charset=utf-8'});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href=url; a.download=fn; a.style.display='none';
     document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 300);
-  } catch(e) {
-    const encoded = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
-    const a = document.createElement('a');
-    a.href = encoded; a.download = csvFilename; a.style.display = 'none';
+    setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },300);
+  } catch(e){
+    const uri='data:application/vnd.ms-excel;charset=utf-8,'+encodeURIComponent(bom+xlsDoc);
+    const a=document.createElement('a');
+    a.href=uri; a.download=fn; a.style.display='none';
     document.body.appendChild(a); a.click();
-    setTimeout(() => { document.body.removeChild(a); }, 300);
+    setTimeout(()=>document.body.removeChild(a),300);
   }
 }
 
+function openSettings() {
+  const sel = document.getElementById('mCycleStart');
+  if(sel) sel.value = String(getCycleStart());
+  openModal('mSettings');
+}
+function saveSettings() {
+  const cs = parseInt(document.getElementById('mCycleStart').value)||1;
+  if(!db.settings) db.settings = {};
+  db.settings.cycleStart = cs;
+  save();
+  closeModal('mSettings');
+  if(curColId) renderColleagueView();
+  renderSidebar();
+  toast('Settings saved');
+}
+
 function doPrint() {
-  // If no colleague selected, fall back to basic print
-  if(!curColId) { window.print(); return; }
+  // Show selection modal
+  const lbl = document.getElementById('ps_current_label');
+  const sub = document.getElementById('ps_current_sub');
+  if(curColId) {
+    const c = db.colleagues.find(x=>x.id===curColId);
+    if(c && lbl) lbl.textContent = c.name + ' — ' + periodLabel(curMonth);
+    if(sub) sub.textContent = 'Report for this colleague';
+  } else {
+    if(lbl) lbl.textContent = 'Current colleague & period';
+    if(sub) sub.textContent = curColId ? '' : '(No colleague selected)';
+  }
+  openModal('mPrintSelect');
+}
 
-  const c = db.colleagues.find(x=>x.id===curColId);
-  if(!c) { window.print(); return; }
+function executePrint() {
+  closeModal('mPrintSelect');
+  const scope      = document.querySelector('input[name="printScope"]:checked')?.value || 'current';
+  const paper      = document.getElementById('ps_paper')?.value || 'A4 portrait';
+  const wantScores = document.getElementById('pOpt_scores')?.checked !== false;
+  const wantCharts = document.getElementById('pOpt_charts')?.checked !== false;
+  const wantCompare= document.getElementById('pOpt_compare')?.checked === true;
+  const wantNotes  = document.getElementById('pOpt_notes')?.checked !== false;
 
-  const activeCriteria = getActiveCriteria(curColId);
-  const [y,m] = curMonth.split('-').map(Number);
-  const dim = new Date(y,m,0).getDate();
-  const days = Array.from({length:dim},(_,i)=>i+1);
-  const scores = db.scores[curColId]?.[curMonth]||{};
-  const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-  const monthLabel = appLang==='ar' ? MONTHS_AR[m-1] : MONTHS_EN[m-1];
+  // Build job list
+  let jobs = [];
+  if(scope === 'current') {
+    if(!curColId){ toast('Select a colleague first','#ffb340'); return; }
+    jobs = [{colId:curColId, month:curMonth}];
+  } else if(scope === 'all_month') {
+    jobs = db.colleagues.map(c=>({colId:c.id, month:curMonth}));
+  } else {
+    db.colleagues.forEach(c=>{
+      availMonths().forEach(mo=>{ if(countScores(c.id,mo)>0) jobs.push({colId:c.id,month:mo}); });
+    });
+    if(!jobs.length) jobs = db.colleagues.map(c=>({colId:c.id,month:curMonth}));
+  }
+
   const isAr = appLang==='ar';
+  const sc2col = s=>({1:'#ff4d6d',2:'#ff6057',3:'#ff7832',4:'#ff9520',5:'#ffb340',6:'#d4c840',7:'#9ed468',8:'#5ec88a',9:'#2dc4a0',10:'#00c896'})[s]||'';
+  const avg2col = a=>a>=8?'#00c896':a>=6?'#ffb340':a>0?'#ff4d6d':'#94a3b8';
+  const avg2lbl = a=>a>=8?(isAr?'ممتاز':'Excellent'):a>=6?(isAr?'جيد':'Good'):a>0?(isAr?'يحتاج تحسيناً':'Needs Work'):(isAr?'لا بيانات':'No Data');
 
-  // ── Helpers ──
-  const sc2col = s => ({1:'#ff4d6d',2:'#ff6057',3:'#ff7832',4:'#ff9520',5:'#ffb340',6:'#d4c840',7:'#9ed468',8:'#5ec88a',9:'#2dc4a0',10:'#00c896'})[s]||'';
-  const avg2col = a => a>=8?'#00c896':a>=6?'#ffb340':a>0?'#ff4d6d':'#94a3b8';
-  const avg2label = a => a>=8?(isAr?'ممتاز':'Excellent'):a>=6?(isAr?'جيد':'Good'):a>0?(isAr?'يحتاج تحسيناً':'Needs Work'):(isAr?'لا بيانات':'No Data');
+  // ── Build one performance report per job ──────────────────────────────────
+  function buildScoreReport(colId, month) {
+    const c = db.colleagues.find(x=>x.id===colId); if(!c) return '';
+    const activeCriteria = getActiveCriteria(colId);
+    const [y,mm] = month.split('-').map(Number);
+    const dim = periodDayCount(month);
+    const days = Array.from({length:dim},(_,i)=>i+1);
+    const scores = db.scores[colId]?.[month]||{};
+    const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const mLabel = periodLabel(month);
 
-  // ── Compute averages ──
-  const crData = activeCriteria.map(cr=>{
-    let ws=0,wn=0,raw=[];
-    days.forEach(d=>{ const e=scores[cr.id]?.[d]; if(e?.score){ws+=e.score*cr.weight;wn+=cr.weight;raw.push(e.score);} });
-    return {cr, avg:wn?ws/wn:0, count:raw.length, min:raw.length?Math.min(...raw):0, max:raw.length?Math.max(...raw):0};
-  });
-  const dayData = days.map(d=>{
-    let s=0,n=0;
-    activeCriteria.forEach(cr=>{ const e=scores[cr.id]?.[d]; if(e?.score){s+=e.score;n++;} });
-    return {avg:n?s/n:0, filled:n};
-  });
-  const filledCrData = crData.filter(x=>x.avg>0);
-  const overallAvg = filledCrData.length ? filledCrData.reduce((a,x)=>a+x.avg,0)/filledCrData.length : 0;
-  const daysScored = dayData.filter(x=>x.filled>0).length;
-  const totalEntries = dayData.reduce((a,x)=>a+x.filled,0);
+    const crData = activeCriteria.map(cr=>{
+      let ws=0,wn=0;
+      days.forEach(d=>{const e=scores[cr.id]?.[d];if(e?.score){ws+=e.score*cr.weight;wn+=cr.weight;}});
+      return {cr,avg:wn?ws/wn:0};
+    });
+    const dayData = days.map(d=>{
+      let s=0,n=0;
+      activeCriteria.forEach(cr=>{const e=scores[cr.id]?.[d];if(e?.score){s+=e.score;n++;}});
+      return {avg:n?s/n:0,filled:n};
+    });
+    const filled = crData.filter(x=>x.avg>0);
+    const overallAvg = filled.length?filled.reduce((a,x)=>a+x.avg,0)/filled.length:0;
+    const daysScored = dayData.filter(x=>x.filled>0).length;
+    const totalEntries = dayData.reduce((a,x)=>a+x.filled,0);
 
-  // ── Score heatmap: days as columns, criteria as rows ──
-  const dayNumsHtml = days.map(d=>{
-    const wd = new Date(y,m-1,d).getDay();
-    const isWknd = wd===0||wd===6;
-    return `<th style="width:20px;min-width:20px;max-width:20px;font-size:5.5pt;text-align:center;padding:2px 0;color:${isWknd?'#ef4444':'#64748b'};background:#f8fafc;border:1px solid #e2e8f0">${d}</th>`;
-  }).join('');
-
-  const gridRows = crData.map(({cr,avg})=>{
-    const catC = {Clinical:'#00d4ff',Service:'#00e5c4',Compliance:'#ff4d6d',Communication:'#a78bfa',Teamwork:'#ffb340',Documentation:'#60a5fa',Other:'#94a3b8'}[cr.category]||'#94a3b8';
-    const cells = days.map(d=>{
-      const e=scores[cr.id]?.[d];
-      const sc=e?.score;
-      const bg=sc?sc2col(sc)+'28':'#f8fafc';
-      const fg=sc?sc2col(sc):'#cbd5e1';
-      return `<td style="width:20px;min-width:20px;max-width:20px;height:18px;text-align:center;vertical-align:middle;padding:0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:6pt;font-weight:700;color:${fg}">${sc||''}</span></td>`;
+    const dayNums = days.map(d=>{
+      const cd=periodDayToDate(month,d); const wd=cd.getDay();
+      const lbl=getCycleStart()===1?d:cd.getDate();
+      return `<th style="width:17px;min-width:17px;font-size:5pt;text-align:center;padding:1px 0;color:${wd===0||wd===6?'#ef4444':'#64748b'};background:#f8fafc;border:1px solid #e2e8f0">${lbl}</th>`;
     }).join('');
-    const ac=avg2col(avg);
-    const barW=Math.round(avg/10*48);
-    return `<tr>
-      <td style="max-width:108px;width:108px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:7pt;font-weight:600;color:#1e293b;padding:2px 6px 2px 4px;border:1px solid #e2e8f0;border-left:3px solid ${catC};text-align:${isAr?'right':'left'}" title="${cr.name}">${cr.name}</td>
-      ${cells}
-      <td style="width:64px;padding:2px 6px;border:1px solid #e2e8f0;white-space:nowrap">
-        <div style="display:flex;align-items:center;gap:3px">
-          <div style="width:${barW}px;height:6px;border-radius:3px;background:${ac};flex-shrink:0"></div>
-          <span style="font-size:7pt;font-weight:700;color:${ac}">${avg?avg.toFixed(1):'—'}</span>
+
+    const gridRows = crData.map(({cr,avg})=>{
+      const cells=days.map(d=>{
+        const e=scores[cr.id]?.[d];const sc=e?.score;
+        const bg=sc?sc2col(sc)+'28':'#f8fafc';const fg=sc?sc2col(sc):'#cbd5e1';
+        return `<td style="width:17px;min-width:17px;height:15px;text-align:center;vertical-align:middle;padding:0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:5pt;font-weight:700;color:${fg}">${sc||''}</span></td>`;
+      }).join('');
+      const ac=avg2col(avg);const bw=Math.round(avg/10*42);
+      return `<tr><td style="width:95px;max-width:95px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:6.5pt;font-weight:600;color:#1e293b;padding:2px 4px;border:1px solid #e2e8f0;border-left:3px solid ${ac}" title="${cr.name}">${cr.name}</td>${cells}<td style="width:52px;padding:2px 4px;border:1px solid #e2e8f0;white-space:nowrap"><div style="display:flex;align-items:center;gap:2px"><div style="width:${bw}px;height:4px;border-radius:2px;background:${ac};min-width:1px"></div><span style="font-size:6.5pt;font-weight:700;color:${ac}">${avg?avg.toFixed(1):'—'}</span></div></td></tr>`;
+    }).join('');
+
+    const dayAvgRow=days.map((_,di)=>{const a=dayData[di].avg;const bg=a?avg2col(a)+'22':'#f8fafc';const fg=a?avg2col(a):'#cbd5e1';return`<td style="text-align:center;padding:1px 0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:4.5pt;font-weight:700;color:${fg}">${a?a.toFixed(1):''}</span></td>`;}).join('');
+
+    const crCards=crData.map(({cr,avg})=>{const ac=avg2col(avg);const bp=avg?Math.round(avg/10*100):0;return`<div style="border-radius:5px;border:1px solid #e2e8f0;padding:5px 6px;border-top:2px solid ${ac};background:#fafbfc"><div style="font-size:6pt;font-weight:700;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${cr.name}">${cr.name}</div><div style="height:3px;background:#e8edf3;border-radius:2px;overflow:hidden;margin:2px 0"><div style="width:${bp}%;height:100%;background:${ac};border-radius:2px"></div></div><div style="font-size:7pt;font-weight:700;color:${ac};text-align:right">${avg?avg.toFixed(1):'—'}</div></div>`;}).join('');
+
+    return `<div class="report-block">
+<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-20px;right:8px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.10) 0%,transparent 70%)"></div>
+  <div style="width:44px;height:44px;border-radius:10px;flex-shrink:0;background:${c.color}20;color:${c.color};border:2px solid ${c.color}44;display:flex;align-items:center;justify-content:center;font-size:14pt;font-weight:800">${ini}</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13pt;font-weight:800;color:#f0f9ff;line-height:1.1">${c.name}</div>
+    <div style="font-size:7.5pt;color:rgba(148,197,232,0.7);margin-top:1px">${c.role}</div>
+    <div style="font-size:7pt;color:#00d4ff;margin-top:2px;font-family:monospace">▸ ${mLabel} · ${activeCriteria.length} ${isAr?'معيار':'criteria'} · ${daysScored}/${days.length} ${isAr?'يوم':'days'}</div>
+  </div>
+  <div style="display:flex;gap:5px">
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 9px;text-align:center;min-width:48px">
+      <div style="font-size:11pt;font-weight:700;color:${avg2col(overallAvg)};font-family:monospace">${overallAvg?overallAvg.toFixed(1):'—'}</div>
+      <div style="font-size:5pt;color:rgba(148,197,232,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-top:1px">${avg2lbl(overallAvg)}</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 9px;text-align:center;min-width:48px">
+      <div style="font-size:11pt;font-weight:700;color:#00d4ff;font-family:monospace">${totalEntries}</div>
+      <div style="font-size:5pt;color:rgba(148,197,232,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-top:1px">${isAr?'إدخال':'entries'}</div>
+    </div>
+  </div>
+</div>
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'مصفوفة الأداء':'Performance Heatmap'}</div>
+<div style="overflow:visible;margin-bottom:7px">
+<table style="border-collapse:collapse;width:100%;table-layout:fixed">
+<thead><tr><th style="width:95px;background:#f8fafc;padding:2px 4px;font-size:5.5pt;color:#64748b;text-align:left;border:1px solid #e2e8f0">${isAr?'المعيار':'Criterion'}</th>${dayNums}<th style="width:52px;background:#f8fafc;padding:2px 4px;font-size:5.5pt;color:#64748b;text-align:left;border:1px solid #e2e8f0">${isAr?'المعدل':'Avg'}</th></tr></thead>
+<tbody>${gridRows}<tr style="background:#f0f9ff"><td style="font-size:5.5pt;font-weight:700;color:#64748b;padding:2px 4px;text-align:left;border:1px solid #e2e8f0">${isAr?'يومي':'Daily avg'}</td>${dayAvgRow}<td style="border:1px solid #e2e8f0"></td></tr></tbody></table></div>
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:4px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'ملخص المعايير':'Criterion Summary'}</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px">${crCards}</div>
+<div style="border-top:1px solid #e2e8f0;padding-top:4px;display:flex;justify-content:space-between;font-size:5pt;color:#94a3b8">
+  <span>RxPerform Pro · ${new Date().toLocaleDateString()}</span><span style="color:#00d4ff">Confidential</span>
+</div></div>`;
+  }
+
+  // ── Build team comparison page ────────────────────────────────────────────
+  function buildComparisonPage(month) {
+    const mLabel = periodLabel(month);
+    const rows = db.colleagues.map(c=>{
+      const avg = colMonthAvg(c.id, month);
+      const cnt = countScores(c.id, month);
+      const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const ac  = avg2col(avg);
+      const bar = avg ? Math.round(avg/10*100) : 0;
+      const criteria = getActiveCriteria(c.id);
+      const scores   = db.scores[c.id]?.[month]||{};
+      const dim = periodDayCount(month);
+      const days = Array.from({length:dim},(_,i)=>i+1);
+      // Per-criterion averages for this colleague
+      const crAvgs = criteria.map(cr=>{
+        let s=0,n=0;
+        days.forEach(d=>{const e=scores[cr.id]?.[d];if(e?.score){s+=e.score;n++;}});
+        return {name:cr.name,avg:n?s/n:0};
+      });
+      const crBars = crAvgs.map(x=>{
+        const xc=avg2col(x.avg);
+        return `<div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
+          <div style="width:80px;font-size:5.5pt;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:0">${x.name}</div>
+          <div style="flex:1;background:#e2e8f0;border-radius:2px;height:5px;overflow:hidden"><div style="width:${x.avg?Math.round(x.avg/10*100):0}%;height:100%;background:${xc}"></div></div>
+          <div style="width:22px;font-size:5.5pt;font-weight:700;color:${xc};text-align:right">${x.avg?x.avg.toFixed(1):'—'}</div>
+        </div>`;
+      }).join('');
+      return `<div style="border:1px solid #e2e8f0;border-left:4px solid ${c.color};border-radius:8px;padding:10px 12px;background:#fafbfc;break-inside:avoid">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="width:32px;height:32px;border-radius:8px;background:${c.color}22;color:${c.color};display:flex;align-items:center;justify-content:center;font-size:11pt;font-weight:800;flex-shrink:0">${ini}</div>
+          <div style="flex:1"><div style="font-size:10pt;font-weight:700;color:#1e293b">${c.name}</div><div style="font-size:7pt;color:#64748b">${c.role}</div></div>
+          <div style="text-align:right"><div style="font-size:16pt;font-weight:800;color:${ac};font-family:monospace;line-height:1">${avg?avg.toFixed(1):'—'}</div><div style="font-size:6pt;color:${ac};text-transform:uppercase">${avg2lbl(avg)}</div></div>
         </div>
-      </td>
-    </tr>`;
-  }).join('');
+        <div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:8px"><div style="width:${bar}%;height:100%;background:${ac}"></div></div>
+        ${crBars}
+      </div>`;
+    }).join('');
 
-  const dayAvgRow = days.map((_,di)=>{
-    const a=dayData[di].avg;
-    const bg=a?avg2col(a)+'22':'#f8fafc';
-    const fg=a?avg2col(a):'#cbd5e1';
-    return `<td style="text-align:center;padding:1px 0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:5.5pt;font-weight:700;color:${fg}">${a?a.toFixed(1):''}</span></td>`;
-  }).join('');
+    const ranked = [...db.colleagues].map(c=>({c,avg:colMonthAvg(c.id,month)})).sort((a,b)=>b.avg-a.avg);
+    const rankRows = ranked.map((x,i)=>{
+      const ac=avg2col(x.avg);
+      return `<tr><td style="padding:4px 8px;border:1px solid #e2e8f0;font-weight:700;color:#64748b">${i+1}</td>
+      <td style="padding:4px 8px;border:1px solid #e2e8f0;font-weight:600;color:#1e293b">${x.c.name}</td>
+      <td style="padding:4px 8px;border:1px solid #e2e8f0;color:#64748b;font-size:7pt">${x.c.role}</td>
+      <td style="padding:4px 8px;border:1px solid #e2e8f0;font-weight:700;color:${ac};font-family:monospace;text-align:center">${x.avg?x.avg.toFixed(2):'—'}</td>
+      <td style="padding:4px 8px;border:1px solid #e2e8f0;font-size:7pt;color:${ac};text-align:center">${avg2lbl(x.avg)}</td></tr>`;
+    }).join('');
 
-  // ── Team notes for this colleague ──
-  const tPos = (db.notes&&db.notes.positive||[]).filter(n=>!n.colId||n.colId===curColId).slice(0,5);
-  const tNeg = (db.notes&&db.notes.negative||[]).filter(n=>!n.colId||n.colId===curColId).slice(0,5);
+    return `<div class="report-block">
+<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+  <div><div style="font-size:14pt;font-weight:800;color:#f0f9ff">${isAr?'مقارنة أداء الفريق':'Team Performance Comparison'}</div>
+  <div style="font-size:8pt;color:#00d4ff;margin-top:3px;font-family:monospace">▸ ${mLabel} · ${db.colleagues.length} ${isAr?'زملاء':'colleagues'}</div></div>
+  <div style="font-size:7pt;color:rgba(148,197,232,0.5);font-family:monospace;text-align:right">RxPerform Pro<br>${new Date().toLocaleDateString()}</div>
+</div>
 
-  // ── Score entry notes ──
-  const obsItems=[];
-  activeCriteria.forEach(cr=>{ days.forEach(d=>{ const e=scores[cr.id]?.[d]; if(e?.note) obsItems.push({day:d,cr:cr.name,note:e.note}); }); });
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'تصنيف الأداء':'Performance Ranking'}</div>
+<table style="border-collapse:collapse;width:100%;margin-bottom:12px;font-size:8pt">
+<thead><tr style="background:#0f2244;color:#fff">
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center">#</th>
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:left">${isAr?'الاسم':'Name'}</th>
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:left">${isAr?'الدور':'Role'}</th>
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center">${isAr?'المعدل':'Avg Score'}</th>
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center">${isAr?'التقييم':'Rating'}</th>
+</tr></thead><tbody>${rankRows}</tbody></table>
+
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'تفاصيل الأداء':'Individual Breakdowns'}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${rows}</div>
+</div>`;
+  }
+
+  // ── Build team notes page ─────────────────────────────────────────────────
+  function buildNotesPage() {
+    const pos = (db.notes&&db.notes.positive)||[];
+    const neg = (db.notes&&db.notes.negative)||[];
+    if(!pos.length && !neg.length) return '';
+
+    const renderList = (items, color, icon, title) => {
+      if(!items.length) return '';
+      const rows = items.map(n=>{
+        const col = n.colId ? db.colleagues.find(c=>c.id===n.colId) : null;
+        return `<tr>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;font-size:7pt;color:#475569;white-space:nowrap">${col?col.name:(isAr?'الفريق':'All Team')}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;font-size:7.5pt;color:#1e293b">${n.text}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;font-size:7pt;color:#94a3b8;white-space:nowrap">${n.date||''}</td>
+        </tr>`;
+      }).join('');
+      return `<div style="margin-bottom:14px">
+        <div style="font-size:9pt;font-weight:700;color:${color};margin-bottom:6px;display:flex;align-items:center;gap:6px">${icon} ${title}</div>
+        <table style="border-collapse:collapse;width:100%;font-size:8pt">
+          <thead><tr style="background:${color}18">
+            <th style="padding:4px 8px;border:1px solid #e2e8f0;text-align:left;font-size:7pt;color:${color}">${isAr?'الزميل':'Colleague'}</th>
+            <th style="padding:4px 8px;border:1px solid #e2e8f0;text-align:left;font-size:7pt;color:${color}">${isAr?'الملاحظة':'Note'}</th>
+            <th style="padding:4px 8px;border:1px solid #e2e8f0;text-align:left;font-size:7pt;color:${color}">${isAr?'التاريخ':'Date'}</th>
+          </tr></thead><tbody>${rows}</tbody>
+        </table></div>`;
+    };
+
+    return `<div class="report-block">
+<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+  <div><div style="font-size:14pt;font-weight:800;color:#f0f9ff">${isAr?'ملاحظات الفريق':'Team Notes'}</div>
+  <div style="font-size:8pt;color:#00d4ff;margin-top:3px">${pos.length} ${isAr?'إيجابية':'positive'} · ${neg.length} ${isAr?'تحسين':'improvement'}</div></div>
+  <div style="font-size:7pt;color:rgba(148,197,232,0.5);font-family:monospace;text-align:right">RxPerform Pro<br>${new Date().toLocaleDateString()}</div>
+</div>
+${renderList(pos,'#00c896','✅',isAr?'النقاط الإيجابية':'Positive Points')}
+${renderList(neg,'#ef4444','⚠️',isAr?'نقاط التحسين':'Points to Improve')}
+</div>`;
+  }
+
+  // ── Build charts page (bar + trend data as table since canvas can't print) ──
+  function buildChartsPage(month) {
+    const mLabel = periodLabel(month);
+    // Team comparison bar chart data → rendered as visual bar table
+    const teamData = db.colleagues.map(c=>({
+      name:c.name.split(' ').slice(-1)[0], fullName:c.name, color:c.color,
+      avg:colMonthAvg(c.id,month)
+    })).sort((a,b)=>b.avg-a.avg);
+
+    const bars = teamData.map(d=>{
+      const ac=avg2col(d.avg);const w=d.avg?Math.round(d.avg/10*100):0;
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:110px;font-size:8pt;font-weight:600;color:#1e293b;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.fullName}</div>
+        <div style="flex:1;background:#e2e8f0;border-radius:3px;height:18px;overflow:hidden">
+          <div style="width:${w}%;height:100%;background:${d.color};display:flex;align-items:center;padding-left:6px">
+            ${w>15?`<span style="font-size:7pt;font-weight:700;color:#fff">${d.avg.toFixed(1)}</span>`:''}
+          </div>
+        </div>
+        ${w<=15?`<span style="font-size:7.5pt;font-weight:700;color:${ac};width:28px">${d.avg?d.avg.toFixed(1):'—'}</span>`:'<span style="width:28px"></span>'}
+      </div>`;
+    }).join('');
+
+    // Monthly trend table
+    const months = availMonths();
+    const trendHdr = months.map(m=>`<th style="padding:4px 6px;border:1px solid #e2e8f0;font-size:6.5pt;color:#64748b;text-align:center;white-space:nowrap">${fmtMonth(m)}</th>`).join('');
+    const trendRows = db.colleagues.map(c=>{
+      const cells = months.map(m=>{
+        const a=colMonthAvg(c.id,m);const ac=avg2col(a);
+        return `<td style="padding:4px 6px;border:1px solid #e2e8f0;font-size:7.5pt;font-weight:700;color:${a?ac:'#cbd5e1'};text-align:center;font-family:monospace">${a?a.toFixed(1):'—'}</td>`;
+      }).join('');
+      return `<tr><td style="padding:4px 8px;border:1px solid #e2e8f0;font-size:8pt;font-weight:600;color:#1e293b;white-space:nowrap">${c.name}</td>${cells}</tr>`;
+    }).join('');
+
+    return `<div class="report-block">
+<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:12px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+  <div><div style="font-size:14pt;font-weight:800;color:#f0f9ff">${isAr?'الرسوم البيانية':'Charts & Analytics'}</div>
+  <div style="font-size:8pt;color:#00d4ff;margin-top:3px;font-family:monospace">▸ ${mLabel}</div></div>
+  <div style="font-size:7pt;color:rgba(148,197,232,0.5);font-family:monospace;text-align:right">RxPerform Pro<br>${new Date().toLocaleDateString()}</div>
+</div>
+
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'مقارنة الفريق — الفترة الحالية':'Team Comparison — Current Period'}</div>
+<div style="margin-bottom:14px;padding:10px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0">${bars}</div>
+
+<div style="font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#64748b;margin-bottom:6px;border-bottom:1px solid #e2e8f0;padding-bottom:3px">${isAr?'الأداء عبر الأشهر':'Monthly Performance Trend'}</div>
+<table style="border-collapse:collapse;width:100%;font-size:8pt">
+<thead><tr style="background:#0f2244;color:#fff">
+  <th style="padding:5px 8px;border:1px solid #e2e8f0;text-align:left">${isAr?'الزميل':'Colleague'}</th>${trendHdr}
+</tr></thead><tbody>${trendRows}</tbody></table>
+</div>`;
+  }
+
+  // ── Assemble all pages ────────────────────────────────────────────────────
+  const pages = [];
+
+  if(wantScores) {
+    jobs.forEach(j=>{ const r=buildScoreReport(j.colId,j.month); if(r) pages.push(r); });
+  }
+  if(wantCharts) {
+    pages.push(buildChartsPage(curMonth));
+  }
+  if(wantCompare) {
+    pages.push(buildComparisonPage(curMonth));
+  }
+  if(wantNotes) {
+    const np = buildNotesPage();
+    if(np) pages.push(np);
+  }
+
+  if(!pages.length){ toast('Nothing selected to print','#ffb340'); return; }
 
   const html_out = `<!DOCTYPE html>
 <html lang="${isAr?'ar':'en'}" dir="${isAr?'rtl':'ltr'}">
-<head>
-<meta charset="UTF-8">
-<title>RxPerform — ${c.name} — ${monthLabel} ${y}</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-@page { size:A4 portrait; margin:8mm 10mm; }
+@page { size:${paper}; margin:8mm 10mm; }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#fff;color:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9pt;}
-
-/* ── HEADER ── */
-.hdr{
-  background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);
-  border-radius:14px;padding:16px 20px;margin-bottom:12px;
-  display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;
-}
-.hdr::before{
-  content:'';position:absolute;top:-40px;right:-20px;
-  width:180px;height:180px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,212,255,0.12) 0%,transparent 70%);
-}
-.hdr::after{
-  content:'RxPerform Pro';position:absolute;bottom:8px;right:16px;
-  font-size:6pt;font-family:'Geist Mono',monospace;color:rgba(0,212,255,0.25);
-  letter-spacing:3px;text-transform:uppercase;
-}
-.hdr-ava{
-  width:54px;height:54px;border-radius:14px;flex-shrink:0;
-  background:${c.color}20;color:${c.color};border:2px solid ${c.color}44;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18pt;font-weight:800;font-family:'Syne',sans-serif;
-}
-.hdr-info{flex:1;min-width:0;}
-.hdr-name{font-size:15pt;font-weight:800;color:#f0f9ff;letter-spacing:-0.5px;line-height:1.1;}
-.hdr-role{font-size:8pt;color:rgba(148,197,232,0.7);margin-top:2px;}
-.hdr-period{font-size:7.5pt;color:#00d4ff;margin-top:4px;font-family:'Geist Mono',monospace;letter-spacing:0.5px;}
-.hdr-kpis{display:flex;gap:8px;flex-shrink:0;}
-.kpi{
-  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
-  border-radius:10px;padding:8px 12px;text-align:center;min-width:60px;
-}
-.kpi-val{font-size:13pt;font-weight:700;font-family:'Geist Mono',monospace;}
-.kpi-lbl{font-size:5.5pt;color:rgba(148,197,232,0.6);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
-.kpi-bar{height:3px;border-radius:2px;margin-top:4px;}
-
-/* ── SECTION TITLE ── */
-.sec-title{
-  font-size:7pt;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
-  color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:6px;
-}
-.sec-title::after{content:'';flex:1;height:1px;background:#e2e8f0;}
-
-/* ── GRID ── */
-.grid-wrap{overflow:visible;margin-bottom:10px;}
-table.hmap{border-collapse:collapse;width:100%;}
-table.hmap td,table.hmap th{border:1px solid #e2e8f0;}
-
-/* ── CRITERION SUMMARY CARDS ── */
-.cr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px;}
-.cr-card{
-  border-radius:8px;border:1px solid #e2e8f0;padding:6px 8px;
-  border-top:3px solid var(--col);background:#fafbfc;
-}
-.cr-card-name{font-size:7pt;font-weight:700;color:#1e293b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;}
-.cr-card-cat{font-size:6pt;color:#94a3b8;margin-bottom:4px;}
-.cr-bar-wrap{height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin-bottom:3px;}
-.cr-bar-fill{height:100%;border-radius:3px;}
-.cr-score{font-size:8pt;font-weight:700;text-align:right;}
-
-/* ── NOTES ── */
-.notes-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.notes-box{border-radius:8px;padding:8px;border:1px solid;}
-.note-item{font-size:7pt;padding:3px 0;border-bottom:1px solid;color:#334155;}
-.note-item:last-child{border-bottom:none;}
-
-/* ── FOOTER ── */
-.footer{
-  border-top:1px solid #e2e8f0;padding-top:7px;margin-top:10px;
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:6pt;color:#94a3b8;
-}
-.footer strong{color:#00d4ff;}
+.report-block { page-break-after:always; page-break-inside:avoid; padding-bottom:4px; }
+.report-block:last-child { page-break-after:auto; }
 </style>
-</head>
-<body>
+</head><body>${pages.join('')}</body></html>`;
 
-<!-- ══ HEADER ══ -->
-<div class="hdr">
-  <div class="hdr-ava">${ini}</div>
-  <div class="hdr-info">
-    <div class="hdr-name">${c.name}</div>
-    <div class="hdr-role">${c.role}</div>
-    <div class="hdr-period">▸ ${monthLabel} ${y} &nbsp;·&nbsp; ${activeCriteria.length} ${isAr?'معيار':'Criteria'} &nbsp;·&nbsp; ${daysScored}/${days.length} ${isAr?'يوم':'Days'}</div>
-  </div>
-  <div class="hdr-kpis">
-    <div class="kpi">
-      <div class="kpi-val" style="color:${avg2col(overallAvg)}">${overallAvg?overallAvg.toFixed(2):'—'}</div>
-      <div class="kpi-bar" style="background:${avg2col(overallAvg)};width:${Math.round(overallAvg/10*100)}%"></div>
-      <div class="kpi-lbl">${avg2label(overallAvg)}</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-val" style="color:#00d4ff">${totalEntries}</div>
-      <div class="kpi-lbl">${isAr?'إدخال':'Entries'}</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-val" style="color:#a78bfa">${daysScored}</div>
-      <div class="kpi-lbl">${isAr?'يوم مسجّل':'Scored'}</div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SCORE HEATMAP ══ -->
-<div class="sec-title">${isAr?'مصفوفة الأداء — الخريطة الحرارية للدرجات':'Performance Matrix — Score Heatmap'}</div>
-<div class="grid-wrap">
-  <table class="hmap" style="table-layout:fixed">
-    <thead><tr>
-      <th style="width:108px;background:#f8fafc;padding:3px 6px;font-size:6.5pt;color:#64748b;text-align:${isAr?'right':'left'};border:1px solid #e2e8f0">${isAr?'المعيار':'Criterion'}</th>
-      ${dayNumsHtml}
-      <th style="width:64px;background:#f8fafc;padding:2px 6px;font-size:6.5pt;color:#64748b;text-align:left;border:1px solid #e2e8f0">${isAr?'المعدل الشهري':'Monthly Avg'}</th>
-    </tr></thead>
-    <tbody>
-      ${gridRows}
-      <tr style="background:#f0f9ff">
-        <td style="font-size:6.5pt;font-weight:700;color:#64748b;padding:2px 6px;text-align:${isAr?'right':'left'};border:1px solid #e2e8f0">${isAr?'المعدل اليومي':'Daily Avg'}</td>
-        ${dayAvgRow}
-        <td style="border:1px solid #e2e8f0"></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- ══ CRITERION CARDS ══ -->
-<div class="sec-title">${isAr?'ملخص المعايير':'Criterion Summary'}</div>
-<div class="cr-grid">
-  ${crData.map(({cr,avg,count,min,max})=>{
-    const catC={Clinical:'#00d4ff',Service:'#00e5c4',Compliance:'#ff4d6d',Communication:'#a78bfa',Teamwork:'#ffb340',Documentation:'#60a5fa',Other:'#94a3b8'}[cr.category]||'#94a3b8';
-    const ac=avg2col(avg);
-    return `<div class="cr-card" style="--col:${catC};border-top-color:${catC}">
-      <div class="cr-card-name" title="${cr.name}">${cr.name}</div>
-      <div class="cr-card-cat" style="color:${catC}">${cr.category}${cr.weight>1?' ×'+cr.weight:''}</div>
-      <div class="cr-bar-wrap"><div class="cr-bar-fill" style="background:${ac};width:${avg?Math.round(avg/10*100):0}%"></div></div>
-      <div class="cr-score" style="color:${ac}">${avg?avg.toFixed(1):'—'}</div>
-    </div>`;
-  }).join('')}
-</div>
-
-<!-- ══ TEAM NOTES ══ -->
-${(tPos.length||tNeg.length)?`
-<div class="sec-title">${isAr?'ملاحظات الفريق':'Team Notes'}</div>
-<div class="notes-row">
-  <div class="notes-box" style="border-color:#00c89630;background:#00c89606">
-    <div style="font-size:7.5pt;font-weight:700;color:#00c896;margin-bottom:5px">✅ ${isAr?'النقاط الإيجابية':'Positive Points'}</div>
-    ${tPos.map(n=>`<div class="note-item" style="border-color:#00c89618">${n.text}</div>`).join('')||`<div style="font-size:7pt;color:#94a3b8">—</div>`}
-  </div>
-  <div class="notes-box" style="border-color:#ff4d6d30;background:#ff4d6d06">
-    <div style="font-size:7.5pt;font-weight:700;color:#ff4d6d;margin-bottom:5px">⚠️ ${isAr?'نقاط التحسين':'Points to Improve'}</div>
-    ${tNeg.map(n=>`<div class="note-item" style="border-color:#ff4d6d18">${n.text}</div>`).join('')||`<div style="font-size:7pt;color:#94a3b8">—</div>`}
-  </div>
-</div>`:''}
-
-<!-- ══ SCORE OBSERVATIONS ══ -->
-${obsItems.length?`
-<div class="sec-title">${isAr?'الملاحظات المدخلة':'Score Observations'}</div>
-<table style="width:100%;border-collapse:collapse;font-size:7pt">
-  ${obsItems.slice(0,12).map(o=>`<tr>
-    <td style="width:40px;padding:2px 6px;color:#94a3b8;white-space:nowrap;border:1px solid #e2e8f0">${isAr?'اليوم':'Day'} ${o.day}</td>
-    <td style="width:130px;padding:2px 6px;font-weight:600;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;border:1px solid #e2e8f0">${o.cr}</td>
-    <td style="padding:2px 6px;color:#475569;border:1px solid #e2e8f0">${o.note}</td>
-  </tr>`).join('')}
-</table>`:''}
-
-<!-- ══ FOOTER ══ -->
-<div class="footer">
-  <span>${isAr?'تم الإنشاء بواسطة':'Generated by'} <strong>RxPerform Pro</strong> · ${new Date().toLocaleDateString(isAr?'ar-SA':'en-GB')} ${new Date().toLocaleTimeString(isAr?'ar-SA':'en-GB',{hour:'2-digit',minute:'2-digit'})}</span>
-  <span>${isAr?'سري — للاستخدام الداخلي فقط':'Confidential — Internal Use Only'}</span>
-  <span style="font-family:'Geist Mono',monospace;color:#00d4ff">RxPerform Pro</span>
-</div>
-
-<!-- Print triggered by parent frame -->
-</body>
-</html>`;
-
-  // Hidden iframe — no popup blocker, works on all browsers including mobile
   let iframe = document.getElementById('rxp-print-frame');
   if(iframe) iframe.remove();
   iframe = document.createElement('iframe');
@@ -2744,17 +3071,13 @@ ${obsItems.length?`
     iframe.contentDocument.open();
     iframe.contentDocument.write(html_out);
     iframe.contentDocument.close();
-    setTimeout(() => {
-      try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e) { window.print(); }
-      setTimeout(() => { if(iframe.parentNode) iframe.remove(); }, 3000);
-    }, 800);
-    toast(isAr ? 'جاري فتح نافذة الطباعة…' : 'Opening print dialog…');
-  } catch(e) {
-    // Last resort fallback
-    window.print();
-  }
+    setTimeout(()=>{
+      try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e){ window.print(); }
+      setTimeout(()=>{ if(iframe.parentNode) iframe.remove(); },3000);
+    },900);
+    toast(isAr?'جاري فتح نافذة الطباعة…':'Opening print dialog…');
+  } catch(e){ window.print(); }
 }
-
 
 /* ════════════════════════════════════════════
    CRITERIA HELPERS
@@ -2766,6 +3089,30 @@ function getActiveCriteria(colId) {
     const s = cr.scope || 'global';
     return s === 'global' || s === colId;
   });
+}
+function getCycleStart() { return (db.settings&&db.settings.cycleStart)||1; }
+function periodDayToDate(periodKey, d) {
+  const [y,m] = periodKey.split('-').map(Number);
+  const cs = getCycleStart();
+  return new Date(y, m-1, cs + d - 1);
+}
+function periodDayCount(periodKey) {
+  const [y,m] = periodKey.split('-').map(Number);
+  const cs = getCycleStart();
+  if(cs===1) return new Date(y,m,0).getDate();
+  const start = new Date(y,m-1,cs);
+  const end   = new Date(y,m,cs-1);
+  return Math.round((end-start)/86400000)+1;
+}
+function periodLabel(periodKey) {
+  const [y,m] = periodKey.split('-').map(Number);
+  const cs = getCycleStart();
+  if(cs===1) return fmtMonth(periodKey);
+  const start = new Date(y,m-1,cs);
+  const end   = new Date(y,m,cs-1);
+  const loc   = appLang==='ar'?'ar-SA':'en-GB';
+  const opts  = {day:'numeric',month:'short'};
+  return start.toLocaleDateString(loc,opts)+' – '+end.toLocaleDateString(loc,{...opts,year:'numeric'});
 }
 /* ════════════════════════════════════════════
    UTILS
@@ -3165,10 +3512,7 @@ function exportNotesExcel() {
 /* ════════════════════════════════════════════
    BOOT
 ════════════════════════════════════════════ */
-load();
-if(!db.colleagues.length) seedData();
-applyMode();
-applyLang();
+loadAndInit(); // async: loads local first, then syncs from cloud
 </script>
 </body>
 </html>
