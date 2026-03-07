@@ -777,7 +777,7 @@ table.ptbl {
   #perfScroll { max-width:calc(100vw - 20px); }
   .t-btn { padding:6px 8px; font-size:10px; }
   .topbar { padding:0 12px; gap:10px; }
-  .syncStatus-wrap { display:none; }
+  /* syncStatus always visible */
 }
 @media(max-width:480px) {
   :root { --topbar:52px; }
@@ -1120,7 +1120,7 @@ body.lang-ar .note-del { right:auto; left:8px; }
     <div class="t-divider"></div>
     <button class="t-btn" id="btn_print" onclick="doPrint()">🖨 Print</button>
     <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">📊 Export Excel</button>
-    <span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap" title="Sync status"></span>
+    <span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:8px;background:var(--ink3);border:1px solid var(--line2)" title="Sync status">⏳ Connecting…</span>
     <button class="t-btn admin-only" id="btn_import" onclick="doImport()" title="Load a backup file">📂 Load Backup</button>
     <button class="t-btn admin-only" id="btn_export" onclick="doExportNow()" title="Download full data backup">💾 Export Data</button>
     <button class="t-btn admin-only" id="btn_undo" onclick="undoLast()" disabled title="Undo last action">↩ Undo</button>
@@ -2573,14 +2573,58 @@ function saveCriterion() {
 }
 function deleteCriterion() {
   if(!editCrId) return;
-  const cr=db.criteria.find(x=>x.id===editCrId);
+  const cr = db.criteria.find(x=>x.id===editCrId);
   if(!cr) return;
-  const t=appLang==='ar'?AR:EN;
-  if(!confirm(`${t.deleteCriterion}: "${cr.name}"?`)) return;
-  db.criteria=db.criteria.filter(x=>x.id!==editCrId);
-  save(); closeModal('mCriterion');
+  const t = appLang==='ar' ? AR : EN;
+
+  // If we're viewing a specific colleague, remove only for them
+  if(curColId) {
+    const scope = cr.scope || 'global';
+    const allColIds = db.colleagues.map(c=>c.id);
+
+    if(scope === 'global') {
+      // Convert to specific: keep everyone EXCEPT this colleague
+      const keep = allColIds.filter(id => id !== curColId);
+      if(keep.length === 0) {
+        // Only one colleague — fully delete
+        if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
+        db.criteria = db.criteria.filter(x=>x.id !== editCrId);
+        toast(t.criterionDeleted);
+      } else {
+        if(!confirm('Remove "' + cr.name + '" from ' + (db.colleagues.find(c=>c.id===curColId)?.name||'this colleague') + ' only?')) return;
+        cr.scope = 'specific';
+        cr.colleagueIds = keep;
+        toast(t.criterionDeleted + ' (for this colleague only)');
+      }
+    } else if(scope === 'specific') {
+      const ids = cr.colleagueIds || [];
+      const newIds = ids.filter(id => id !== curColId);
+      if(newIds.length === 0) {
+        // No one left — fully delete
+        if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
+        db.criteria = db.criteria.filter(x=>x.id !== editCrId);
+        toast(t.criterionDeleted);
+      } else {
+        if(!confirm('Remove "' + cr.name + '" from ' + (db.colleagues.find(c=>c.id===curColId)?.name||'this colleague') + ' only?')) return;
+        cr.colleagueIds = newIds;
+        toast(t.criterionDeleted + ' (for this colleague only)');
+      }
+    } else {
+      // Legacy single-colleague scope — just delete
+      if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
+      db.criteria = db.criteria.filter(x=>x.id !== editCrId);
+      toast(t.criterionDeleted);
+    }
+  } else {
+    // No colleague selected — delete globally (from criteria manager)
+    if(!confirm(t.deleteCriterion + ': "' + cr.name + '" for ALL colleagues?')) return;
+    db.criteria = db.criteria.filter(x=>x.id !== editCrId);
+    toast(t.criterionDeleted);
+  }
+
+  save();
+  closeModal('mCriterion');
   if(curColId) renderPerfTable();
-  toast(t.criterionDeleted);
 }
 
 /* ════════════════════════════════════════════
