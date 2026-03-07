@@ -1734,14 +1734,9 @@ function loadAndInit() {
   if(!db.colleagues.length) seedData();
   applyMode();
   applyLang();
-  pullFromSheets().then(synced => {
-    if(synced) {
-      applyLang();
-      if(typeof renderSidebar        === 'function') renderSidebar();
-      if(typeof renderStats          === 'function') renderStats();
-      if(curColId && typeof renderColleagueView === 'function') renderColleagueView();
-    }
-  });
+  // Note: cloud pull happens in launchApp() after login, not here
+  // This avoids the "Connecting..." hanging on the login screen
+  setSyncStatus('☁', 'Ready', 'var(--text3)');
 }
 function generateShareLink() {
   try {
@@ -1796,6 +1791,26 @@ function launchApp() {
   setTimeout(()=>{ scr.style.display='none'; },400);
   document.getElementById('app').style.display='flex';
   initApp();
+  // Always pull fresh from cloud when app opens (catches any saves from other devices)
+  pullFromSheets().then(synced => {
+    if(synced) {
+      renderSidebar();
+      renderStats();
+      if(curColId) renderColleagueView();
+    }
+  });
+  // Re-sync every 30 seconds so mobile↔PC stay in sync
+  clearInterval(window._syncInterval);
+  window._syncInterval = setInterval(() => {
+    if(document.visibilityState !== 'hidden') {
+      pullFromSheets().then(synced => {
+        if(synced) {
+          renderSidebar();
+          if(curColId) renderColleagueView();
+        }
+      });
+    }
+  }, 30000);
 }
 document.addEventListener('keydown', e => {
   if(e.key==='Enter') {
@@ -4409,6 +4424,19 @@ document.addEventListener('click', e => {
 });
 
 loadAndInit(); // loads local first, then syncs from cloud
+
+// Re-sync when tab/app becomes visible again (e.g. switching from mobile)
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && document.getElementById('app').style.display !== 'none') {
+    pullFromSheets().then(synced => {
+      if(synced) {
+        renderSidebar();
+        renderStats();
+        if(curColId) renderColleagueView();
+      }
+    });
+  }
+});
 
 /* ════════════════════════════════════════════
    PWA — SERVICE WORKER + INSTALL PROMPT
