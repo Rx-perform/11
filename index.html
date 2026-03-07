@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+  renderInsightCard(); lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RxPerform Pro — Pharmacy Performance System</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RxPerform">
+<meta name="application-name" content="RxPerform Pro">
+<meta name="theme-color" content="#070c14">
+<meta name="description" content="Pharmacy team performance tracking system">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22RxPerform%20Pro%22%2C%22short_name%22%3A%22RxPerform%22%2C%22description%22%3A%22Pharmacy%20Performance%20Tracker%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23070c14%22%2C%22theme_color%22%3A%22%23070c14%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D%2527http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%3D%270%200%20512%20512%2527%253E%253Crect%2520width%3D%2527512%2527%2520height%3D%2527512%2527%2520rx%3D%2527100%2527%2520fill%3D%2527%23070c14%2527%2F%253E%253Ccircle%2520cx%3D%2527256%2527%2520cy%3D%2527200%2527%2520r%3D%2527120%2527%2520fill%3D%2527none%2527%2520stroke%3D%2527%2300d4ff%2527%2520stroke-width%3D%252740%2527%2F%253E%253Cpath%2520d%3D%2527M196%2520320%2520h120%2520v140%2520q-60%2520-30%2520-120%25200%2527%2520fill%3D%2527%2300d4ff%2527%2F%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<!-- Apple touch icon (inline SVG as data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23070c14'/><circle cx='256' cy='200' r='120' fill='none' stroke='%2300d4ff' stroke-width='40'/><path d='M196 320 h120 v140 q-60 -30 -120 0' fill='%2300d4ff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -191,8 +202,9 @@ body {
   background:var(--ink1);
   border-bottom:1px solid var(--line);
   display:flex; align-items:center;
-  padding:0 20px; gap:16px;
+  padding:0 12px; gap:8px;
   position:relative; z-index:50;
+  overflow-x:auto; overflow-y:visible;
 }
 .topbar-logo {
   font-family:'Syne',sans-serif; font-weight:800;
@@ -200,9 +212,9 @@ body {
   white-space:nowrap;
 }
 .topbar-logo span { color:var(--cyan); }
-.topbar-sep { flex:1; }
+.topbar-sep { flex:1; min-width:8px; }
 .topbar-date {
-  font-family:'Geist Mono',monospace;
+  font-family:monospace;
   font-size:11px; color:var(--text3);
   white-space:nowrap;
 }
@@ -219,6 +231,7 @@ body {
   padding:4px 12px 4px 4px;
   background:var(--ink2); border:1px solid var(--line);
   border-radius:20px; cursor:pointer; transition:var(--trans);
+  margin-left:auto; flex-shrink:0;
 }
 .user-chip:hover { border-color:var(--line2); background:var(--ink3); }
 .user-ava {
@@ -330,7 +343,7 @@ body {
 }
 .sb-role { font-size:10px; color:var(--text3); margin-top:1px; }
 .sb-score {
-  font-family:'Geist Mono',monospace; font-size:11px; font-weight:500;
+  font-family:monospace; font-size:11px; font-weight:500;
   padding:2px 7px; border-radius:6px;
 }
 .sc-hi { background:rgba(0,200,150,0.15); color:var(--emerald); }
@@ -391,11 +404,110 @@ body {
 .col-metrics { display:flex; gap:24px; flex-wrap:wrap; }
 .col-metric { text-align:center; }
 .col-metric-val {
-  font-family:'Geist Mono',monospace; font-size:22px; font-weight:600;
+  font-family:monospace; font-size:22px; font-weight:600;
   line-height:1;
 }
 .col-metric-lbl { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
 .col-hdr-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+/* ── RANK BADGE ── */
+.rank-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 10px; border-radius:20px;
+  font-size:11px; font-weight:700; letter-spacing:0.5px;
+  border:1px solid; backdrop-filter:blur(4px);
+}
+.rank-elite   { background:rgba(255,215,0,0.12);  color:#ffd700; border-color:rgba(255,215,0,0.3); }
+.rank-star    { background:rgba(0,212,255,0.1);   color:#00d4ff; border-color:rgba(0,212,255,0.3); }
+.rank-good    { background:rgba(0,200,150,0.1);   color:#00c896; border-color:rgba(0,200,150,0.3); }
+.rank-dev     { background:rgba(255,179,64,0.1);  color:#ffb340; border-color:rgba(255,179,64,0.3); }
+.rank-none    { background:rgba(100,116,139,0.1); color:#64748b; border-color:rgba(100,116,139,0.3); }
+
+/* ── STREAK ── */
+.streak-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600;
+  background:rgba(255,100,50,0.1); color:#ff9520;
+  border:1px solid rgba(255,100,50,0.25);
+}
+
+/* ── SIDEBAR SPARKLINE ── */
+.sb-spark { display:flex; align-items:flex-end; gap:2px; height:18px; margin-top:2px; }
+.sb-spark-bar {
+  width:4px; border-radius:2px 2px 0 0;
+  background:var(--cyan); opacity:0.6;
+  transition:height 0.3s ease;
+  min-height:2px;
+}
+
+/* ── SCORE DOT PULSE ANIMATION ── */
+@keyframes scorePulse {
+  0%   { transform:scale(1); }
+  40%  { transform:scale(1.35); }
+  70%  { transform:scale(0.9); }
+  100% { transform:scale(1); }
+}
+.sc-dot.just-saved { animation: scorePulse 0.4s ease; }
+
+/* ── RIPPLE ── */
+.ripple-host { position:relative; overflow:hidden; }
+@keyframes ripple-anim {
+  to { transform:scale(4); opacity:0; }
+}
+.ripple-circle {
+  position:absolute; border-radius:50%;
+  transform:scale(0); animation:ripple-anim 0.5s linear;
+  background:rgba(255,255,255,0.25); pointer-events:none;
+}
+
+/* ── SCORE PICKER POP ── */
+@keyframes scorePop {
+  0%   { transform:scale(0.6) rotate(-8deg); opacity:0; }
+  60%  { transform:scale(1.15) rotate(3deg); opacity:1; }
+  100% { transform:scale(1) rotate(0deg); opacity:1; }
+}
+.sp-o { animation: scorePop 0.22s ease forwards; }
+.sp-o:nth-child(1){ animation-delay:0.00s }
+.sp-o:nth-child(2){ animation-delay:0.04s }
+.sp-o:nth-child(3){ animation-delay:0.08s }
+.sp-o:nth-child(4){ animation-delay:0.12s }
+.sp-o:nth-child(5){ animation-delay:0.16s }
+
+/* ── NOTE CARD POP-IN ── */
+@keyframes noteCardIn {
+  from { transform:translateY(10px); opacity:0; }
+  to   { transform:translateY(0);    opacity:1; }
+}
+.note-card { animation: noteCardIn 0.2s ease; }
+
+/* ── SIDEBAR ITEM ACTIVE GLOW ── */
+.sb-item.sb-active { box-shadow: inset 0 0 0 1px rgba(0,212,255,0.15), 0 0 12px rgba(0,212,255,0.06); }
+
+/* ── INSIGHT CARD ── */
+.insight-card {
+  background:linear-gradient(135deg, rgba(0,212,255,0.06), rgba(0,200,150,0.04));
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:var(--r2); padding:18px 22px;
+  position:relative; overflow:hidden;
+}
+.insight-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--cyan), var(--emerald), var(--cyan));
+  background-size:200% 100%;
+  animation:shimmer 3s linear infinite;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.insight-line { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; font-size:13px; color:var(--text); line-height:1.5; }
+.insight-line:last-child { margin-bottom:0; }
+.insight-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+/* ── MOST IMPROVED BADGE ── */
+.improved-banner {
+  background:linear-gradient(135deg,rgba(0,200,150,0.1),rgba(0,212,255,0.06));
+  border:1px solid rgba(0,200,150,0.2); border-radius:var(--r);
+  padding:10px 16px; display:flex; align-items:center; gap:10px;
+  font-size:12px; color:var(--text);
+}
 
 /* ── MONTH ROW ── */
 .month-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:space-between; }
@@ -419,7 +531,7 @@ table.ptbl {
   padding:9px 7px; background:var(--ink2);
   color:var(--text3); font-weight:600;
   text-align:center; border-bottom:1px solid var(--line);
-  white-space:nowrap; font-family:'Geist Mono',monospace; font-size:10px;
+  white-space:nowrap; font-family:monospace; font-size:10px;
 }
 .ptbl th.ptbl-cr {
   text-align:left; padding-left:18px; min-width:180px;
@@ -446,7 +558,7 @@ table.ptbl {
 .sc-dot {
   width:30px; height:30px; border-radius:7px;
   display:inline-flex; align-items:center; justify-content:center;
-  font-family:'Geist Mono',monospace; font-size:12px; font-weight:500;
+  font-family:monospace; font-size:12px; font-weight:500;
   cursor:pointer; transition:var(--trans);
   border:1.5px solid transparent; background:var(--ink2);
   color:var(--text3); user-select:none;
@@ -469,12 +581,14 @@ table.ptbl {
   width:4px; height:4px; border-radius:50%; background:var(--cyan);
 }
 .sc-dot.has-note { position:relative; }
+.sc-dot.absent { background:rgba(255,77,109,0.18) !important; color:#ff4d6d !important; border-color:rgba(255,77,109,0.5) !important; font-size:14px !important; }
+.sc-dot.busy   { background:rgba(255,179,64,0.18) !important; color:#ffb340 !important; border-color:rgba(255,179,64,0.5) !important; font-size:14px !important; }
 
 .row-avg {
-  font-family:'Geist Mono',monospace; font-size:11px; font-weight:600;
+  font-family:monospace; font-size:11px; font-weight:600;
 }
 .col-avg-v {
-  font-family:'Geist Mono',monospace; font-size:10px; font-weight:500;
+  font-family:monospace; font-size:10px; font-weight:500;
   color:var(--text2);
 }
 .cr-cat-badge {
@@ -581,7 +695,7 @@ table.ptbl {
   width:44px; height:44px; border-radius:10px;
   border:2px solid transparent; cursor:pointer;
   font-size:16px; font-weight:700; transition:var(--trans);
-  font-family:'Geist Mono',monospace;
+  font-family:monospace;
   display:flex; align-items:center; justify-content:center;
 }
 .sp-o:hover { transform:scale(1.1); }
@@ -636,21 +750,44 @@ table.ptbl {
   .sidebar {
     position:fixed; left:0; top:0; height:100%;
     z-index:50; transform:translateX(-100%);
+    width:270px !important;
   }
   .sidebar.sb-open { transform:none; }
   .hamburger-btn { display:flex; }
   .chart-grid { grid-template-columns:1fr; }
-  .main-pad { padding:14px; }
-  .toolbar { padding:0 12px; }
-  .t-btn-label { display:none; }
-  .t-btn { padding:8px 12px; }
   .col-hdr { padding:14px; }
+  /* ── MOBILE FULL WIDTH CRITICAL FIX ── */
+  :root { --sidebar: 0px; }
+  #app { width:100vw; max-width:100vw; overflow-x:hidden; }
+  .body-row { width:100vw !important; max-width:100vw !important; flex:1; }
+  .main { flex:1 !important; width:100% !important; max-width:100vw !important; min-width:0 !important; }
+  .main-pad { width:100% !important; box-sizing:border-box !important; padding:12px !important; }
+  .view { width:100% !important; max-width:100% !important; box-sizing:border-box; }
+  .card { width:100% !important; box-sizing:border-box !important; }
+  #perfScroll { width:100% !important; max-width:100% !important; overflow-x:auto; -webkit-overflow-scrolling:touch; box-sizing:border-box; }
+  .ptbl-cr-hdr { width:80px !important; min-width:80px !important; max-width:80px !important; }
+  .ptbl-cr-hdr .cr-name-lbl { font-size:10px; }
+  /* ── TOOLBAR WRAPS ON MOBILE ── */
+  .toolbar { flex-wrap:wrap; height:auto !important; padding:6px 8px !important; gap:4px !important; }
+  .t-btn { padding:7px 9px; font-size:11px; }
+  .t-btn-label { display:none; }
+}
+
+@media(max-width:480px) {
+  #perfScroll { max-width:calc(100vw - 20px); }
+  .t-btn { padding:6px 8px; font-size:10px; }
+  .topbar { padding:0 12px; gap:10px; }
+  .syncStatus-wrap { display:none; }
 }
 @media(max-width:480px) {
-  :root { --topbar:52px; --toolbar:58px; }
+  :root { --topbar:52px; }
   .col-metrics { gap:16px; }
   .col-metric-val { font-size:18px; }
   .topbar-date { display:none; }
+  .topbar-sep { display:none; }
+  .topbar-logo { font-size:14px; }
+  .tb-ctrl { padding:5px 8px; font-size:11px; }
+  .user-name { display:none; }
 }
 
 /* ── PERF TABLE vertical layout ── */
@@ -758,7 +895,7 @@ table.ptbl {
 .cmp-name { font-size:13px; font-weight:600; color:var(--white); }
 .cmp-role { font-size:10px; color:var(--text3); }
 .cmp-avg-badge {
-  margin-left:auto; font-family:'Geist Mono',monospace;
+  margin-left:auto; font-family:monospace;
   font-size:14px; font-weight:700; padding:4px 10px; border-radius:8px;
 }
 
@@ -774,13 +911,23 @@ table.ptbl {
 
 /* ── DAY MODE ── */
 body.day-mode {
-  --ink:#f0f4f8; --ink1:#ffffff; --ink2:#e8edf3; --ink3:#dce3ec;
-  --ink4:#c8d2de; --ink5:#b0bfcc;
-  --line:rgba(0,100,180,0.1); --line2:rgba(0,100,180,0.18); --line3:rgba(0,100,180,0.3);
-  --cyan:#0078cc; --cyan2:#005fa3; --cyan3:rgba(0,120,204,0.1);
-  --text:#1a2b3c; --text2:#3d5166; --text3:#7a8fa6; --white:#0d1a2a;
-  --glow:0 0 40px rgba(0,120,204,0.04); --glow2:0 0 20px rgba(0,120,204,0.08);
-  --amber:#d97706; --rose:#dc2626; --emerald:#059669;
+  --ink:#dff0fb;        /* lightest baby blue background */
+  --ink1:#eaf6fd;       /* cards/panels — very pale sky */
+  --ink2:#d0eaf8;       /* slightly deeper sky */
+  --ink3:#b8dcf4;       /* hover states */
+  --ink4:#9dccea;       /* borders, dividers */
+  --ink5:#82bde0;       /* deeper accent */
+  --line:rgba(0,120,200,0.12); --line2:rgba(0,120,200,0.22); --line3:rgba(0,120,200,0.36);
+  --cyan:#0077b6;       /* primary action color — deep ocean blue */
+  --cyan2:#023e8a;      /* darker for hover */
+  --cyan3:rgba(0,119,182,0.12);
+  --teal:#0096c7;
+  --text:#01253f;       /* near-black navy text */
+  --text2:#14527a;      /* medium blue-grey */
+  --text3:#4a7fa0;      /* muted */
+  --white:#011627;      /* headings */
+  --glow:0 0 40px rgba(0,119,182,0.08); --glow2:0 0 20px rgba(0,119,182,0.15);
+  --amber:#b45309; --rose:#b91c1c; --emerald:#047857;
 }
 body.day-mode .score-cell { color:#1a2b3c; }
 
@@ -828,7 +975,7 @@ body.lang-ar input, body.lang-ar textarea, body.lang-ar select { text-align:righ
 }
 .notes-col-title { font-size:13px; font-weight:700; }
 .notes-col-badge {
-  font-family:'Geist Mono',monospace; font-size:10px; font-weight:700;
+  font-family:monospace; font-size:10px; font-weight:700;
   padding:2px 8px; border-radius:10px; margin-left:auto;
 }
 .notes-list {
@@ -950,6 +1097,7 @@ body.lang-ar .note-del { right:auto; left:8px; }
     <div class="topbar-logo">Rx<span>Perform</span></div>
     <div class="topbar-sep"></div>
     <div class="topbar-date" id="topDate"></div>
+    <div id="liveClock" style="font-family:monospace;font-size:12px;color:var(--text3);letter-spacing:1px;white-space:nowrap"></div>
     <button class="tb-ctrl" id="langBtn" onclick="toggleLang()" title="Switch language">EN | ع</button>
     <button class="tb-ctrl" id="modeBtn" onclick="toggleMode()">☀ Day Mode</button>
     <div class="user-chip" onclick="logoutConfirm()" title="Sign out">
@@ -972,8 +1120,11 @@ body.lang-ar .note-del { right:auto; left:8px; }
     <div class="t-divider"></div>
     <button class="t-btn" id="btn_print" onclick="doPrint()">🖨 Print</button>
     <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">📊 Export Excel</button>
-    <button class="t-btn btn-save admin-only" id="btn_savedata" onclick="saveDataNow()" title="Save data to Google Sheets (online)">☁ Save Online</button><span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap" title="Sync status"></span>
+    <span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap" title="Sync status"></span>
     <button class="t-btn admin-only" id="btn_import" onclick="doImport()" title="Load a backup file">📂 Load Backup</button>
+    <button class="t-btn admin-only" id="btn_export" onclick="doExportNow()" title="Download full data backup">💾 Export Data</button>
+    <button class="t-btn admin-only" id="btn_undo" onclick="undoLast()" disabled title="Undo last action">↩ Undo</button>
+    
     <div id="viewerNote" class="viewer-note" style="display:none">View Only Mode</div>
     <button class="t-btn admin-only" onclick="openSettings()" title="Evaluation cycle settings">⚙ Settings</button>
   </div>
@@ -1026,6 +1177,7 @@ body.lang-ar .note-del { right:auto; left:8px; }
         <!-- STATS VIEW -->
         <div class="view" id="view-stats">
           <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)">Team Statistics</div>
+          <div class="insight-card" id="insightCard" style="display:none"></div>
           <div class="stat-grid" id="statsGrid"></div>
           <div class="card">
             <div class="card-head">
@@ -1086,10 +1238,18 @@ body.lang-ar .note-del { right:auto; left:8px; }
               <div id="notesViewSub" style="font-size:12px;color:var(--text3);margin-top:2px">Collective observations — positive strengths &amp; areas to improve</div>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:7px">
+              <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
                 <label style="font-size:11px;color:var(--text3);white-space:nowrap">📅 Period</label>
-                <select id="notesMonthFilter" class="form-sel" style="padding:5px 10px;font-size:12px;min-width:160px" onchange="renderNotesView()">
+                <select id="notesMonthFilter" class="form-sel" style="padding:5px 10px;font-size:12px;min-width:150px" onchange="renderNotesView()">
                   <option value="">All periods</option>
+                </select>
+                <input type="text" id="notesSearch" placeholder="🔍 Search…" oninput="renderNotesView()"
+                  style="background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:5px 10px;font-size:12px;font-family:inherit;min-width:130px;flex:1">
+                <select id="notesPriorityFilter" class="form-sel" style="padding:5px 10px;font-size:12px;min-width:110px" onchange="renderNotesView()">
+                  <option value="">All priorities</option>
+                  <option value="critical">🔥 Critical</option>
+                  <option value="high">⭐ High</option>
+                  <option value="normal">Normal</option>
                 </select>
               </div>
               <button class="btn btn-sm btn-excel" onclick="exportNotesExcel()" id="notesExportBtn">Export Notes</button>
@@ -1202,9 +1362,14 @@ body.lang-ar .note-del { right:auto; left:8px; }
     </div>
     <div class="form-g">
       <label class="form-lbl" id="lbl_crScope">Apply To</label>
-      <select class="form-sel" id="mCrScope">
-        <option value="global">All Colleagues</option>
+      <select class="form-sel" id="mCrScope" onchange="toggleCrScopeUI()">
+        <option value="global">All colleagues</option>
+        <option value="specific">Specific colleagues (choose below)</option>
       </select>
+    </div>
+    <div id="crScopeColleagues" style="display:none;margin-bottom:14px">
+      <label class="form-lbl" style="margin-bottom:6px">Select colleagues:</label>
+      <div id="crColleagueChecks" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;padding:10px;background:var(--ink2);border-radius:8px;border:1px solid var(--line2)"></div>
     </div>
     <div class="m-actions">
       <button class="btn" onclick="closeModal('mCriterion')" id="btn_crCancel">Cancel</button>
@@ -1303,6 +1468,10 @@ body.lang-ar .note-del { right:auto; left:8px; }
       <label class="form-lbl">Note (optional)</label>
       <input class="form-in" id="mScNote" type="text" placeholder="Add observation…">
     </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn btn-sm" style="flex:1;background:rgba(255,77,109,0.12);color:#ff4d6d;border-color:rgba(255,77,109,0.3)" onclick="SFX.absent();setStatus('absent')">🔴 Absent</button>
+      <button class="btn btn-sm" style="flex:1;background:rgba(255,179,64,0.12);color:#ffb340;border-color:rgba(255,179,64,0.3)" onclick="SFX.busy();setStatus('busy')">🟡 Busy</button>
+    </div>
     <div class="m-actions">
       <button class="btn btn-sm btn-danger" onclick="clearScore()">Clear Score</button>
       <button class="btn btn-sm" onclick="closeModal('mScore')">Cancel</button>
@@ -1338,7 +1507,7 @@ body.lang-ar .note-del { right:auto; left:8px; }
 /* ════════════════════════════════════════════
    DATA LAYER
 ════════════════════════════════════════════ */
-const PASSWORDS = { admin: 'admin123', viewer: 'view456' };
+const PASSWORDS = { admin: 'Anonymous@1151', viewer: 'view456' };
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const COLORS_PALETTE = [
   '#00d4ff','#00e5c4','#ffb340','#ff4d6d','#a78bfa','#34d399','#fb923c','#60a5fa','#f472b6','#4ade80'
@@ -1424,6 +1593,8 @@ const SUPA_HEADERS  = {
 
 let _syncTimer = null;
 let _syncDirty = false;
+let _undoStack = []; // stores up to 5 db snapshots
+const UNDO_MAX  = 5;
 
 function setSyncStatus(icon, msg, color) {
   const el = document.getElementById('syncStatus');
@@ -1493,6 +1664,13 @@ function pullFromSheets() {
 }
 
 /* ── save(): instant localStorage + debounced cloud push ── */
+function snapshotForUndo() {
+  _undoStack.push(JSON.stringify(db));
+  if(_undoStack.length > UNDO_MAX) _undoStack.shift();
+  const btn = document.getElementById('btn_undo');
+  if(btn) btn.disabled = false;
+}
+
 function save() {
   try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
   _syncDirty = true;
@@ -1501,6 +1679,24 @@ function save() {
 }
 
 /* ── saveDataNow(): skip debounce, push immediately ── */
+function undoLast() {
+  if(!_undoStack.length) { toast('Nothing to undo', '#ffb340'); return; }
+  db = JSON.parse(_undoStack.pop());
+  if(!db.notes)    db.notes    = { positive:[], negative:[] };
+  if(!db.settings) db.settings = { cycleStart:16 };
+  try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(pushToSheets, 2000);
+  // Refresh UI
+  if(typeof renderSidebar        === 'function') renderSidebar();
+  if(typeof renderStats          === 'function') renderStats();
+  if(curColId && typeof renderColleagueView === 'function') renderColleagueView();
+  if(typeof renderNotesView      === 'function') renderNotesView();
+  const btn = document.getElementById('btn_undo');
+  if(btn) btn.disabled = _undoStack.length === 0;
+  toast('↩ Undone — last action reversed', 'var(--amber)');
+}
+
 function saveDataNow() {
   try { localStorage.setItem('rxp_db', JSON.stringify(db)); } catch(e) {}
   clearTimeout(_syncTimer);
@@ -1688,6 +1884,11 @@ function renderSidebar(q='') {
       <div class="sb-info">
         <div class="sb-name">${c.name}</div>
         <div class="sb-role">${c.role}</div>
+        <div class="sb-spark">${(()=>{
+          const sp=sparklineData(c.id,curMonth);
+          const mx=Math.max(...sp,1);
+          return sp.map(v=>`<div class="sb-spark-bar" style="height:${Math.max(2,Math.round((v/mx)*18))}px;background:${v>=8?'var(--emerald)':v>=6?'var(--amber)':v>0?'var(--rose)':'var(--ink5)'}"></div>`).join('');
+        })()}</div>
       </div>
       <div class="sb-score sc-${sc}">${avg>0?avg.toFixed(1):'—'}</div>
     </div>`;
@@ -1783,7 +1984,7 @@ function renderCompareView() {
       return `<div style="margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
           <span style="color:var(--text2)">${cr.name}</span>
-          <span style="font-family:'Geist Mono',monospace;color:${barC};font-weight:600">${crAvg?crAvg.toFixed(1):'—'}</span>
+          <span style="font-family:monospace;color:${barC};font-weight:600">${crAvg?crAvg.toFixed(1):'—'}</span>
         </div>
         <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${barC}"></div></div>
       </div>`;
@@ -1815,16 +2016,20 @@ function renderCompareView() {
           const vals=Object.values(scores[cr.id]||{}).map(e=>e.score).filter(Boolean);
           return vals.length?parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2)):0;
         }),
-        borderColor:c.color, backgroundColor:c.color+'22',
-        borderWidth:2, pointRadius:4, tension:0.2
+        backgroundColor:c.color+'bb', borderColor:c.color,
+        borderWidth:1, borderRadius:4, borderSkipped:false
       };
     }).filter(Boolean);
     charts['cmpChart']=new Chart(document.getElementById('cmpChart'),{
-      type:'radar',
+      type:'bar',
       data:{labels,datasets},
       options:{responsive:true,maintainAspectRatio:false,
-        scales:{r:{ticks:{color:'#4a5568',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.08)'},pointLabels:{color:'#7a8fa6',font:{size:9}},min:0,max:10}},
-        plugins:{legend:{labels:{color:'#7a8fa6',font:{size:11}}}}}
+        plugins:{legend:{labels:{color:'#7a8fa6',font:{size:10}}},
+          tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}`}}},
+        scales:{
+          x:{grid:{display:false},ticks:{color:'#7a8fa6',font:{size:9},maxRotation:30}},
+          y:{min:0,max:10,grid:{color:'rgba(0,212,255,0.05)'},ticks:{color:'#7a8fa6',font:{size:10}}}
+        }}
     });
   },30);
 }
@@ -1876,6 +2081,7 @@ function renderColleagueView() {
           <div class="col-metric-val" style="color:var(--cyan)" id="hdCnt">${cnt}</div>
           <div class="col-metric-lbl">Entries</div>
         </div>
+
         <div class="col-metric">
           <div class="col-metric-val" style="color:var(--amber)">${getActiveCriteria(c.id).length}</div>
           <div class="col-metric-lbl">Criteria</div>
@@ -1997,15 +2203,43 @@ function renderPerfTable() {
   // DAY ROWS
   const dayRows = days.map(d=>{
     let daySum=0, dayN=0;
-    const cells = activeCriteria.map(cr=>{
+    // Detect day-wide absent/busy status
+    const dayStatus = (()=>{
+      if(!activeCriteria.length) return null;
+      const first = scores[activeCriteria[0].id]?.[d];
+      if(first?.status && !first?.score) {
+        const allMatch = activeCriteria.every(cr2 => {
+          const e2 = scores[cr2.id]?.[d];
+          return e2?.status === first.status && !e2?.score;
+        });
+        return allMatch ? first.status : null;
+      }
+      return null;
+    })();
+
+    const cells = dayStatus ? (()=>{
+      // Full-row absent/busy spanning all criteria columns
+      const roClass = ro ? ' readonly' : '';
+      const click   = ro ? '' : ('onclick="openScore(\''+activeCriteria[0].id+'\','+d+')" id="cell-'+activeCriteria[0].id+'-'+d+'"');
+      const icon    = dayStatus==='absent' ? '🔴 Absent' : '🟡 Busy';
+      const bg      = dayStatus==='absent' ? 'rgba(255,77,109,0.12)' : 'rgba(255,179,64,0.12)';
+      const border  = dayStatus==='absent' ? '#ff4d6d55' : '#ffb34055';
+      const color   = dayStatus==='absent' ? '#ff4d6d'   : '#ffb340';
+      return '<td colspan="'+activeCriteria.length+'" style="text-align:center;padding:2px 4px">'
+        +'<div class="sc-dot'+roClass+'" style="background:'+bg+';color:'+color+';border:1px solid '+border+';font-size:11px;font-weight:700;width:100%;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:5px;min-height:28px" '+click+'>'
+        +icon+'</div></td>';
+    })() : activeCriteria.map(cr=>{
       const e = scores[cr.id]?.[d];
       if(e?.score){ daySum+=e.score; dayN++; }
       const sc = e?.score;
-      const dotStyle = sc ? `background:${SCORE_COLORS[sc]}22;color:${SCORE_COLORS[sc]};border:1px solid ${SCORE_COLORS[sc]}55` : '';
+      const st = e?.status;
       const noteAttr = e?.note ? ' has-note' : '';
       const roClass = ro ? ' readonly' : '';
-      const click = ro ? '' : `onclick="openScore('${cr.id}',${d})"`;
-      return `<td style="text-align:center;padding:2px 1px"><div class="sc-dot${noteAttr}${roClass}" style="${dotStyle}" ${click} title="${e?.note||''}">${sc||''}</div></td>`;
+      const click = ro ? '' : ('onclick="openScore(\''+cr.id+'\','+d+')" id="cell-'+cr.id+'-'+d+'"');
+      const dotStyle = sc ? 'background:'+SCORE_COLORS[sc]+'22;color:'+SCORE_COLORS[sc]+';border:1px solid '+SCORE_COLORS[sc]+'55'
+                          : st ? (st==='absent'?'background:rgba(255,77,109,0.10);color:#ff4d6d':'background:rgba(255,179,64,0.10);color:#ffb340') : '';
+      const display  = sc ? sc : (st==='absent'?'🔴':st==='busy'?'🟡':'');
+      return '<td style="text-align:center;padding:2px 1px"><div class="sc-dot'+noteAttr+roClass+'" style="'+dotStyle+'" '+click+' title="'+(e?.note||'')+'">'+display+'</div></td>';
     }).join('');
     const dayAvg = dayN ? daySum/dayN : 0;
     const dayAvgC = dayAvg>=8?'var(--emerald)':dayAvg>=6?'var(--amber)':dayAvg>0?'var(--rose)':'var(--text3)';
@@ -2048,6 +2282,7 @@ function renderPerfTable() {
 ════════════════════════════════════════════ */
 function openScore(crId, day) {
   if(role!=='admin') return;
+  SFX.open();
   const cr = db.criteria.find(x=>x.id===crId);
   const e = db.scores[curColId]?.[curMonth]?.[crId]?.[day];
   pendingSc = {crId, day, cur: e?.score};
@@ -2069,6 +2304,7 @@ function openScore(crId, day) {
       picker.querySelectorAll('.sp-o').forEach(b=>b.classList.remove('sp-sel'));
       btn.classList.add('sp-sel');
       pendingSc.newScore=s;
+      SFX.score(s);
     };
     picker.appendChild(btn);
   }
@@ -2082,21 +2318,66 @@ function confirmScore() {
   const note = document.getElementById('mScNote').value.trim();
   ensure(curColId,curMonth,crId);
   db.scores[curColId][curMonth][crId][day] = {score:newScore, note};
+  // If this day was marked absent/busy across other criteria, clear those statuses
+  getActiveCriteria(curColId).forEach(cr => {
+    if(cr.id === crId) return; // skip the one we just scored
+    const entry = db.scores[curColId]?.[curMonth]?.[cr.id]?.[day];
+    if(entry && entry.status && !entry.score) {
+      delete db.scores[curColId][curMonth][cr.id][day];
+    }
+  });
+  SFX.save();
   save();
   closeModal('mScore');
   renderPerfTable();
+  // Pulse the saved cell
+  if(pendingSc) {
+    setTimeout(()=>{
+      const el = document.getElementById(`cell-${pendingSc.crId}-${pendingSc.day}`);
+      if(el) { el.classList.add('just-saved'); el.addEventListener('animationend',()=>el.classList.remove('just-saved'),{once:true}); }
+    }, 60);
+  }
   renderSidebar();
   updateHdrMetrics();
   toast('Score saved');
 }
 
+function setStatus(status) {
+  if(!pendingSc) return;
+  const {day} = pendingSc;
+  if(!db.scores[curColId])           db.scores[curColId] = {};
+  if(!db.scores[curColId][curMonth]) db.scores[curColId][curMonth] = {};
+  // Fill ALL active criteria for this day with the status
+  getActiveCriteria(curColId).forEach(cr => {
+    if(!db.scores[curColId][curMonth][cr.id]) db.scores[curColId][curMonth][cr.id] = {};
+    db.scores[curColId][curMonth][cr.id][day] = { score: null, status };
+  });
+  snapshotForUndo();
+  save();
+  closeModal('mScore');
+  renderPerfTable();
+  renderColMetrics();
+  toast(status === 'absent' ? '🔴 Day marked as Absent' : '🟡 Day marked as Busy',
+        status === 'absent' ? '#ff4d6d' : '#ffb340');
+}
+
 function clearScore() {
   if(!pendingSc) return;
   const {crId,day} = pendingSc;
+  snapshotForUndo();
+  // Clear this criterion's entry
   if(db.scores[curColId]?.[curMonth]?.[crId]?.[day]) {
     delete db.scores[curColId][curMonth][crId][day];
-    save();
   }
+  // Also clear any leftover absent/busy status on other criteria for this day
+  getActiveCriteria(curColId).forEach(cr => {
+    if(cr.id === crId) return;
+    const entry = db.scores[curColId]?.[curMonth]?.[cr.id]?.[day];
+    if(entry && entry.status && !entry.score) {
+      delete db.scores[curColId][curMonth][cr.id][day];
+    }
+  });
+  save();
   closeModal('mScore');
   renderPerfTable();
   renderSidebar();
@@ -2219,6 +2500,7 @@ function saveColleague() {
 function deleteColleague(id) {
   if(!confirm('Delete this colleague and all their data?')) return;
   db.colleagues=db.colleagues.filter(c=>c.id!==id);
+  snapshotForUndo();
   delete db.scores[id];
   if(curColId===id){
     curColId=null;
@@ -2230,6 +2512,24 @@ function deleteColleague(id) {
 /* ════════════════════════════════════════════
    CRITERION CRUD
 ════════════════════════════════════════════ */
+function toggleCrScopeUI() {
+  const scope = document.getElementById('mCrScope').value;
+  const box   = document.getElementById('crScopeColleagues');
+  if(box) box.style.display = scope === 'specific' ? '' : 'none';
+}
+
+function populateCrColleagueChecks(selectedIds) {
+  const wrap = document.getElementById('crColleagueChecks');
+  if(!wrap) return;
+  wrap.innerHTML = db.colleagues.map(c =>
+    `<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);cursor:pointer;padding:3px 0">
+      <input type="checkbox" value="${c.id}" ${selectedIds&&selectedIds.includes(c.id)?'checked':''}
+             style="accent-color:var(--cyan);width:14px;height:14px;flex-shrink:0">
+      <span style="color:${c.color};font-weight:600">${c.name}</span>
+      <span style="color:var(--text3);font-size:10px">${c.role}</span>
+    </label>`).join('');
+}
+
 function openCriterionModal(id) {
   editCrId=id;
   const cr=db.criteria.find(x=>x.id===id);
@@ -2238,11 +2538,15 @@ function openCriterionModal(id) {
   document.getElementById('mCrName').value=cr?.name||'';
   document.getElementById('mCrCat').value=cr?.category||'Clinical';
   document.getElementById('mCrWeight').value=cr?.weight||'1';
-  // Scope dropdown: global + each colleague
+  // Scope: global or specific colleagues
   const scopeSel = document.getElementById('mCrScope');
-  scopeSel.innerHTML = `<option value="global">${t.allColleagues}</option>` +
-    db.colleagues.map(c=>`<option value="${c.id}">${c.name} ${t.only}</option>`).join('');
-  scopeSel.value = cr?.scope || 'global';
+  const hasLegacyScope = cr?.scope && cr.scope !== 'global' && !cr?.colleagueIds;
+  const scopeVal = hasLegacyScope ? 'specific' : (cr?.scope || 'global');
+  scopeSel.value = scopeVal;
+  // Populate colleague checkboxes
+  const selectedIds = cr?.colleagueIds || (hasLegacyScope ? [cr.scope] : []);
+  populateCrColleagueChecks(selectedIds);
+  toggleCrScopeUI();
   // Delete button only when editing
   const delBtn = document.getElementById('mCrDeleteBtn');
   if(delBtn) delBtn.style.display = id ? '' : 'none';
@@ -2251,13 +2555,16 @@ function openCriterionModal(id) {
 function saveCriterion() {
   const name=document.getElementById('mCrName').value.trim();
   const weight=parseFloat(document.getElementById('mCrWeight').value);
-  const scope=document.getElementById('mCrScope').value || 'global';
+  const scope = document.getElementById('mCrScope').value || 'global';
+  const colleagueIds = scope === 'specific'
+    ? [...document.querySelectorAll('#crColleagueChecks input:checked')].map(el=>el.value)
+    : [];
   if(!name){ toast('⚠ Name required','#ffb340'); return; }
   if(editCrId) {
     const cr=db.criteria.find(x=>x.id===editCrId);
-    cr.name=name; cr.weight=weight; cr.scope=scope;
+    cr.name=name; cr.weight=weight; cr.scope=scope; cr.colleagueIds=colleagueIds;
   } else {
-    db.criteria.push({id:'cr'+Date.now(),name,weight,scope});
+    db.criteria.push({id:'cr'+Date.now(),name,weight,scope,colleagueIds});
   }
   save(); closeModal('mCriterion');
   if(curColId) renderPerfTable();
@@ -2279,50 +2586,314 @@ function deleteCriterion() {
 /* ════════════════════════════════════════════
    STATISTICS
 ════════════════════════════════════════════ */
+function renderInsightCard() {
+  const card = document.getElementById('insightCard');
+  if(!card) return;
+  const cols = db.colleagues;
+  if(!cols.length) { card.style.display='none'; return; }
+
+  const avgs = cols.map(c => ({ c, avg: colMonthAvg(c.id, curMonth) })).filter(x => x.avg > 0);
+  if(!avgs.length) { card.style.display='none'; return; }
+
+  avgs.sort((a,b) => b.avg - a.avg);
+  const teamAvg = avgs.reduce((s,x)=>s+x.avg,0)/avgs.length;
+  const top     = avgs[0];
+  const bottom  = avgs[avgs.length-1];
+
+  // Most improved vs previous period
+  const months  = availMonths();
+  const prevM   = months[1];
+  let improved  = null, improvedDelta = 0;
+  if(prevM) {
+    cols.forEach(c => {
+      const curr = colMonthAvg(c.id, curMonth);
+      const prev = colMonthAvg(c.id, prevM);
+      if(curr > 0 && prev > 0) {
+        const delta = curr - prev;
+        if(delta > improvedDelta) { improvedDelta = delta; improved = c; }
+      }
+    });
+  }
+
+  // Weakest criterion team-wide
+  let weakCr = null, weakVal = Infinity;
+  db.criteria.forEach(cr => {
+    let s=0, n=0;
+    cols.forEach(c => {
+      const sc = db.scores[c.id]?.[curMonth]?.[cr.id] || {};
+      Object.values(sc).forEach(e => { if(e.score){ s+=e.score; n++; } });
+    });
+    const avg = n ? s/n : 0;
+    if(avg > 0 && avg < weakVal) { weakVal = avg; weakCr = cr; }
+  });
+
+  const lines = [];
+  const pLabel = periodLabel(curMonth);
+
+  // Team performance summary
+  const teamRank = rankInfo(teamAvg);
+  lines.push(`<div class="insight-line"><span class="insight-icon">${teamRank.icon}</span><span>Team average this period (<b style="color:var(--cyan)">${pLabel}</b>) is <b style="color:${teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'}">${teamAvg.toFixed(2)}/10</b> — <b>${teamRank.label}</b> performance.</span></div>`);
+
+  // Top performer
+  if(top) {
+    const streak = calcStreak(top.c.id, curMonth).streak;
+    lines.push(`<div class="insight-line"><span class="insight-icon">🏆</span><span>Top performer is <b style="color:${top.c.color}">${top.c.name}</b> with <b style="color:var(--emerald)">${top.avg.toFixed(2)}/10</b>${streak>=2?` and a <b style="color:#ff9520">🔥${streak}-day streak</b>`:''}.</span></div>`);
+  }
+
+  // Most improved
+  if(improved && improvedDelta > 0.2) {
+    lines.push(`<div class="insight-line"><span class="insight-icon">📈</span><span>Most improved from last period: <b style="color:${improved.color}">${improved.name}</b> (+${improvedDelta.toFixed(2)} pts).</span></div>`);
+  }
+
+  // Weakest criterion
+  if(weakCr && weakVal < 8) {
+    lines.push(`<div class="insight-line"><span class="insight-icon">⚠️</span><span>Area needing attention: <b style="color:var(--amber)">${weakCr.name}</b> (avg <b style="color:var(--rose)">${weakVal.toFixed(2)}/10</b>) — consider focused coaching.</span></div>`);
+  }
+
+  // Bottom performer (only if gap is significant)
+  if(bottom && top && (top.avg - bottom.avg) > 1.5) {
+    lines.push(`<div class="insight-line"><span class="insight-icon">💡</span><span><b style="color:${bottom.c.color}">${bottom.c.name}</b> is scoring <b style="color:var(--rose)">${bottom.avg.toFixed(2)}/10</b> this period — a <b>${(top.avg - bottom.avg).toFixed(2)}-point gap</b> from the top. A 1-on-1 review may help.</span></div>`);
+  }
+
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--cyan);margin-bottom:12px">
+      🧠 Performance Insights — ${pLabel}
+    </div>
+    ${lines.join('')}`;
+}
+
 function renderStats() {
-  const cols=db.colleagues;
-  const avgs=cols.map(c=>colMonthAvg(c.id,curMonth)).filter(Boolean);
-  const teamAvg=avgs.length?(avgs.reduce((a,b)=>a+b,0)/avgs.length):0;
-  const best=cols.slice().sort((a,b)=>colMonthAvg(b.id,curMonth)-colMonthAvg(a.id,curMonth))[0];
-  const totalEntries=cols.reduce((s,c)=>s+countScores(c.id,curMonth),0);
+  const cols = db.colleagues;
+  const months = availMonths();
+  const prevMonth = months[1] || null;
 
-  document.getElementById('statsGrid').innerHTML=[
-    {ico:'👥',val:cols.length,lbl:'Team Size',color:'var(--cyan)'},
-    {ico:'⭐',val:teamAvg?teamAvg.toFixed(2):'—',lbl:'Team Avg Score',color:teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'},
-    {ico:'🏆',val:best?best.name.split(' ').slice(-1)[0]:'—',lbl:'Top Performer',color:'var(--amber)'},
-    {ico:'📝',val:totalEntries,lbl:'Total Entries',color:'var(--teal)'},
-    {ico:'📋',val:db.criteria.length,lbl:'Active Criteria',color:'var(--amber)'},
-    {ico:'📅',val:fmtMonth(curMonth),lbl:'Current Period',color:'var(--text2)'},
-  ].map(s=>`<div class="stat-card">
-    <div class="stat-icon">${s.ico}</div>
-    <div><div class="stat-val" style="color:${s.color}">${s.val}</div><div class="stat-lbl">${s.lbl}</div></div>
-  </div>`).join('');
+  // per-colleague stats
+  const colStats = cols.map(c => {
+    const avg = colMonthAvg(c.id, curMonth);
+    const cnt = countScores(c.id, curMonth);
+    const prevAvg = prevMonth ? colMonthAvg(c.id, prevMonth) : 0;
+    const delta = (avg > 0 && prevAvg > 0) ? +(avg - prevAvg).toFixed(2) : null;
+    const vals = [];
+    const sc = db.scores[c.id]?.[curMonth] || {};
+    getActiveCriteria(c.id).forEach(cr => {
+      Object.values(sc[cr.id] || {}).forEach(e => { if(e.score) vals.push(e.score); });
+    });
+    const mean = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+    const stddev = vals.length > 1
+      ? +Math.sqrt(vals.map(v=>(v-mean)**2).reduce((a,b)=>a+b,0)/vals.length).toFixed(2)
+      : 0;
+    const dim = periodDayCount(curMonth);
+    let absentDays=0, busyDays=0;
+    for(let d=1;d<=dim;d++){
+      const cr0 = getActiveCriteria(c.id)[0]; if(!cr0) continue;
+      const e = sc[cr0.id]?.[d];
+      if(e?.status==='absent'&&!e?.score) absentDays++;
+      else if(e?.status==='busy'&&!e?.score) busyDays++;
+    }
+    let bestDay={avg:0,d:0};
+    for(let d=1;d<=dim;d++){
+      let s=0,n=0;
+      getActiveCriteria(c.id).forEach(cr=>{ const e=sc[cr.id]?.[d]; if(e?.score){s+=e.score;n++;} });
+      if(n>0&&s/n>bestDay.avg) bestDay={avg:s/n,d};
+    }
+    return {c,avg,cnt,prevAvg,delta,stddev,absentDays,busyDays,bestDay,vals};
+  });
 
-  // Overview table
-  const months=availMonths();
-  const tbl=document.getElementById('overviewTbl');
-  if(!tbl) return;
-  tbl.innerHTML=`<thead><tr><th>Colleague</th><th>Role</th>${months.map(m=>`<th>${fmtMonth(m)}</th>`).join('')}<th>Overall</th></tr></thead>
-  <tbody>${cols.map(c=>{
-    const mAvgs=months.map(m=>{
-      const a=colMonthAvg(c.id,m);
-      const col=a>=8?'var(--emerald)':a>=6?'var(--amber)':a>0?'var(--rose)':'var(--text3)';
-      return a?`<td style="color:${col};font-family:'Geist Mono',monospace;font-weight:600">${a.toFixed(2)}</td>`:'<td style="color:var(--text3)">—</td>';
+  const activeAvgs = colStats.filter(x=>x.avg>0);
+  const teamAvg = activeAvgs.length ? activeAvgs.reduce((s,x)=>s+x.avg,0)/activeAvgs.length : 0;
+  const totalEntries = colStats.reduce((s,x)=>s+x.cnt,0);
+  const best = [...activeAvgs].sort((a,b)=>b.avg-a.avg)[0]?.c;
+  const totalAbsent = colStats.reduce((s,x)=>s+x.absentDays,0);
+
+  // score distribution 1-5 across team
+  const distrib = [0,0,0,0,0];
+  colStats.forEach(x => x.vals.forEach(v => { if(v>=1&&v<=5) distrib[v-1]++; }));
+  const distribMax = Math.max(...distrib, 1);
+  const distColors = ['#ff4d6d','#ff7849','#ffb340','#60d394','#00c896'];
+
+  const trendArrow = d => {
+    if(d===null||d===undefined) return '';
+    if(d > 0.1)  return '<span style="color:#00c896;font-size:10px"> ▲'+d.toFixed(1)+'</span>';
+    if(d < -0.1) return '<span style="color:#ff4d6d;font-size:10px"> ▼'+Math.abs(d).toFixed(1)+'</span>';
+    return '<span style="color:#64748b;font-size:10px"> ▬</span>';
+  };
+
+  // KPI cards
+  document.getElementById('statsGrid').innerHTML = [
+    {ico:'👥', val:cols.length,                   lbl:'Team Size',       color:'var(--cyan)'},
+    {ico:'⭐', val:teamAvg?teamAvg.toFixed(2):'—', lbl:'Team Avg',        color:teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'},
+    {ico:'🏆', val:best?best.name.split(' ').slice(-1)[0]:'—', lbl:'Top Performer', color:'var(--amber)'},
+    {ico:'📝', val:totalEntries,                  lbl:'Total Entries',   color:'var(--teal)'},
+    {ico:'📋', val:db.criteria.length,            lbl:'Criteria',        color:'var(--amber)'},
+    {ico:'🔴', val:totalAbsent||'—',              lbl:'Absent Days',     color:'var(--rose)'},
+  ].map(s => '<div class="stat-card">'
+    +'<div class="stat-icon">'+s.ico+'</div>'
+    +'<div><div class="stat-val" style="color:'+s.color+'">'+s.val+'</div><div class="stat-lbl">'+s.lbl+'</div></div>'
+    +'</div>').join('');
+
+  // Distribution bars
+  const distHTML = distrib.map((n,i) =>
+    '<div class="distrib-bar-wrap">'
+    +'<div class="distrib-bar-lbl" style="color:'+distColors[i]+'">'+(i+1)+'★</div>'
+    +'<div class="distrib-bar-track"><div class="distrib-bar-fill" style="width:'+Math.round(n/distribMax*100)+'%;background:'+distColors[i]+'"></div></div>'
+    +'<div class="distrib-bar-count">'+n+'</div>'
+    +'</div>'
+  ).join('');
+
+  // Colleague analytics rows
+  const analRows = colStats.map(x => {
+    if(!x.avg) return '';
+    const ac = x.avg>=8?'var(--emerald)':x.avg>=6?'var(--amber)':'var(--rose)';
+    const ini = x.c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const cons = x.stddev>0 ? Math.max(0,Math.round((1-x.stddev/5)*100)) : (x.avg>0?100:0);
+    const cc = cons>=80?'#00c896':cons>=60?'#ffb340':'#ff4d6d';
+    return '<tr>'
+      +'<td><div style="display:flex;align-items:center;gap:8px">'
+      +'<div style="width:28px;height:28px;border-radius:7px;background:'+x.c.color+'22;color:'+x.c.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+ini+'</div>'
+      +x.c.name+'</div></td>'
+      '<td style="color:'+ac+';font-family:monospace;font-weight:700;text-align:center">'+x.avg.toFixed(2)+trendArrow(x.delta)+'</td>'
+      '<td style="text-align:center;color:var(--text2);font-family:monospace">±'+x.stddev+'</td>'
+      +'<td style="text-align:center"><div style="display:inline-flex;align-items:center;gap:4px">'
+      +'<div style="width:36px;height:5px;background:var(--ink4);border-radius:3px;overflow:hidden">'
+      +'<div style="width:'+cons+'%;height:100%;background:'+cc+';border-radius:3px"></div></div>'
+      +'<span style="font-size:10px;color:'+cc+'">'+cons+'%</span></div></td>'
+      +'<td style="text-align:center;font-size:11px">'
+      +(x.absentDays?'<span style="color:#ff4d6d">🔴'+x.absentDays+'d</span> ':'')
+      +(x.busyDays?'<span style="color:#ffb340">🟡'+x.busyDays+'d</span>':'')
+      +((!x.absentDays&&!x.busyDays)?'<span style="color:var(--text3)">—</span>':'')
+      +'</td>'
+      +'<td style="text-align:center;font-size:10px;color:var(--emerald)">'+(x.bestDay.d?'Day '+x.bestDay.d+' ('+x.bestDay.avg.toFixed(1)+')':'—')+'</td>'
+      +'</tr>';
+  }).join('');
+
+  // Monthly overview table
+  const tbl = document.getElementById('overviewTbl');
+  if(tbl) {
+    tbl.innerHTML = '<thead><tr><th>Colleague</th><th>Role</th>'
+      +months.map(m=>'<th>'+fmtMonth(m)+'</th>').join('')
+      +'<th>Overall</th></tr></thead><tbody>'
+      +cols.map(c=>{
+        const mAvgs=months.map(m=>{
+          const a=colMonthAvg(c.id,m);
+          const col=a>=8?'var(--emerald)':a>=6?'var(--amber)':a>0?'var(--rose)':'var(--text3)';
+          return a?'<td style="color:'+col+';font-family:monospace;font-weight:600">'+a.toFixed(2)+'</td>':'<td style="color:var(--text3)">—</td>';
+        }).join('');
+        const all=months.map(m=>colMonthAvg(c.id,m)).filter(Boolean);
+        const ov=all.length?all.reduce((a,b)=>a+b,0)/all.length:0;
+        const ovc=ov>=8?'var(--emerald)':ov>=6?'var(--amber)':ov>0?'var(--rose)':'var(--text3)';
+        const ini=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+        return '<tr>'
+          +'<td><div style="display:flex;align-items:center;gap:8px">'
+          +'<div style="width:30px;height:30px;border-radius:8px;background:'+c.color+'22;color:'+c.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+ini+'</div>'
+          +c.name+'</div></td>'
+          +'<td style="color:var(--text3)">'+c.role+'</td>'
+          +mAvgs
+          +'<td style="color:'+ovc+';font-family:monospace;font-weight:700">'+(ov?ov.toFixed(2):'—')+'</td>'
+          +'</tr>';
+      }).join('')+'</tbody>';
+  }
+
+  // Inject analytics section
+  let analyticsEl = document.getElementById('statsAnalytics');
+  if(!analyticsEl) {
+    analyticsEl = document.createElement('div');
+    analyticsEl.id = 'statsAnalytics';
+    const sg = document.getElementById('statsGrid');
+    if(sg && sg.parentNode) sg.parentNode.insertBefore(analyticsEl, sg.nextSibling);
+  }
+  if(analyticsEl) {
+    // ── A: Period Completion ── % of days with at least one score
+    const dim = periodDayCount(curMonth);
+    const completionRows = cols.map(c => {
+      const sc = db.scores[c.id]?.[curMonth] || {};
+      const filled = new Set();
+      getActiveCriteria(c.id).forEach(cr => {
+        Object.keys(sc[cr.id]||{}).forEach(d => { if(sc[cr.id][d]?.score) filled.add(d); });
+      });
+      const pct = dim>0 ? Math.round((filled.size/dim)*100) : 0;
+      const color = pct>=80?'#00c896':pct>=50?'#00d4ff':'#ffb340';
+      const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      return '<tr>'
+        +'<td><div style="display:flex;align-items:center;gap:7px">'
+        +'<div style="width:26px;height:26px;border-radius:6px;background:'+c.color+'22;color:'+c.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+ini+'</div>'
+        +c.name+'</div></td>'
+        +'<td style="width:120px;padding-right:8px"><div style="height:7px;background:var(--ink4);border-radius:4px;overflow:hidden">'
+        +'<div style="width:'+pct+'%;height:100%;background:'+color+';border-radius:4px;transition:width 0.8s cubic-bezier(.4,0,.2,1)"></div></div></td>'
+        +'<td style="font-size:12px;font-weight:700;color:'+color+';text-align:right;white-space:nowrap">'+pct+'%</td>'
+        +'<td style="font-size:11px;color:var(--text3);text-align:right">'+filled.size+'/'+dim+' days</td>'
+        +'</tr>';
     }).join('');
-    const all=months.map(m=>colMonthAvg(c.id,m)).filter(Boolean);
-    const ov=all.length?(all.reduce((a,b)=>a+b,0)/all.length):0;
-    const ovc=ov>=8?'var(--emerald)':ov>=6?'var(--amber)':ov>0?'var(--rose)':'var(--text3)';
-    const ini=c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:8px">
-        <div style="width:30px;height:30px;border-radius:8px;background:${c.color}22;color:${c.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${ini}</div>
-        ${c.name}
-      </div></td>
-      <td style="color:var(--text3)">${c.role}</td>
-      ${mAvgs}
-      <td style="color:${ovc};font-family:'Geist Mono',monospace;font-weight:700">${ov?ov.toFixed(2):'—'}</td>
-    </tr>`;
-  }).join('')}</tbody>`;
+
+    // ── B: Criterion Spotlight ── best & worst criterion per colleague
+    const spotRows = cols.map(c => {
+      const crAvgs = getActiveCriteria(c.id).map(cr => {
+        let s=0, n=0;
+        const sc = db.scores[c.id]?.[curMonth]||{};
+        Object.values(sc[cr.id]||{}).forEach(e => { if(e?.score){s+=e.score;n++;} });
+        return {name:cr.name, avg:n?s/n:0};
+      }).filter(x=>x.avg>0);
+      if(!crAvgs.length) return '';
+      crAvgs.sort((a,b)=>b.avg-a.avg);
+      const best  = crAvgs[0];
+      const worst = crAvgs[crAvgs.length-1];
+      const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      return '<tr>'
+        +'<td><div style="display:flex;align-items:center;gap:7px">'
+        +'<div style="width:26px;height:26px;border-radius:6px;background:'+c.color+'22;color:'+c.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+ini+'</div>'
+        +c.name+'</div></td>'
+        +'<td><div style="font-size:11px;color:#00c896;font-weight:600">✅ '+best.name.slice(0,28)+'</div>'
+        +'<div style="font-size:10px;color:var(--text3)">'+best.avg.toFixed(2)+'/10</div></td>'
+        +'<td><div style="font-size:11px;color:#ffb340;font-weight:600">⚠ '+worst.name.slice(0,28)+'</div>'
+        +'<div style="font-size:10px;color:var(--text3)">'+worst.avg.toFixed(2)+'/10</div></td>'
+        +'</tr>';
+    }).filter(Boolean).join('');
+
+    // ── C: Momentum Tracker ── last 4 periods rolling avg with arrows
+    const last4 = months.slice(0,4);
+    const momentumRows = cols.map(c => {
+      const avgs = last4.map(m => colMonthAvg(c.id,m));
+      const cells = avgs.map((a,i) => {
+        const prev = avgs[i+1];
+        const arrow = (a>0&&prev>0) ? (a>prev?'<span style="color:#00c896">▲</span>':a<prev?'<span style="color:#ff4d6d">▼</span>':'<span style="color:#64748b">▬</span>') : '';
+        const color = a>=8?'#00c896':a>=6?'#00d4ff':a>0?'#ffb340':'var(--text3)';
+        return '<td style="text-align:center;padding:4px 6px">'
+          +'<div style="font-size:12px;font-weight:700;color:'+color+'">'+(a?a.toFixed(1):'—')+'</div>'
+          +'<div style="font-size:9px">'+arrow+'</div></td>';
+      }).join('');
+      const ini = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      return '<tr>'
+        +'<td><div style="display:flex;align-items:center;gap:7px">'
+        +'<div style="width:26px;height:26px;border-radius:6px;background:'+c.color+'22;color:'+c.color+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">'+ini+'</div>'
+        +c.name+'</div></td>'+cells+'</tr>';
+    }).join('');
+    const momentumHdr = last4.map(m=>'<th style="text-align:center;font-size:10px">'+fmtMonth(m)+'</th>').join('');
+
+    analyticsEl.innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">'
+      // Card A: Period Completion
+      +'<div class="card"><div class="card-head"><div>'
+      +'<div class="card-title">📅 Period Completion</div>'
+      +'<div class="card-sub">% of days with at least one score entered</div>'
+      +'</div></div>'
+      +'<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="rtbl" style="min-width:280px;width:100%"><tbody>'+completionRows+'</tbody></table></div></div>'
+      // Card B: Criterion Spotlight
+      +'<div class="card" style="overflow-x:auto"><div class="card-head"><div>'
+      +'<div class="card-title">🔍 Criterion Spotlight</div>'
+      +'<div class="card-sub">Strongest and weakest criterion per colleague this period</div>'
+      +'</div></div>'
+      +'<table class="rtbl"><thead><tr><th>Colleague</th><th>✅ Best</th><th>⚠ Needs Work</th></tr></thead>'
+      +'<tbody>'+spotRows+'</tbody></table></div></div>'
+      // Card C: Momentum Tracker (full width)
+      +'<div class="card" style="overflow-x:auto;margin-bottom:20px"><div class="card-head"><div>'
+      +'<div class="card-title">📈 Momentum Tracker</div>'
+      +'<div class="card-sub">Rolling average across last 4 periods — spot trends early</div>'
+      +'</div></div>'
+      +'<table class="rtbl" style="min-width:400px"><thead><tr><th>Colleague</th>'+momentumHdr+'</tr></thead>'
+      +'<tbody>'+momentumRows+'</tbody></table></div>';
+  }
+
+  renderInsightCard();
 }
 
 /* ════════════════════════════════════════════
@@ -2337,17 +2908,67 @@ const CHART_BASE = {
   }
 };
 
+/* ── RANK HELPER ── */
+function rankInfo(avg) {
+  if(!avg || avg === 0) return { cls:'rank-none',  label:'No Data',   icon:'—'  };
+  if(avg >= 9.0)        return { cls:'rank-elite', label:'Elite',     icon:'🥇' };
+  if(avg >= 7.5)        return { cls:'rank-star',  label:'Star',      icon:'🌟' };
+  if(avg >= 6.0)        return { cls:'rank-good',  label:'Good',      icon:'✅' };
+  return                       { cls:'rank-dev',   label:'Developing',icon:'📈' };
+}
+
+/* ── STREAK: consecutive period-days with at least one score ── */
+function calcStreak(colId, periodKey) {
+  const scores = db.scores[colId]?.[periodKey] || {};
+  const cs  = getCycleStart();
+  const dim = periodDayCount(periodKey);
+  let streak = 0, maxStreak = 0, cur = 0;
+  for(let d = 1; d <= dim; d++) {
+    const hasScore = Object.values(scores).some(cr => cr[d]?.score);
+    if(hasScore) { cur++; maxStreak = Math.max(maxStreak, cur); }
+    else cur = 0;
+  }
+  // Current streak: count backwards from today
+  const [y,m] = periodKey.split('-').map(Number);
+  const now = new Date();
+  const periodStart = new Date(y, m-1, cs);
+  const periodEnd   = new Date(y, m, cs-1);
+  if(now >= periodStart && now <= periodEnd) {
+    const todayPDay = Math.floor((now - periodStart)/86400000) + 1;
+    let s = 0;
+    for(let d = todayPDay; d >= 1; d--) {
+      const has = Object.values(scores).some(cr => cr[d]?.score);
+      if(has) s++; else break;
+    }
+    streak = s;
+  }
+  return { streak, maxStreak };
+}
+
+/* ── SPARKLINE DATA: last 6 period-day avgs ── */
+function sparklineData(colId, periodKey) {
+  const scores = db.scores[colId]?.[periodKey] || {};
+  const dim = periodDayCount(periodKey);
+  const result = [];
+  for(let d = Math.max(1, dim-9); d <= dim; d++) {
+    const vals = Object.values(scores)
+      .map(cr => cr[d]?.score).filter(Boolean);
+    result.push(vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0);
+  }
+  return result;
+}
+
 function destroyChart(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
 
 function renderAllCharts() {
   const g=document.getElementById('chartsGrid');
   g.innerHTML=`
-    <div class="chart-card"><div class="chart-card-title">Team Comparison</div><div class="chart-card-sub">Current month average score per colleague</div><div class="chart-wrap"><canvas id="chTeam"></canvas></div></div>
-    <div class="chart-card"><div class="chart-card-title">Criteria Performance</div><div class="chart-card-sub">Team-wide average per criterion</div><div class="chart-wrap"><canvas id="chCriteria"></canvas></div></div>
-    <div class="chart-card"><div class="chart-card-title">Monthly Trend</div><div class="chart-card-sub">Average scores over time — all colleagues</div><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
-    <div class="chart-card"><div class="chart-card-title">Score Distribution</div><div class="chart-card-sub">Breakdown of score values this month</div><div class="chart-wrap"><canvas id="chDist"></canvas></div></div>
+    <div class="chart-card"><div class="chart-card-title">Team Comparison</div><div class="chart-card-sub">Current period — average score per colleague</div><div class="chart-wrap"><canvas id="chTeam"></canvas></div></div>
+    <div class="chart-card"><div class="chart-card-title">Criteria Ranking</div><div class="chart-card-sub">Team-wide avg per criterion — highest to lowest</div><div class="chart-wrap" style="height:240px"><canvas id="chCriteria"></canvas></div></div>
+    <div class="chart-card"><div class="chart-card-title">Monthly Trend</div><div class="chart-card-sub">Average score trajectory — all colleagues</div><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
+    <div class="chart-card"><div class="chart-card-title">Score Spread</div><div class="chart-card-sub">How scores are distributed across the team this period</div><div class="chart-wrap"><canvas id="chSpread"></canvas></div></div>
   `;
-  setTimeout(()=>{ buildChTeam(); buildChCriteria(); buildChTrend(); buildChDist(); },30);
+  setTimeout(()=>{ buildChTeam(); buildChCriteria(); buildChTrend(); buildChSpread(); },30);
 }
 
 function buildChTeam() {
@@ -2369,21 +2990,33 @@ function buildChTeam() {
 
 function buildChCriteria() {
   destroyChart('chCriteria');
-  const labels=db.criteria.map(cr=>cr.name.length>20?cr.name.slice(0,20)+'…':cr.name);
-  const data=db.criteria.map(cr=>{
-    let s=0,n=0;
-    db.colleagues.forEach(c=>{
-      const sc=db.scores[c.id]?.[curMonth]?.[cr.id]||{};
-      Object.values(sc).forEach(e=>{if(e.score){s+=e.score;n++;}});
+  const rawData = db.criteria.map(cr => {
+    let s=0, n=0;
+    db.colleagues.forEach(c => {
+      const sc = db.scores[c.id]?.[curMonth]?.[cr.id] || {};
+      Object.values(sc).forEach(e => { if(e.score){ s+=e.score; n++; } });
     });
-    return n?parseFloat((s/n).toFixed(2)):0;
-  });
-  charts['chCriteria']=new Chart(document.getElementById('chCriteria'),{
-    type:'radar',
-    data:{labels,datasets:[{label:'Team Avg',data,backgroundColor:'rgba(0,212,255,0.08)',borderColor:'#00d4ff',pointBackgroundColor:'#00d4ff',pointRadius:4,borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      scales:{r:{ticks:{color:'#4a5568',backdropColor:'transparent',font:{size:9}},grid:{color:'rgba(0,212,255,0.08)'},pointLabels:{color:'#7a8fa6',font:{size:9}},min:0,max:10}},
-      plugins:{legend:{labels:{color:'#7a8fa6'}}}}
+    return { name: cr.name.length>22 ? cr.name.slice(0,22)+'…' : cr.name, avg: n?parseFloat((s/n).toFixed(2)):0 };
+  }).sort((a,b) => b.avg - a.avg);
+  charts['chCriteria'] = new Chart(document.getElementById('chCriteria'), {
+    type: 'bar',
+    data: {
+      labels: rawData.map(d => d.name),
+      datasets: [{
+        label: 'Team Avg', data: rawData.map(d => d.avg),
+        backgroundColor: rawData.map(d => d.avg>=8?'#00c896bb':d.avg>=6?'#ffb340bb':d.avg>0?'#ff4d6dbb':'#2a3547bb'),
+        borderRadius: 6, borderSkipped: false, borderWidth: 0
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x.toFixed(2)} / 10` } } },
+      scales: {
+        x: { min:0, max:10, grid:{color:'rgba(0,212,255,0.05)'}, ticks:{color:'#7a8fa6',font:{size:10}} },
+        y: { grid:{display:false}, ticks:{color:'#c0cfe0',font:{size:10}} }
+      }
+    }
   });
 }
 
@@ -2406,25 +3039,52 @@ function buildChTrend() {
   });
 }
 
-function buildChDist() {
-  destroyChart('chDist');
-  const dist=[1,2,3,4,5].map(s=>{
-    let n=0;
-    db.colleagues.forEach(c=>{
-      Object.values(db.scores[c.id]?.[curMonth]||{}).forEach(cr=>{
-        Object.values(cr).forEach(e=>{if(e.score===s)n++;});
-      });
-    });
-    return n;
+function buildChSpread() {
+  destroyChart('chSpread');
+  const labels = db.colleagues.map(c => c.name.split(' ').slice(-1)[0]);
+  // For each colleague: avg, best day, worst day this period
+  const avgData = db.colleagues.map(c => colMonthAvg(c.id, curMonth) || 0);
+  const bestData = db.colleagues.map(c => {
+    const sc = db.scores[c.id]?.[curMonth]||{};
+    const dim = periodDayCount(curMonth);
+    let best = 0;
+    for(let d=1;d<=dim;d++){
+      let s=0,n=0;
+      getActiveCriteria(c.id).forEach(cr=>{ const e=sc[cr.id]?.[d]; if(e?.score){s+=e.score;n++;} });
+      if(n&&s/n>best) best=s/n;
+    }
+    return +best.toFixed(2);
   });
-  charts['chDist']=new Chart(document.getElementById('chDist'),{
-    type:'doughnut',
+  const worstData = db.colleagues.map(c => {
+    const sc = db.scores[c.id]?.[curMonth]||{};
+    const dim = periodDayCount(curMonth);
+    let worst = 11;
+    let found = false;
+    for(let d=1;d<=dim;d++){
+      let s=0,n=0;
+      getActiveCriteria(c.id).forEach(cr=>{ const e=sc[cr.id]?.[d]; if(e?.score){s+=e.score;n++;} });
+      if(n){ const da=s/n; if(da<worst){worst=da;found=true;} }
+    }
+    return found ? +worst.toFixed(2) : 0;
+  });
+  charts['chSpread'] = new Chart(document.getElementById('chSpread'), {
+    type:'bar',
     data:{
-      labels:['1★','2★','3★','4★','5★'],
-      datasets:[{data:dist,backgroundColor:Object.values(SCORE_COLORS).map(c=>c+'aa'),borderWidth:0,hoverOffset:10}]
+      labels,
+      datasets:[
+        {label:'Best Day',  data:bestData,  backgroundColor:db.colleagues.map(c=>c.color+'66'), borderColor:db.colleagues.map(c=>c.color), borderWidth:2, borderRadius:4, borderSkipped:false},
+        {label:'Period Avg',data:avgData,   backgroundColor:db.colleagues.map(c=>c.color+'bb'), borderColor:db.colleagues.map(c=>c.color), borderWidth:1, borderRadius:4, borderSkipped:false},
+        {label:'Worst Day', data:worstData, backgroundColor:'rgba(100,116,139,0.25)', borderColor:'rgba(100,116,139,0.5)', borderWidth:1, borderRadius:4, borderSkipped:false},
+      ]
     },
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#7a8fa6',padding:14,font:{size:11}}}}}
+    options:{...CHART_BASE,
+      plugins:{...CHART_BASE.plugins,
+        legend:{labels:{color:'#7a8fa6',font:{size:10}}}},
+      scales:{
+        x:{...CHART_BASE.scales.x, stacked:false},
+        y:{...CHART_BASE.scales.y, min:0, max:10}
+      }
+    }
   });
 }
 
@@ -2528,7 +3188,7 @@ function applyFilter() {
   <tbody>${rows.map(r=>{
     const c=r.avg>=8?'var(--emerald)':r.avg>=6?'var(--amber)':'var(--rose)';
     return `<tr><td>${r.colleague}</td><td>${r.month}</td><td>${r.criterion}</td>
-    <td style="color:${c};font-family:'Geist Mono',monospace;font-weight:600">${r.avg.toFixed(2)}</td>
+    <td style="color:${c};font-family:monospace;font-weight:600">${r.avg.toFixed(2)}</td>
     <td>${r.entries}</td>
     <td style="color:var(--rose)">${r.min}</td>
     <td style="color:var(--emerald)">${r.max}</td></tr>`;
@@ -2546,6 +3206,8 @@ function resetFilter() {
    EXPORT / IMPORT / PRINT
 ════════════════════════════════════════════ */
 // saveDataNow() defined in GOOGLE SHEETS SYNC block
+
+function doExportNow() { doExport(); }
 
 function doExport() {
   const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
@@ -2829,9 +3491,11 @@ function executePrint() {
 
     const gridRows = crData.map(({cr,avg})=>{
       const cells=days.map(d=>{
-        const e=scores[cr.id]?.[d];const sc=e?.score;
-        const bg=sc?sc2col(sc)+'28':'#f8fafc';const fg=sc?sc2col(sc):'#cbd5e1';
-        return `<td style="width:17px;min-width:17px;height:15px;text-align:center;vertical-align:middle;padding:0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:5pt;font-weight:700;color:${fg}">${sc||''}</span></td>`;
+        const e=scores[cr.id]?.[d];const sc=e?.score;const st=e?.status;
+        const bg=sc?sc2col(sc)+'28':st==='absent'?'#fee2e2':st==='busy'?'#fef3c7':'#f8fafc';
+        const fg=sc?sc2col(sc):st==='absent'?'#dc2626':st==='busy'?'#d97706':'#cbd5e1';
+        const lbl=sc?sc:st==='absent'?'A':st==='busy'?'B':'';
+        return `<td style="width:17px;min-width:17px;height:15px;text-align:center;vertical-align:middle;padding:0;background:${bg};border:1px solid #e2e8f0"><span style="font-size:5pt;font-weight:700;color:${fg}">${lbl}</span></td>`;
       }).join('');
       const ac=avg2col(avg);const bw=Math.round(avg/10*42);
       return `<tr><td style="width:95px;max-width:95px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:6.5pt;font-weight:600;color:#1e293b;padding:2px 4px;border:1px solid #e2e8f0;border-left:3px solid ${ac}" title="${cr.name}">${cr.name}</td>${cells}<td style="width:52px;padding:2px 4px;border:1px solid #e2e8f0;white-space:nowrap"><div style="display:flex;align-items:center;gap:2px"><div style="width:${bw}px;height:4px;border-radius:2px;background:${ac};min-width:1px"></div><span style="font-size:6.5pt;font-weight:700;color:${ac}">${avg?avg.toFixed(1):'—'}</span></div></td></tr>`;
@@ -3090,7 +3754,12 @@ body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#ff
 function getActiveCriteria(colId) {
   return db.criteria.filter(cr => {
     const s = cr.scope || 'global';
-    return s === 'global' || s === colId;
+    if(s === 'global') return true;
+    if(s === 'specific') {
+      const ids = cr.colleagueIds || [];
+      return ids.length === 0 || ids.includes(colId);
+    }
+    return s === colId; // legacy single-colleague scope
   });
 }
 function getCycleStart() { return (db.settings&&db.settings.cycleStart)||1; }
@@ -3123,19 +3792,17 @@ function periodLabel(periodKey) {
 function availMonths() {
   const now = new Date();
   const cs  = getCycleStart();
-  const months = [];
-  // Find the period that contains today
   const todayDay = now.getDate();
-  // Base period: if today < cs, current period started last calendar month
-  const baseMonth = (todayDay < cs)
+  const baseMo = (todayDay < cs)
     ? new Date(now.getFullYear(), now.getMonth()-1, 1)
     : new Date(now.getFullYear(), now.getMonth(),   1);
-  // Generate 6 consecutive period keys going back from base
-  for(let i=5; i>=0; i--) {
-    const d = new Date(baseMonth.getFullYear(), baseMonth.getMonth()-i, 1);
-    months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);
-  }
-  return months;
+  const curPeriod = `${baseMo.getFullYear()}-${String(baseMo.getMonth()+1).padStart(2,'0')}`;
+  // Collect all period keys that have score or note data
+  const keys = new Set([curPeriod]);
+  Object.values(db.scores || {}).forEach(col => Object.keys(col).forEach(k => keys.add(k)));
+  const allNotes = [...(db.notes?.positive||[]), ...(db.notes?.negative||[])];
+  allNotes.forEach(n => { if(n.month) keys.add(n.month); });
+  return [...keys].sort().reverse(); // newest first
 }
 function fmtMonth(m) {
   const [y,mo]=m.split('-').map(Number);
@@ -3457,12 +4124,20 @@ function renderNotesList(type) {
   const cntEl   = document.getElementById(isPos ? 'posCnt' : 'negCnt');
   if(!listEl) return;
   const allNotes    = (db.notes && db.notes[type]) ? db.notes[type] : [];
-  const filterMonth = document.getElementById('notesMonthFilter')?.value || '';
-  // Filter by selected month (or show all)
-  const notes = filterMonth
-    ? allNotes.filter(n => (n.month || '') === filterMonth)
-    : allNotes;
-  if(cntEl) cntEl.textContent = notes.length + (filterMonth ? '' : '');
+  const filterMonth    = document.getElementById('notesMonthFilter')?.value || '';
+  const searchQ        = (document.getElementById('notesSearch')?.value || '').toLowerCase().trim();
+  const filterPriority = document.getElementById('notesPriorityFilter')?.value || '';
+  const notes = allNotes.filter(n => {
+    if(filterMonth    && (n.month||'') !== filterMonth) return false;
+    if(filterPriority && (n.priority||'normal') !== filterPriority) return false;
+    if(searchQ) {
+      const col = n.colId ? (db.colleagues.find(c=>c.id===n.colId)?.name||'').toLowerCase() : '';
+      const txt = (n.text||'').toLowerCase();
+      if(!txt.includes(searchQ) && !col.includes(searchQ)) return false;
+    }
+    return true;
+  });
+  if(cntEl) cntEl.textContent = notes.length;
   const t = appLang==='ar' ? AR : EN;
   if(!notes.length) {
     listEl.innerHTML = `<div class="notes-empty-msg">${filterMonth ? 'No notes for this period' : t.noNotes}</div>`;
@@ -3471,41 +4146,93 @@ function renderNotesList(type) {
   const accentColor = isPos ? 'var(--emerald)' : 'var(--rose)';
   const isAdmin = role === 'admin';
 
-  // Group by month (newest first)
-  const groups = {};
-  [...notes].reverse().forEach((n, ri) => {
+  // Group by month first, then by colleague within each month
+  const monthGroups = {};
+  [...notes].reverse().forEach(n => {
     const realIdx = allNotes.indexOf(n);
-    const mKey = n.month || 'unknown';
-    if(!groups[mKey]) groups[mKey] = [];
-    groups[mKey].push({ n, realIdx });
+    const mKey   = n.month || 'unknown';
+    const colKey = n.colId || '__team__';
+    if(!monthGroups[mKey]) monthGroups[mKey] = {};
+    if(!monthGroups[mKey][colKey]) monthGroups[mKey][colKey] = [];
+    monthGroups[mKey][colKey].push({ n, realIdx });
   });
 
-  // Sort groups newest first
-  const sortedMonths = Object.keys(groups).sort().reverse();
+  const sortedMonths = Object.keys(monthGroups).sort().reverse();
 
   listEl.innerHTML = sortedMonths.map(mKey => {
-    const label = mKey !== 'unknown' ? periodLabel(mKey) : 'No period';
-    const cards = groups[mKey].map(({ n, realIdx }) => {
-      const colleague = n.colId ? db.colleagues.find(c=>c.id===n.colId) : null;
-      const colName   = colleague ? colleague.name : t.allTeam;
-      const colColor  = colleague ? colleague.color : 'var(--text3)';
-      const safeText  = n.text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      return `<div class="note-card" style="border-left:3px solid ${accentColor}">
-        ${isAdmin ? `<button class="note-del" onclick="deleteNote('${type}',${realIdx})" title="Delete">✕</button>` : ''}
-        <div class="note-card-who" style="color:${colColor}">${colName}</div>
-        <div class="note-card-text">${safeText}</div>
-        ${n.date ? `<div class="note-card-meta">${n.date}</div>` : ''}
+    const mLabel = mKey !== 'unknown' ? periodLabel(mKey) : 'No period';
+
+    // Sort colleagues: team-wide first, then alphabetically
+    const colKeys = Object.keys(monthGroups[mKey]).sort((a,b) => {
+      if(a==='__team__') return -1; if(b==='__team__') return 1;
+      const ca = db.colleagues.find(c=>c.id===a)?.name||'';
+      const cb = db.colleagues.find(c=>c.id===b)?.name||'';
+      return ca.localeCompare(cb);
+    });
+
+    const colSections = colKeys.map(colKey => {
+      const colleague  = colKey !== '__team__' ? db.colleagues.find(c=>c.id===colKey) : null;
+      const colName    = colleague ? colleague.name : t.allTeam;
+      const colColor   = colleague ? colleague.color : 'var(--text3)';
+      const cards = monthGroups[mKey][colKey].map(({ n, realIdx }) => {
+        const safeText = n.text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const prio = n.priority || 'normal';
+        const prioBorder  = prio==='critical'?'#ff4d6d':prio==='high'?'#ffb340':accentColor;
+        const prioBg      = prio==='critical'?'rgba(255,77,109,0.06)':prio==='high'?'rgba(255,179,64,0.04)':'';
+        const prioLabel   = prio==='critical'?'🔥 Critical':prio==='high'?'⭐ High':'○ Normal';
+        const prioColor   = prio==='critical'?'#ff4d6d':prio==='high'?'#ffb340':'var(--text3)';
+        const prioPillBg  = prio==='critical'?'rgba(255,77,109,0.12)':prio==='high'?'rgba(255,179,64,0.10)':'rgba(100,116,139,0.08)';
+        return `<div class="note-card" style="border-left:3px solid ${prioBorder};${prioBg?'background:'+prioBg+';':''}">
+          ${isAdmin ? `<button class="note-del" onclick="deleteNote('${type}',${realIdx})" title="Delete">✕</button>` : ''}
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px">
+            <div class="note-card-text" style="margin:0;flex:1">${safeText}</div>
+            ${isAdmin ? `<button onclick="toggleNotePriority('${type}',${realIdx})" title="Click to change priority"
+              style="flex-shrink:0;padding:2px 8px;border-radius:12px;border:1px solid ${prioBorder}55;
+                     background:${prioPillBg};color:${prioColor};font-size:10px;font-weight:700;
+                     cursor:pointer;font-family:inherit;white-space:nowrap;transition:all 0.2s;line-height:1.6">${prioLabel}</button>` : `<span style="padding:2px 8px;border-radius:12px;background:${prioPillBg};color:${prioColor};font-size:10px;font-weight:700">${prioLabel}</span>`}
+          </div>
+          ${n.date ? `<div class="note-card-meta">${n.date}</div>` : ''}
+        </div>`;
+      }).join('');
+      return `<div style="margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:${colColor};padding:3px 6px 3px 10px;
+                    border-left:3px solid ${colColor};background:${colColor}11;
+                    border-radius:4px;margin-bottom:4px">
+          ${colName}
+        </div>
+        ${cards}
       </div>`;
     }).join('');
-    return `<div style="margin-bottom:6px">
+
+    return `<div style="margin-bottom:10px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
-                  color:${accentColor};padding:4px 8px;margin-bottom:4px;
-                  border-bottom:1px solid ${accentColor}44;opacity:0.85">
-        📅 ${label}
+                  color:${accentColor};padding:4px 8px;margin-bottom:6px;
+                  border-bottom:1px solid ${accentColor}44">
+        📅 ${mLabel}
       </div>
-      ${cards}
+      ${colSections}
     </div>`;
   }).join('');
+}
+
+function toggleNotePriority(type, idx) {
+  if(role !== 'admin') return;
+  const notes = db.notes?.[type];
+  if(!notes || !notes[idx]) return;
+  const cycle = {normal:'high', high:'critical', critical:'normal'};
+  notes[idx].priority = cycle[notes[idx].priority||'normal'] || 'normal';
+  SFX.tap();
+  save();
+  renderNotesList(type);
+}
+
+function updateCharCount(prefix, val) {
+  const el = document.getElementById(prefix+'CharCount');
+  if(el) {
+    const n = val.length;
+    el.textContent = n + ' chars';
+    el.style.color = n > 200 ? 'var(--amber)' : n > 280 ? 'var(--rose)' : 'var(--text3)';
+  }
 }
 
 function addNote(type) {
@@ -3518,10 +4245,12 @@ function addNote(type) {
   if(!db.notes) db.notes = { positive:[], negative:[] };
   if(!db.notes[type]) db.notes[type] = [];
   const notePeriod = curMonth || (()=>{ const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; })();
-  db.notes[type].push({ colId, text, date, month: notePeriod, ts: Date.now() });
+  const priority = document.getElementById(isPos ? 'posPriority' : 'negPriority')?.value || 'normal';
+  db.notes[type].push({ colId, text, date, month: notePeriod, ts: Date.now(), priority });
   save();
   document.getElementById(isPos ? 'posTextInp' : 'negTextInp').value = '';
   document.getElementById(isPos ? 'posDateInp' : 'negDateInp').value = '';
+  SFX.note();
   renderNotesList(type);
   toast(isPos ? 'Positive note added' : 'Improvement note added');
 }
@@ -3529,7 +4258,9 @@ function addNote(type) {
 function deleteNote(type, idx) {
   if(role !== 'admin') return;
   if(!confirm('Delete this note?')) return;
+  SFX.delete();
   db.notes[type].splice(idx, 1);
+  snapshotForUndo();
   save();
   renderNotesList(type);
 }
@@ -3562,7 +4293,157 @@ function exportNotesExcel() {
 /* ════════════════════════════════════════════
    BOOT
 ════════════════════════════════════════════ */
+// Live clock
+(function startClock() {
+  function tick() {
+    const el = document.getElementById('liveClock');
+    if(!el) return;
+    const now = new Date();
+    const hh  = String(now.getHours()).padStart(2,'0');
+    const mm  = String(now.getMinutes()).padStart(2,'0');
+    const ss  = String(now.getSeconds()).padStart(2,'0');
+    el.textContent = `${hh}:${mm}:${ss}`;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ── SOUND ENGINE (Web Audio API — no files needed) ── */
+const SFX = (() => {
+  let ctx = null;
+  const getCtx = () => {
+    if(!ctx) { try { ctx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+    return ctx;
+  };
+  const play = (freq, type, dur, vol=0.18, attack=0.005, decay=0.1) => {
+    const c = getCtx(); if(!c) return;
+    try {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
+      g.gain.setValueAtTime(0, c.currentTime);
+      g.gain.linearRampToValueAtTime(vol, c.currentTime + attack);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+      o.start(c.currentTime); o.stop(c.currentTime + dur);
+    } catch(e) {}
+  };
+  return {
+    tap:    () => play(880,  'sine',    0.08, 0.10),
+    score:  (n) => play(300 + n*80, 'triangle', 0.18, 0.14),
+    save:   () => { play(523, 'sine', 0.12, 0.10); setTimeout(()=>play(659,'sine',0.14,0.10),80); setTimeout(()=>play(784,'sine',0.18,0.10),160); },
+    delete: () => play(220,  'sawtooth', 0.16, 0.12),
+    absent: () => { play(300,'square',0.10,0.08); setTimeout(()=>play(220,'square',0.12,0.08),100); },
+    busy:   () => play(440,  'triangle', 0.10, 0.10),
+    note:   () => { play(659,'sine',0.10,0.08); setTimeout(()=>play(784,'sine',0.12,0.08),90); },
+    open:   () => play(660,  'sine',    0.06, 0.08),
+  };
+})();
+
+/* ── RIPPLE EFFECT ── */
+function addRipple(e, el) {
+  el = el || e.currentTarget;
+  if(!el) return;
+  const rect = el.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 2;
+  const x = (e.clientX - rect.left) - size/2;
+  const y = (e.clientY - rect.top)  - size/2;
+  const r = document.createElement('span');
+  r.className = 'ripple-circle';
+  r.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+x+'px;top:'+y+'px';
+  el.appendChild(r);
+  r.addEventListener('animationend', () => r.remove());
+}
+
+/* ── ATTACH RIPPLE TO ALL BUTTONS ── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('button, .btn, .t-btn, .tb-ctrl, .m-pill, .sp-o');
+  if(btn && !btn.classList.contains('no-ripple')) {
+    if(!btn.classList.contains('ripple-host')) btn.classList.add('ripple-host');
+    addRipple(e, btn);
+  }
+});
+
 loadAndInit(); // loads local first, then syncs from cloud
+
+/* ════════════════════════════════════════════
+   PWA — SERVICE WORKER + INSTALL PROMPT
+════════════════════════════════════════════ */
+
+// Register inline service worker for offline support
+(function registerSW() {
+  if(!('serviceWorker' in navigator)) return;
+  const swCode = `
+const CACHE = 'rxperform-v1';
+const ASSETS = []; // app is single-file, nothing extra to cache
+
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  clients.claim();
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+});
+
+// Network first, cache fallback — keeps data fresh from Supabase
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
+  );
+});
+`;
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  const url  = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(() => {});
+})();
+
+// Install prompt (Android Chrome shows "Add to home screen" banner)
+let _installPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  const btn = document.getElementById('btn_install');
+  if(btn) btn.style.display = '';
+});
+
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btn_install');
+  if(btn) btn.style.display = 'none';
+  toast('✅ App installed! Find RxPerform on your home screen.');
+  _installPrompt = null;
+});
+
+function installPWA() {
+  if(_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(r => {
+      if(r.outcome === 'accepted') toast('Installing RxPerform Pro…');
+      _installPrompt = null;
+      const btn = document.getElementById('btn_install');
+      if(btn) btn.style.display = 'none';
+    });
+  } else {
+    // iOS Safari — no prompt API, show manual instructions
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if(isIOS) {
+      toast('On iPhone: tap the Share button (□↑) then "Add to Home Screen"', 5000);
+    } else {
+      toast('Open in Chrome and tap the menu → "Add to Home Screen"', 4000);
+    }
+  }
+}
 </script>
 </body>
 </html>
