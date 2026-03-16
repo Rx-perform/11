@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html
-  renderInsightCard(); lang="en">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -863,31 +862,22 @@ table.ptbl {
 
 /* ── PRINT ── */
 @media print {
-  @page { size: A4 landscape; margin: 10mm; }
-  .sidebar, .topbar, .toolbar, .no-print, .sb-overlay,
-  .compare-bar, .month-actions, .col-hdr-actions,
-  .sb-foot, .t-divider, .tb-ctrl { display:none!important; }
-  html, body { height:auto!important; overflow:visible!important; background:#fff!important; color:#000!important; }
-  .main { overflow:visible!important; height:auto!important; }
-  .body-row { overflow:visible!important; height:auto!important; }
-  .main-pad { overflow:visible!important; height:auto!important; padding:0!important; }
-  #app { display:block!important; overflow:visible!important; height:auto!important; }
+  @page { size: A4 landscape; margin: 8mm 10mm; }
+  .sidebar,.topbar,.toolbar,.sb-overlay,.compare-bar,.sb-foot,
+  .no-print,.col-hdr-actions,.month-actions,#todayDashboard,
+  .month-pills,.notes-add-unified,#colCharts,.chart-grid { display:none!important; }
+  html,body { height:auto!important; overflow:visible!important; }
+  .main,.body-row,.main-pad,#app { overflow:visible!important; height:auto!important; padding:0!important; }
   .view { display:none!important; }
-  .view.v-on { display:block!important; }
-  .card { border:1px solid #ccc!important; break-inside:avoid; box-shadow:none!important; }
-  .ptbl { width:100%; border-collapse:collapse; font-size:8pt; }
-  .ptbl th, .ptbl td { border:1px solid #999!important; padding:3px 4px!important; }
-  .ptbl-cr-hdr { min-width:80px!important; max-width:110px!important; font-size:8pt!important; }
-  .ptbl-cr-hdr .cr-name-lbl { color:#000!important; }
-  .ptbl-cr-hdr .cr-edit-btn, .cr-edit-btn { display:none!important; }
-  .sc-dot { border:1px solid #999!important; font-size:8pt!important; }
-  .stat-grid { grid-template-columns:repeat(3,1fr)!important; }
-  .stat-card { border:1px solid #ccc!important; box-shadow:none!important; }
-  .rtbl th, .rtbl td { border:1px solid #ccc!important; }
-  .chart-grid { grid-template-columns:1fr 1fr!important; }
-  .col-hdr { flex-wrap:wrap!important; }
-  .month-pills { display:none!important; }
-  * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; color-adjust:exact!important; }
+  .view.v-on { display:block!important; overflow:visible!important; }
+  .col-hdr { break-after:avoid!important; }
+  .perf-scroll { overflow:visible!important; }
+  .ptbl { width:100%!important; border-collapse:collapse!important; font-size:6pt!important; table-layout:fixed!important; }
+  .ptbl th,.ptbl td { border:1px solid #555!important; padding:1px 2px!important; font-size:6pt!important; }
+  .ptbl-cr-hdr .cr-name-lbl { font-size:5pt!important; white-space:normal!important; word-break:break-word!important; display:block!important; line-height:1.2!important; }
+  .sc-dot { width:18px!important; height:16px!important; min-height:unset!important; border-radius:2px!important; font-size:5.5pt!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; }
+  .card { break-inside:auto!important; box-shadow:none!important; }
+  * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
 }
 
 /* ── CHECKBOXES & COMPARE ── */
@@ -1098,27 +1088,107 @@ body.lang-ar .note-del { right:auto; left:8px; }
 .pip-badge { display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,179,64,0.12);border:1px solid rgba(255,179,64,0.3);border-radius:20px;font-size:11px;color:var(--amber);font-weight:600;cursor:pointer;transition:background 0.15s; }
 .pip-badge:hover { background:rgba(255,179,64,0.2); }
 </style>
+
+<style media="print">
+/* Hardcoded print colors — no CSS variables, survives Android Chrome re-render */
+@page { size: A4 landscape; margin: 8mm 10mm; }
+
+html, body {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Hide chrome */
+.topbar, .toolbar, .sidebar, .sb-overlay, .no-print,
+.compare-bar, .month-actions, .col-hdr-actions, .sb-foot,
+.t-divider, .tb-ctrl, #todayDashboard, .month-pills,
+.cr-edit-btn, .note-del, .notes-add-unified, .viewer-note,
+#colCharts, .chart-grid, .col-metrics, .pip-badge { display: none !important; }
+
+/* Layout */
+.main, .body-row, .main-pad, #app, #entryContent {
+  overflow: visible !important; height: auto !important;
+  padding: 0 !important; margin: 0 !important;
+}
+.view { display: none !important; }
+.view.v-on { display: block !important; overflow: visible !important; }
+
+/* Every background → white */
+div, section, article, aside, header, footer, main, nav,
+.card, .stat-card, .chart-card, .col-hdr, .note-card,
+.cmp-card, .modal, .insight-card {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Colleague header */
+.col-hdr {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 6px 10px !important;
+  margin-bottom: 4px !important;
+  break-after: avoid !important;
+}
+.col-hdr-name { color: #0f172a !important; font-size: 11pt !important; }
+.col-hdr-role { color: #475569 !important; font-size: 8pt !important; }
+.col-hdr-ava  { background: #e2e8f0 !important; color: #0f172a !important; }
+
+/* Card */
+.card { border: 1px solid #cbd5e1 !important; break-inside: auto !important; margin-top: 0 !important; }
+.card-head { background: #f8fafc !important; border-bottom: 1px solid #e2e8f0 !important; padding: 4px 8px !important; }
+.card-title { color: #0f172a !important; font-size: 9pt !important; }
+.card-sub   { color: #475569 !important; font-size: 7pt !important; }
+
+/* Performance table */
+.perf-scroll { overflow: visible !important; }
+.ptbl { width: 100% !important; border-collapse: collapse !important; font-size: 6pt !important; table-layout: fixed !important; }
+.ptbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 5pt !important; border: 1px solid #94a3b8 !important; padding: 2px 1px !important; white-space: normal !important; word-break: break-word !important; }
+.ptbl td { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 1px !important; color: #0f172a !important; text-align: center !important; font-size: 6pt !important; }
+.ptbl-day, .ptbl-day-cell { width: 26px !important; }
+.ptbl-cr-hdr .cr-name-lbl { font-size: 5pt !important; white-space: normal !important; word-break: break-word !important; color: #0f172a !important; display: block !important; line-height: 1.2 !important; }
+.ptbl-cr-avg { width: 26px !important; }
+.sc-dot { width: 18px !important; height: 16px !important; min-height: unset !important; border-radius: 2px !important; font-size: 5.5pt !important; border: 1px solid #94a3b8 !important; background: #f8fafc !important; color: #0f172a !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+.today-row td { background: #fffbeb !important; }
+.trow-total td { background: #f0fdf4 !important; font-weight: 700 !important; }
+
+/* Score badges */
+.sc-hi { background: rgba(0,200,150,0.20) !important; color: #047857 !important; }
+.sc-md { background: rgba(255,179,64,0.20) !important; color: #b45309 !important; }
+.sc-lo { background: rgba(255,77,109,0.20) !important; color: #b91c1c !important; }
+.sc-na { background: #f1f5f9 !important; color: #64748b !important; }
+
+/* Stats */
+.stat-grid { grid-template-columns: repeat(3,1fr) !important; }
+.stat-card  { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; }
+.stat-val   { color: #0f172a !important; }
+.stat-lbl   { color: #475569 !important; }
+
+/* Tables */
+.rtbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 7pt !important; }
+.rtbl td { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; font-size: 7pt !important; }
+
+/* All text → dark */
+span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
+  color: #0f172a !important;
+}
+</style>
 </head>
 <body>
 <script>
-// ── CACHE BUSTER v9 ── runs before anything else
-(function() {
-  if(sessionStorage.getItem('rxp_fresh') === 'v9') return; // already fresh this session
-  sessionStorage.setItem('rxp_fresh','v9');
-  var did = false;
-  if('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(regs) {
-      regs.forEach(function(r){ r.unregister(); });
-    });
-  }
-  if('caches' in window) {
+// ── SW KILLER ── unregister any cached service worker on every load
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
+  if('caches' in window){
     caches.keys().then(function(keys){
-      return Promise.all(keys.map(function(k){ return caches.delete(k); }));
-    }).then(function(){
-      if(!did){ did=true; location.reload(true); }
+      keys.forEach(function(k){ caches.delete(k); });
     });
-  } else {
-    location.reload(true);
   }
 })();
 </script>
@@ -3757,6 +3827,94 @@ function downloadAsXlsx(rows, filename) {
 <x:ExcelWorksheet><x:Name>RxPerform</x:Name>
 <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
 </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+
+<style media="print">
+/* Hardcoded print colors — no CSS variables, survives Android Chrome re-render */
+@page { size: A4 landscape; margin: 8mm 10mm; }
+
+html, body {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* Hide chrome */
+.topbar, .toolbar, .sidebar, .sb-overlay, .no-print,
+.compare-bar, .month-actions, .col-hdr-actions, .sb-foot,
+.t-divider, .tb-ctrl, #todayDashboard, .month-pills,
+.cr-edit-btn, .note-del, .notes-add-unified, .viewer-note,
+#colCharts, .chart-grid, .col-metrics, .pip-badge { display: none !important; }
+
+/* Layout */
+.main, .body-row, .main-pad, #app, #entryContent {
+  overflow: visible !important; height: auto !important;
+  padding: 0 !important; margin: 0 !important;
+}
+.view { display: none !important; }
+.view.v-on { display: block !important; overflow: visible !important; }
+
+/* Every background → white */
+div, section, article, aside, header, footer, main, nav,
+.card, .stat-card, .chart-card, .col-hdr, .note-card,
+.cmp-card, .modal, .insight-card {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Colleague header */
+.col-hdr {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 6px 10px !important;
+  margin-bottom: 4px !important;
+  break-after: avoid !important;
+}
+.col-hdr-name { color: #0f172a !important; font-size: 11pt !important; }
+.col-hdr-role { color: #475569 !important; font-size: 8pt !important; }
+.col-hdr-ava  { background: #e2e8f0 !important; color: #0f172a !important; }
+
+/* Card */
+.card { border: 1px solid #cbd5e1 !important; break-inside: auto !important; margin-top: 0 !important; }
+.card-head { background: #f8fafc !important; border-bottom: 1px solid #e2e8f0 !important; padding: 4px 8px !important; }
+.card-title { color: #0f172a !important; font-size: 9pt !important; }
+.card-sub   { color: #475569 !important; font-size: 7pt !important; }
+
+/* Performance table */
+.perf-scroll { overflow: visible !important; }
+.ptbl { width: 100% !important; border-collapse: collapse !important; font-size: 6pt !important; table-layout: fixed !important; }
+.ptbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 5pt !important; border: 1px solid #94a3b8 !important; padding: 2px 1px !important; white-space: normal !important; word-break: break-word !important; }
+.ptbl td { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 1px !important; color: #0f172a !important; text-align: center !important; font-size: 6pt !important; }
+.ptbl-day, .ptbl-day-cell { width: 26px !important; }
+.ptbl-cr-hdr .cr-name-lbl { font-size: 5pt !important; white-space: normal !important; word-break: break-word !important; color: #0f172a !important; display: block !important; line-height: 1.2 !important; }
+.ptbl-cr-avg { width: 26px !important; }
+.sc-dot { width: 18px !important; height: 16px !important; min-height: unset !important; border-radius: 2px !important; font-size: 5.5pt !important; border: 1px solid #94a3b8 !important; background: #f8fafc !important; color: #0f172a !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
+.today-row td { background: #fffbeb !important; }
+.trow-total td { background: #f0fdf4 !important; font-weight: 700 !important; }
+
+/* Score badges */
+.sc-hi { background: rgba(0,200,150,0.20) !important; color: #047857 !important; }
+.sc-md { background: rgba(255,179,64,0.20) !important; color: #b45309 !important; }
+.sc-lo { background: rgba(255,77,109,0.20) !important; color: #b91c1c !important; }
+.sc-na { background: #f1f5f9 !important; color: #64748b !important; }
+
+/* Stats */
+.stat-grid { grid-template-columns: repeat(3,1fr) !important; }
+.stat-card  { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; }
+.stat-val   { color: #0f172a !important; }
+.stat-lbl   { color: #475569 !important; }
+
+/* Tables */
+.rtbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 7pt !important; }
+.rtbl td { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; font-size: 7pt !important; }
+
+/* All text → dark */
+span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
+  color: #0f172a !important;
+}
+</style>
 </head><body>${tbl}</body></html>`;
 
   const fn  = filename.replace(/\.xlsx?$/,'.xls').replace(/\.csv$/,'.xls');
@@ -4186,29 +4344,38 @@ function executePrint() {
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 @page { size:${paper}; margin:8mm 10mm; }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#fff;color:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9pt;}
-.report-block { page-break-after:always; page-break-inside:avoid; padding-bottom:4px; }
-.report-block:last-child { page-break-after:auto; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+html,body{background:#ffffff!important;color:#1e293b!important;font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;font-size:9pt;}
+.report-block{page-break-after:always;page-break-inside:avoid;padding-bottom:4px;}
+.report-block:last-child{page-break-after:auto;}
 </style>
 </head><body>${pages.join('')}</body></html>`;
 
-  let iframe = document.getElementById('rxp-print-frame');
-  if(iframe) iframe.remove();
-  iframe = document.createElement('iframe');
-  iframe.id = 'rxp-print-frame';
-  iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;z-index:-1';
-  document.body.appendChild(iframe);
-  try {
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html_out);
-    iframe.contentDocument.close();
-    setTimeout(()=>{
-      try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e){ window.print(); }
-      setTimeout(()=>{ if(iframe.parentNode) iframe.remove(); },3000);
-    },900);
-    toast(isAr?'جاري فتح نافذة الطباعة…':'Opening print dialog…');
-  } catch(e){ window.print(); }
+  // ── Body-swap print: replace page with white content, restore after ──
+  const _origHTML = document.documentElement.innerHTML;
+
+  // Build standalone white page
+  const _isAr2 = (typeof appLang !== 'undefined') && appLang === 'ar';
+  const _printDoc = '<!DOCTYPE html><html lang="' + (_isAr2?'ar':'en') + '" dir="' + (_isAr2?'rtl':'ltr') + '">'
+    + '<head><meta charset="UTF-8">'
+    + '<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">'
+    + '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}'
+    + 'html,body{background:#ffffff!important;color:#1e293b!important;font-family:' + (_isAr2?"'Cairo'":'Syne') + ',system-ui,sans-serif;font-size:9pt;}'
+    + '.report-block{page-break-after:always;page-break-inside:avoid;}'
+    + '.report-block:last-child{page-break-after:auto;}'
+    + '</style></head><body>' + pages.join('') + '</body></html>';
+
+  // Replace entire document
+  document.open();
+  document.write(_printDoc);
+  document.close();
+
+  // Print then reload to restore app
+  setTimeout(function() {
+    window.print();
+    setTimeout(function() { location.reload(); }, 2000);
+  }, 500);
 }
 
 /* ════════════════════════════════════════════
@@ -5084,6 +5251,75 @@ document.addEventListener('click', e => {
   }
 });
 
+// ── Print mode: swap to light theme before browser renders print ──
+// Override window.print to always apply light mode first
+var _nativePrint = window.print.bind(window);
+window.print = function() {
+  applyPrintMode();
+  setTimeout(function() {
+    _nativePrint();
+    setTimeout(removePrintMode, 100);
+  }, 50);
+};
+
+function applyPrintMode() {
+  document.body.classList.add('print-mode');
+  var s = document.documentElement.style;
+  s.setProperty('--ink','#ffffff');
+  s.setProperty('--ink1','#f8fafc');
+  s.setProperty('--ink2','#f1f5f9');
+  s.setProperty('--ink3','#e2e8f0');
+  s.setProperty('--ink4','#cbd5e1');
+  s.setProperty('--ink5','#94a3b8');
+  s.setProperty('--line','rgba(0,0,0,0.10)');
+  s.setProperty('--line2','rgba(0,0,0,0.15)');
+  s.setProperty('--line3','rgba(0,0,0,0.22)');
+  s.setProperty('--text','#0f172a');
+  s.setProperty('--text2','#334155');
+  s.setProperty('--text3','#64748b');
+  s.setProperty('--white','#0f172a');
+  s.setProperty('--cyan','#0077b6');
+  s.setProperty('--emerald','#047857');
+  s.setProperty('--amber','#b45309');
+  s.setProperty('--rose','#b91c1c');
+  s.setProperty('--glow','none');
+  s.setProperty('--glow2','none');
+}
+function removePrintMode() {
+  document.body.classList.remove('print-mode');
+  var s = document.documentElement.style;
+  ['--ink','--ink1','--ink2','--ink3','--ink4','--ink5',
+   '--line','--line2','--line3','--text','--text2','--text3',
+   '--white','--cyan','--emerald','--amber','--rose','--glow','--glow2'
+  ].forEach(function(p){ s.removeProperty(p); });
+}
+
+window.addEventListener('beforeprint', function() {
+  document.body.classList.add('print-mode');
+  // Also force all CSS custom properties to light values
+  var s = document.documentElement.style;
+  s.setProperty('--ink','#ffffff');
+  s.setProperty('--ink1','#f8fafc');
+  s.setProperty('--ink2','#f1f5f9');
+  s.setProperty('--ink3','#e2e8f0');
+  s.setProperty('--ink4','#cbd5e1');
+  s.setProperty('--ink5','#94a3b8');
+  s.setProperty('--line','rgba(0,0,0,0.10)');
+  s.setProperty('--line2','rgba(0,0,0,0.15)');
+  s.setProperty('--line3','rgba(0,0,0,0.22)');
+  s.setProperty('--text','#0f172a');
+  s.setProperty('--text2','#334155');
+  s.setProperty('--text3','#64748b');
+  s.setProperty('--white','#0f172a');
+  s.setProperty('--cyan','#0077b6');
+  s.setProperty('--emerald','#047857');
+  s.setProperty('--amber','#b45309');
+  s.setProperty('--rose','#b91c1c');
+  s.setProperty('--glow','none');
+  s.setProperty('--glow2','none');
+});
+window.addEventListener('afterprint', removePrintMode);
+
 loadAndInit(); // loads local first, then syncs from cloud
 
 // Re-sync when tab/app becomes visible again (e.g. switching from mobile)
@@ -5103,47 +5339,16 @@ document.addEventListener('visibilitychange', () => {
    PWA — SERVICE WORKER + INSTALL PROMPT
 ════════════════════════════════════════════ */
 
-// Register inline service worker for offline support
-(function registerSW() {
-  if(!('serviceWorker' in navigator)) return;
-  const swCode = `
-const CACHE = 'rxperform-v9';
-const ASSETS = [];
+// Service worker disabled — unregister any old ones to prevent stale cache
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+if('caches' in window) {
+  caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+}
 
-self.addEventListener('install', e => {
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(k => caches.delete(k)))
-    ).then(() => clients.claim())
-  );
-});
-
-self.addEventListener('fetch', e => {
-  if(e.request.method !== 'GET') return;
-  if(e.request.url.includes('supabase.co')) {
-    e.respondWith(fetch(e.request));
-    return;
-  }
-  // Network first — always try fresh, fallback to cache
-  e.respondWith(
-    fetch(e.request, {cache: 'no-store'})
-      .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
-        return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
-});
-`;
-  const blob = new Blob([swCode], {type:'application/javascript'});
-  const url  = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(url).catch(() => {});
-})();
 
 // Install prompt (Android Chrome shows "Add to home screen" banner)
 let _installPrompt = null;
