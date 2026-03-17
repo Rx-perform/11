@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+  renderInsightCard(); lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -79,38 +80,7 @@ body {
   background-image: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,212,255,0.06) 0%, transparent 70%);
 }
 .login-gfx {
-  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
-}
-.login-gfx-orb1 {
-  position:absolute;
-  width:700px; height:700px;
-  border-radius:50%;
-  background: radial-gradient(circle, rgba(0,212,255,0.20) 0%, rgba(0,168,204,0.08) 40%, transparent 68%);
-  top:-250px; left:-180px;
-  animation: orb1 12s ease-in-out infinite alternate;
-}
-.login-gfx-orb2 {
-  position:absolute;
-  width:600px; height:600px;
-  border-radius:50%;
-  background: radial-gradient(circle, rgba(0,200,150,0.16) 0%, rgba(255,179,64,0.06) 50%, transparent 68%);
-  bottom:-200px; right:-150px;
-  animation: orb2 15s ease-in-out infinite alternate;
-}
-@keyframes orb1 {
-  from { transform: translate(0,0) scale(1); }
-  to   { transform: translate(60px,40px) scale(1.2); }
-}
-@keyframes orb2 {
-  from { transform: translate(0,0) scale(1); }
-  to   { transform: translate(-50px,-30px) scale(1.25); }
-}
-.login-grid {
-  position:absolute; inset:0;
-  background-image:
-    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-  background-size: 44px 44px;
+  position:absolute; inset:0; overflow:hidden; pointer-events:none;
 }
 .login-gfx::before {
   content:''; position:absolute;
@@ -120,7 +90,7 @@ body {
   box-shadow: 0 0 0 60px rgba(0,212,255,0.025), 0 0 0 120px rgba(0,212,255,0.015), 0 0 0 200px rgba(0,212,255,0.008);
 }
 .login-panel {
-  position:relative; z-index:2;
+  position:relative; z-index:1;
   background:var(--ink1);
   border:1px solid var(--line2);
   border-radius: var(--r2);
@@ -296,17 +266,6 @@ body {
   transition:var(--trans); flex-shrink:0;
 }
 .t-btn:hover { background:var(--ink3); color:var(--white); border-color:var(--line2); }
-
-.more-item {
-  display:flex; align-items:center; gap:10px;
-  width:100%; padding:9px 12px; border-radius:8px;
-  border:none; background:transparent;
-  color:var(--text2); font-size:12px; font-weight:500;
-  cursor:pointer; font-family:inherit;
-  transition:var(--trans); text-align:left; white-space:nowrap;
-}
-.more-item:hover { background:var(--ink3); color:var(--white); }
-.more-divider { height:1px; background:var(--line); margin:4px 2px; }
 .t-btn.t-active {
   background:var(--cyan3); color:var(--cyan);
   border-color:var(--line3);
@@ -384,9 +343,8 @@ body {
 }
 .sb-role { font-size:10px; color:var(--text3); margin-top:1px; }
 .sb-score {
-  font-family:monospace; font-size:12px; font-weight:700;
-  padding:3px 8px; border-radius:8px; flex-shrink:0;
-  letter-spacing:0.3px;
+  font-family:monospace; font-size:11px; font-weight:500;
+  padding:2px 7px; border-radius:6px;
 }
 .sc-hi { background:rgba(0,200,150,0.15); color:var(--emerald); }
 .sc-md { background:rgba(255,179,64,0.15); color:var(--amber); }
@@ -862,22 +820,31 @@ table.ptbl {
 
 /* ── PRINT ── */
 @media print {
-  @page { size: A4 landscape; margin: 8mm 10mm; }
-  .sidebar,.topbar,.toolbar,.sb-overlay,.compare-bar,.sb-foot,
-  .no-print,.col-hdr-actions,.month-actions,#todayDashboard,
-  .month-pills,.notes-add-unified,#colCharts,.chart-grid { display:none!important; }
-  html,body { height:auto!important; overflow:visible!important; }
-  .main,.body-row,.main-pad,#app { overflow:visible!important; height:auto!important; padding:0!important; }
+  @page { size: A4 landscape; margin: 10mm; }
+  .sidebar, .topbar, .toolbar, .no-print, .sb-overlay,
+  .compare-bar, .month-actions, .col-hdr-actions,
+  .sb-foot, .t-divider, .tb-ctrl { display:none!important; }
+  html, body { height:auto!important; overflow:visible!important; background:#fff!important; color:#000!important; }
+  .main { overflow:visible!important; height:auto!important; }
+  .body-row { overflow:visible!important; height:auto!important; }
+  .main-pad { overflow:visible!important; height:auto!important; padding:0!important; }
+  #app { display:block!important; overflow:visible!important; height:auto!important; }
   .view { display:none!important; }
-  .view.v-on { display:block!important; overflow:visible!important; }
-  .col-hdr { break-after:avoid!important; }
-  .perf-scroll { overflow:visible!important; }
-  .ptbl { width:100%!important; border-collapse:collapse!important; font-size:6pt!important; table-layout:fixed!important; }
-  .ptbl th,.ptbl td { border:1px solid #555!important; padding:1px 2px!important; font-size:6pt!important; }
-  .ptbl-cr-hdr .cr-name-lbl { font-size:5pt!important; white-space:normal!important; word-break:break-word!important; display:block!important; line-height:1.2!important; }
-  .sc-dot { width:18px!important; height:16px!important; min-height:unset!important; border-radius:2px!important; font-size:5.5pt!important; display:inline-flex!important; align-items:center!important; justify-content:center!important; }
-  .card { break-inside:auto!important; box-shadow:none!important; }
-  * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
+  .view.v-on { display:block!important; }
+  .card { border:1px solid #ccc!important; break-inside:avoid; box-shadow:none!important; }
+  .ptbl { width:100%; border-collapse:collapse; font-size:8pt; }
+  .ptbl th, .ptbl td { border:1px solid #999!important; padding:3px 4px!important; }
+  .ptbl-cr-hdr { min-width:80px!important; max-width:110px!important; font-size:8pt!important; }
+  .ptbl-cr-hdr .cr-name-lbl { color:#000!important; }
+  .ptbl-cr-hdr .cr-edit-btn, .cr-edit-btn { display:none!important; }
+  .sc-dot { border:1px solid #999!important; font-size:8pt!important; }
+  .stat-grid { grid-template-columns:repeat(3,1fr)!important; }
+  .stat-card { border:1px solid #ccc!important; box-shadow:none!important; }
+  .rtbl th, .rtbl td { border:1px solid #ccc!important; }
+  .chart-grid { grid-template-columns:1fr 1fr!important; }
+  .col-hdr { flex-wrap:wrap!important; }
+  .month-pills { display:none!important; }
+  * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; color-adjust:exact!important; }
 }
 
 /* ── CHECKBOXES & COMPARE ── */
@@ -1088,114 +1055,12 @@ body.lang-ar .note-del { right:auto; left:8px; }
 .pip-badge { display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:rgba(255,179,64,0.12);border:1px solid rgba(255,179,64,0.3);border-radius:20px;font-size:11px;color:var(--amber);font-weight:600;cursor:pointer;transition:background 0.15s; }
 .pip-badge:hover { background:rgba(255,179,64,0.2); }
 </style>
-
-<style media="print">
-/* Hardcoded print colors — no CSS variables, survives Android Chrome re-render */
-@page { size: A4 landscape; margin: 8mm 10mm; }
-
-html, body {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
-/* Hide chrome */
-.topbar, .toolbar, .sidebar, .sb-overlay, .no-print,
-.compare-bar, .month-actions, .col-hdr-actions, .sb-foot,
-.t-divider, .tb-ctrl, #todayDashboard, .month-pills,
-.cr-edit-btn, .note-del, .notes-add-unified, .viewer-note,
-#colCharts, .chart-grid, .col-metrics, .pip-badge { display: none !important; }
-
-/* Layout */
-.main, .body-row, .main-pad, #app, #entryContent {
-  overflow: visible !important; height: auto !important;
-  padding: 0 !important; margin: 0 !important;
-}
-.view { display: none !important; }
-.view.v-on { display: block !important; overflow: visible !important; }
-
-/* Every background → white */
-div, section, article, aside, header, footer, main, nav,
-.card, .stat-card, .chart-card, .col-hdr, .note-card,
-.cmp-card, .modal, .insight-card {
-  background: #ffffff !important;
-  box-shadow: none !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-/* Colleague header */
-.col-hdr {
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-  break-after: avoid !important;
-}
-.col-hdr-name { color: #0f172a !important; font-size: 11pt !important; }
-.col-hdr-role { color: #475569 !important; font-size: 8pt !important; }
-.col-hdr-ava  { background: #e2e8f0 !important; color: #0f172a !important; }
-
-/* Card */
-.card { border: 1px solid #cbd5e1 !important; break-inside: auto !important; margin-top: 0 !important; }
-.card-head { background: #f8fafc !important; border-bottom: 1px solid #e2e8f0 !important; padding: 4px 8px !important; }
-.card-title { color: #0f172a !important; font-size: 9pt !important; }
-.card-sub   { color: #475569 !important; font-size: 7pt !important; }
-
-/* Performance table */
-.perf-scroll { overflow: visible !important; }
-.ptbl { width: 100% !important; border-collapse: collapse !important; font-size: 6pt !important; table-layout: fixed !important; }
-.ptbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 5pt !important; border: 1px solid #94a3b8 !important; padding: 2px 1px !important; white-space: normal !important; word-break: break-word !important; }
-.ptbl td { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 1px !important; color: #0f172a !important; text-align: center !important; font-size: 6pt !important; }
-.ptbl-day, .ptbl-day-cell { width: 26px !important; }
-.ptbl-cr-hdr .cr-name-lbl { font-size: 5pt !important; white-space: normal !important; word-break: break-word !important; color: #0f172a !important; display: block !important; line-height: 1.2 !important; }
-.ptbl-cr-avg { width: 26px !important; }
-.sc-dot { width: 18px !important; height: 16px !important; min-height: unset !important; border-radius: 2px !important; font-size: 5.5pt !important; border: 1px solid #94a3b8 !important; background: #f8fafc !important; color: #0f172a !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
-.today-row td { background: #fffbeb !important; }
-.trow-total td { background: #f0fdf4 !important; font-weight: 700 !important; }
-
-/* Score badges */
-.sc-hi { background: rgba(0,200,150,0.20) !important; color: #047857 !important; }
-.sc-md { background: rgba(255,179,64,0.20) !important; color: #b45309 !important; }
-.sc-lo { background: rgba(255,77,109,0.20) !important; color: #b91c1c !important; }
-.sc-na { background: #f1f5f9 !important; color: #64748b !important; }
-
-/* Stats */
-.stat-grid { grid-template-columns: repeat(3,1fr) !important; }
-.stat-card  { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; }
-.stat-val   { color: #0f172a !important; }
-.stat-lbl   { color: #475569 !important; }
-
-/* Tables */
-.rtbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 7pt !important; }
-.rtbl td { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; font-size: 7pt !important; }
-
-/* All text → dark */
-span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
-  color: #0f172a !important;
-}
-</style>
 </head>
 <body>
-<script>
-// ── SW KILLER ── unregister any cached service worker on every load
-(function(){
-  if(!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); });
-  });
-  if('caches' in window){
-    caches.keys().then(function(keys){
-      keys.forEach(function(k){ caches.delete(k); });
-    });
-  }
-})();
-</script>
 
 <!-- ═══════ LOGIN SCREEN ═══════ -->
 <div id="loginScreen">
-  <div class="login-gfx"><div class="login-gfx-orb1"></div><div class="login-gfx-orb2"></div><div class="login-grid"></div></div>
+  <div class="login-gfx"></div>
   <div class="login-panel">
     <div class="login-wordmark">Rx<span>Perform</span> Pro</div>
     <div class="login-tagline">Pharmacy Performance Management</div>
@@ -1251,13 +1116,6 @@ span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
     <button class="hamburger-btn" onclick="toggleSb()">☰</button>
     <div class="topbar-logo">Rx<span>Perform</span></div>
     <div class="topbar-sep"></div>
-    <div id="topPeriodPill" style="display:flex;align-items:center;gap:10px;background:var(--ink3);border:1px solid var(--line2);border-radius:10px;padding:4px 12px;flex-shrink:0">
-      <span id="topPeriodLabel" style="font-size:11px;color:var(--text3);white-space:nowrap;letter-spacing:0.3px"></span>
-      <div style="width:1px;height:12px;background:var(--line2)"></div>
-      <span style="font-size:10px;color:var(--text3)">Team</span>
-      <span id="topTeamAvg" style="font-family:monospace;font-size:13px;font-weight:700;color:var(--cyan)">—</span>
-    </div>
-    <div class="topbar-sep" style="max-width:20px"></div>
     <div class="topbar-date" id="topDate"></div>
     <div id="liveClock" style="font-family:monospace;font-size:12px;color:var(--text3);letter-spacing:1px;white-space:nowrap"></div>
     
@@ -1328,15 +1186,16 @@ span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
     <button class="t-btn" id="tb-compare" onclick="setView('compare')" style="display:none">
       Compare <span id="cmpCount" style="margin-left:4px;background:var(--cyan);color:var(--ink);border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700"></span>
     </button>
-    <div style="flex:1;min-width:8px"></div>
-    <span id="syncStatus" style="font-size:10px;color:var(--text2);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:8px;background:var(--ink3);border:1px solid var(--line2)" title="Sync status">⏳ Connecting…</span>
+    <div class="t-divider"></div>
     <button class="t-btn" id="btn_print" onclick="doPrint()">🖨 Print</button>
-    <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">📊 Export</button>
-    <button class="t-btn admin-only" id="btn_import" onclick="doImport()" title="Load a backup file">📂 Import</button>
-    <button class="t-btn admin-only" id="btn_export" onclick="doExportNow()" title="Download full data backup">💾 Backup</button>
+    <button class="t-btn btn-excel" id="btn_excel" onclick="exportExcel()">📊 Export Excel</button>
+    <span id="syncStatus" style="font-size:10px;margin-left:2px;margin-right:6px;color:var(--text2);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:8px;background:var(--ink3);border:1px solid var(--line2)" title="Sync status">⏳ Connecting…</span>
+    <button class="t-btn admin-only" id="btn_import" onclick="doImport()" title="Load a backup file">📂 Load Backup</button>
+    <button class="t-btn admin-only" id="btn_export" onclick="doExportNow()" title="Download full data backup">💾 Export Data</button>
     <button class="t-btn admin-only" id="btn_undo" onclick="undoLast()" disabled title="Undo last action">↩ Undo</button>
-    <button class="t-btn admin-only" onclick="openSettings()" title="Evaluation cycle settings">⚙ Settings</button>
+    
     <div id="viewerNote" class="viewer-note" style="display:none">View Only Mode</div>
+    <button class="t-btn admin-only" onclick="openSettings()" title="Evaluation cycle settings">⚙ Settings</button>
   </div>
 
   <!-- BODY -->
@@ -1465,55 +1324,44 @@ span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
               <button class="btn btn-sm btn-excel" onclick="exportNotesExcel()" id="notesExportBtn">Export Notes</button>
             </div>
           </div>
-          <!-- Unified colleague-grouped notes list -->
-          <div id="unifiedNotesList" style="margin-top:12px"></div>
+          <div class="notes-2col">
 
-          <!-- Add note box (admin only) -->
-          <div class="notes-add-unified admin-only" style="margin-top:16px;background:var(--ink2);border:1px solid var(--line2);border-radius:14px;padding:16px 18px">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px">➕ Add Note</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
-              <div>
-                <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Colleague</div>
-                <select id="posColSel" style="width:100%;background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit">
-                  <option value="">All Team</option>
-                </select>
-                <!-- keep negColSel in sync via JS -->
-                <select id="negColSel" style="display:none"><option value="">All Team</option></select>
+            <!-- POSITIVE -->
+            <div class="notes-col" style="border-top:3px solid var(--emerald)">
+              <div class="notes-col-head">
+                <span style="font-size:16px">✅</span>
+                <span class="notes-col-title" style="color:var(--emerald)" id="posTitleEl">Positive Points</span>
+                <span class="notes-col-badge" style="background:rgba(0,200,150,0.12);color:var(--emerald)" id="posCnt">0</span>
               </div>
-              <div>
-                <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Type</div>
-                <select id="noteTypeSelect" style="width:100%;background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit">
-                  <option value="positive">✅ Positive</option>
-                  <option value="negative">⚠ Improvement</option>
-                </select>
-              </div>
-              <div>
-                <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Date (optional)</div>
-                <input type="text" id="posDateInp" placeholder="e.g. 15 Mar" style="width:100%;background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;box-sizing:border-box">
-                <input type="text" id="negDateInp" style="display:none">
+              <div class="notes-list" id="posNotesList"></div>
+              <div class="notes-add-box admin-only">
+                <div class="notes-add-row">
+                  <select id="posColSel"><option value="">All Team</option></select>
+                  <input type="text" id="posDateInp" placeholder="Date (optional)" style="max-width:130px">
+                </div>
+                <textarea class="notes-textarea" id="posTextInp" placeholder="Enter a positive observation…" rows="2"></textarea>
+                <button class="notes-submit-btn pos-submit" onclick="addNote('positive')" id="posSubmitBtn">+ Add Positive Note</button>
               </div>
             </div>
-            <textarea id="posTextInp" placeholder="Write your note here…" rows="2"
-              style="width:100%;background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box;margin-bottom:10px"></textarea>
-            <textarea id="negTextInp" style="display:none"></textarea>
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <select id="posPriority" style="background:var(--ink3);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit">
-                <option value="normal">○ Normal</option>
-                <option value="high">⭐ High</option>
-                <option value="critical">🔥 Critical</option>
-              </select>
-              <select id="negPriority" style="display:none"><option value="normal">Normal</option><option value="high">High</option><option value="critical">Critical</option></select>
-              <button id="posSubmitBtn" onclick="addUnifiedNote()"
-                style="padding:8px 20px;background:linear-gradient(135deg,var(--cyan2),var(--cyan));color:var(--ink);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">
-                + Add Note
-              </button>
-              <!-- keep legacy ids for AR translation -->
-              <span id="posTitleEl" style="display:none">Positive Points</span>
-              <span id="negTitleEl" style="display:none">Points to Improve</span>
-              <span id="posCnt" style="display:none">0</span>
-              <span id="negCnt" style="display:none">0</span>
-              <span id="negSubmitBtn" style="display:none"></span>
+
+            <!-- NEGATIVE / IMPROVEMENT -->
+            <div class="notes-col" style="border-top:3px solid var(--rose)">
+              <div class="notes-col-head">
+                <span style="font-size:16px">⚠️</span>
+                <span class="notes-col-title" style="color:var(--rose)" id="negTitleEl">Points to Improve</span>
+                <span class="notes-col-badge" style="background:rgba(255,77,109,0.12);color:var(--rose)" id="negCnt">0</span>
+              </div>
+              <div class="notes-list" id="negNotesList"></div>
+              <div class="notes-add-box admin-only">
+                <div class="notes-add-row">
+                  <select id="negColSel"><option value="">All Team</option></select>
+                  <input type="text" id="negDateInp" placeholder="Date (optional)" style="max-width:130px">
+                </div>
+                <textarea class="notes-textarea" id="negTextInp" placeholder="Enter an area for improvement…" rows="2"></textarea>
+                <button class="notes-submit-btn neg-submit" onclick="addNote('negative')" id="negSubmitBtn">+ Add Improvement Note</button>
+              </div>
             </div>
+
           </div>
         </div>
 
@@ -1940,10 +1788,10 @@ function setSyncStatus(icon, msg, color) {
 /* ── WRITE: PATCH row in Supabase ── */
 function pushToSheets() {
   setSyncStatus('⏳', 'Saving…', 'var(--cyan)');
-  fetch(SUPA_URL + '/rest/v1/rxperform', {
-    method:  'POST',
-    headers: { ...SUPA_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-    body:    JSON.stringify({ id: 'main', data: db, updated_at: new Date().toISOString() })
+  fetch(SUPA_ENDPOINT, {
+    method:  'PATCH',
+    headers: SUPA_HEADERS,
+    body:    JSON.stringify({ data: db, updated_at: new Date().toISOString() })
   })
   .then(r => {
     if(r.ok) {
@@ -1960,13 +1808,11 @@ function pushToSheets() {
 /* ── READ: GET row from Supabase ── */
 function pullFromSheets() {
   setSyncStatus('⏳', 'Loading from cloud…', 'var(--cyan)');
-  const _pullUrl = SUPA_ENDPOINT + '&_t=' + Date.now();
-  return fetch(_pullUrl, {
+  return fetch(SUPA_ENDPOINT, {
     method:  'GET',
     headers: {
       'apikey':        SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
-      'Cache-Control': 'no-cache, no-store'
+      'Authorization': 'Bearer ' + SUPA_KEY
     },
     cache: 'no-store'
   })
@@ -2007,7 +1853,7 @@ function pullFromSheets() {
 function snapshotForUndo() {
   _undoStack.push(JSON.stringify(db));
   if(_undoStack.length > UNDO_MAX) _undoStack.shift();
-  const btn = document.getElementById('more_undo')||document.getElementById('btn_undo');
+  const btn = document.getElementById('btn_undo');
   if(btn) btn.disabled = false;
 }
 
@@ -2032,7 +1878,7 @@ function undoLast() {
   if(typeof renderStats          === 'function') renderStats();
   if(curColId && typeof renderColleagueView === 'function') renderColleagueView();
   if(typeof renderNotesView      === 'function') renderNotesView();
-  const btn = document.getElementById('more_undo')||document.getElementById('btn_undo');
+  const btn = document.getElementById('btn_undo');
   if(btn) btn.disabled = _undoStack.length === 0;
   toast('↩ Undone — last action reversed', 'var(--amber)');
 }
@@ -2231,20 +2077,6 @@ function setView(v) {
 /* ════════════════════════════════════════════
    SIDEBAR
 ════════════════════════════════════════════ */
-function updateTopBar() {
-  const pill = document.getElementById('topPeriodPill');
-  if(!pill) return;
-  const lbl = document.getElementById('topPeriodLabel');
-  const avg = document.getElementById('topTeamAvg');
-  if(lbl) lbl.textContent = periodLabel(curMonth);
-  if(avg) {
-    const avgs = db.colleagues.map(c=>colMonthAvg(c.id,curMonth)).filter(a=>a>0);
-    const teamAvg = avgs.length ? (avgs.reduce((a,b)=>a+b,0)/avgs.length) : 0;
-    avg.textContent = teamAvg > 0 ? teamAvg.toFixed(2) : '—';
-    avg.style.color = teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':teamAvg>0?'var(--rose)':'var(--cyan)';
-  }
-}
-
 function renderSidebar(q='') {
   const list = document.getElementById('sbList');
   const cols = db.colleagues.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
@@ -2258,7 +2090,7 @@ function renderSidebar(q='') {
       : '';
     return `<div class="sb-item${c.id===curColId&&!compareMode?' sb-active':''}" onclick="${compareMode?`toggleCompareItem('${c.id}')`:`selectColleague('${c.id}')`}">
       ${cbHtml}
-      <div class="sb-ava" style="background:${avg>=8?'rgba(0,200,150,0.18)':avg>=6?'rgba(255,179,64,0.18)':avg>0?'rgba(255,77,109,0.18)':'rgba(30,45,66,0.8)'};color:${avg>=8?'var(--emerald)':avg>=6?'var(--amber)':avg>0?'var(--rose)':'var(--text3)'};box-shadow:${avg>=8?'0 0 0 1.5px rgba(0,200,150,0.35)':avg>=6?'0 0 0 1.5px rgba(255,179,64,0.35)':avg>0?'0 0 0 1.5px rgba(255,77,109,0.35)':'none'}">${ini}</div>
+      <div class="sb-ava" style="background:${c.color}22;color:${c.color}">${ini}</div>
       <div class="sb-info">
         <div class="sb-name">${c.name}</div>
         <div class="sb-role">${c.role}</div>
@@ -2271,7 +2103,6 @@ function renderSidebar(q='') {
       <div class="sb-score sc-${sc}">${avg>0?avg.toFixed(1):'—'}</div>
     </div>`;
   }).join('');
-  updateTopBar();
 }
 function filterSb(q) { renderSidebar(q); }
 
@@ -3827,94 +3658,6 @@ function downloadAsXlsx(rows, filename) {
 <x:ExcelWorksheet><x:Name>RxPerform</x:Name>
 <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
 </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-
-<style media="print">
-/* Hardcoded print colors — no CSS variables, survives Android Chrome re-render */
-@page { size: A4 landscape; margin: 8mm 10mm; }
-
-html, body {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
-/* Hide chrome */
-.topbar, .toolbar, .sidebar, .sb-overlay, .no-print,
-.compare-bar, .month-actions, .col-hdr-actions, .sb-foot,
-.t-divider, .tb-ctrl, #todayDashboard, .month-pills,
-.cr-edit-btn, .note-del, .notes-add-unified, .viewer-note,
-#colCharts, .chart-grid, .col-metrics, .pip-badge { display: none !important; }
-
-/* Layout */
-.main, .body-row, .main-pad, #app, #entryContent {
-  overflow: visible !important; height: auto !important;
-  padding: 0 !important; margin: 0 !important;
-}
-.view { display: none !important; }
-.view.v-on { display: block !important; overflow: visible !important; }
-
-/* Every background → white */
-div, section, article, aside, header, footer, main, nav,
-.card, .stat-card, .chart-card, .col-hdr, .note-card,
-.cmp-card, .modal, .insight-card {
-  background: #ffffff !important;
-  box-shadow: none !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-/* Colleague header */
-.col-hdr {
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-  break-after: avoid !important;
-}
-.col-hdr-name { color: #0f172a !important; font-size: 11pt !important; }
-.col-hdr-role { color: #475569 !important; font-size: 8pt !important; }
-.col-hdr-ava  { background: #e2e8f0 !important; color: #0f172a !important; }
-
-/* Card */
-.card { border: 1px solid #cbd5e1 !important; break-inside: auto !important; margin-top: 0 !important; }
-.card-head { background: #f8fafc !important; border-bottom: 1px solid #e2e8f0 !important; padding: 4px 8px !important; }
-.card-title { color: #0f172a !important; font-size: 9pt !important; }
-.card-sub   { color: #475569 !important; font-size: 7pt !important; }
-
-/* Performance table */
-.perf-scroll { overflow: visible !important; }
-.ptbl { width: 100% !important; border-collapse: collapse !important; font-size: 6pt !important; table-layout: fixed !important; }
-.ptbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 5pt !important; border: 1px solid #94a3b8 !important; padding: 2px 1px !important; white-space: normal !important; word-break: break-word !important; }
-.ptbl td { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 1px !important; color: #0f172a !important; text-align: center !important; font-size: 6pt !important; }
-.ptbl-day, .ptbl-day-cell { width: 26px !important; }
-.ptbl-cr-hdr .cr-name-lbl { font-size: 5pt !important; white-space: normal !important; word-break: break-word !important; color: #0f172a !important; display: block !important; line-height: 1.2 !important; }
-.ptbl-cr-avg { width: 26px !important; }
-.sc-dot { width: 18px !important; height: 16px !important; min-height: unset !important; border-radius: 2px !important; font-size: 5.5pt !important; border: 1px solid #94a3b8 !important; background: #f8fafc !important; color: #0f172a !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; }
-.today-row td { background: #fffbeb !important; }
-.trow-total td { background: #f0fdf4 !important; font-weight: 700 !important; }
-
-/* Score badges */
-.sc-hi { background: rgba(0,200,150,0.20) !important; color: #047857 !important; }
-.sc-md { background: rgba(255,179,64,0.20) !important; color: #b45309 !important; }
-.sc-lo { background: rgba(255,77,109,0.20) !important; color: #b91c1c !important; }
-.sc-na { background: #f1f5f9 !important; color: #64748b !important; }
-
-/* Stats */
-.stat-grid { grid-template-columns: repeat(3,1fr) !important; }
-.stat-card  { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; }
-.stat-val   { color: #0f172a !important; }
-.stat-lbl   { color: #475569 !important; }
-
-/* Tables */
-.rtbl th { background: #e2e8f0 !important; color: #0f172a !important; font-size: 7pt !important; }
-.rtbl td { background: #ffffff !important; color: #0f172a !important; border: 1px solid #cbd5e1 !important; font-size: 7pt !important; }
-
-/* All text → dark */
-span, p, div, td, th, label, a, li, h1, h2, h3, h4, h5 {
-  color: #0f172a !important;
-}
-</style>
 </head><body>${tbl}</body></html>`;
 
   const fn  = filename.replace(/\.xlsx?$/,'.xls').replace(/\.csv$/,'.xls');
@@ -4149,125 +3892,88 @@ function executePrint() {
     const pos = (db.notes&&db.notes.positive)||[];
     const neg = (db.notes&&db.notes.negative)||[];
     if(!pos.length && !neg.length) return '';
-
     const teamKey = '__team__';
-
-    // Group notes by colleague key, preserving db colleague order
     const byCol = {};
-    const addNote = (n, type) => {
+    const addNote = function(n, type) {
       const k = n.colId || teamKey;
-      if(!byCol[k]) byCol[k] = {
-        notes: [],
-        col: n.colId ? db.colleagues.find(c=>c.id===n.colId) : null
-      };
-      byCol[k].notes.push({...n, _type: type});
+      if(!byCol[k]) byCol[k] = { notes:[], col: n.colId ? db.colleagues.find(function(c){return c.id===n.colId;}) : null };
+      byCol[k].notes.push(Object.assign({}, n, {_type: type}));
     };
-    pos.forEach(n => addNote(n, 'pos'));
-    neg.forEach(n => addNote(n, 'neg'));
-
-    // Order: db colleague order first, then All Team
-    const keys = [
-      ...db.colleagues.map(c=>c.id).filter(id => byCol[id]),
-      ...(byCol[teamKey] ? [teamKey] : [])
-    ];
-
-    const prioBadge = p => {
-      if(p==='critical') return ' <span style="font-size:6pt;font-weight:700;padding:1px 5px;border-radius:8px;background:#fee2e2;color:#dc2626">🔥 Critical</span>';
-      if(p==='high')     return ' <span style="font-size:6pt;font-weight:700;padding:1px 5px;border-radius:8px;background:#fef3c7;color:#d97706">⭐ High</span>';
+    pos.forEach(function(n){ addNote(n,'pos'); });
+    neg.forEach(function(n){ addNote(n,'neg'); });
+    const keys = db.colleagues.map(function(c){return c.id;}).filter(function(id){return !!byCol[id];});
+    if(byCol[teamKey]) keys.push(teamKey);
+    const prioBadge = function(p) {
+      if(p==='critical') return ' <span style="font-size:5.5pt;font-weight:700;padding:1px 5px;border-radius:8px;background:#fee2e2;color:#dc2626">&#128293; Critical</span>';
+      if(p==='high') return ' <span style="font-size:5.5pt;font-weight:700;padding:1px 5px;border-radius:8px;background:#fef3c7;color:#d97706">&#11088; High</span>';
       return '';
     };
-
-    // Build rows — colleague name cell spans all its note rows (rowspan)
     let tableRows = '';
-    keys.forEach(k => {
+    keys.forEach(function(k) {
       const entry = byCol[k];
       const c = entry.col;
-      const name = c ? c.name : (isAr ? 'ملاحظات الفريق' : 'All Team');
-      const role = c ? c.role : (isAr ? 'عام' : 'General');
+      const name  = c ? c.name : (isAr ? 'ملاحظات الفريق' : 'All Team');
+      const role  = c ? c.role : '';
       const color = c ? c.color : '#64748b';
-      const ini = c ? c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '✦';
-      const notes = entry.notes; // already in insertion order (pos first, neg second)
-      const rowspan = notes.length;
-
-      // Colleague name cell — only rendered on the first note row
-      const nameCell = `<td rowspan="${rowspan}" style="padding:10px 12px;border:1px solid #e2e8f0;border-left:4px solid ${color};vertical-align:middle;background:#fafbfc;width:170px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-            <div style="width:30px;height:30px;border-radius:7px;background:${color}22;color:${color};display:flex;align-items:center;justify-content:center;font-size:10pt;font-weight:800;flex-shrink:0">${ini}</div>
-            <div>
-              <div style="font-size:9pt;font-weight:700;color:#0f172a;line-height:1.2">${name}</div>
-              <div style="font-size:6.5pt;color:#64748b;margin-top:1px">${role}</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:5px;flex-wrap:wrap">
-            <span style="font-size:6.5pt;padding:2px 6px;border-radius:8px;background:#d1fae5;color:#065f46;font-weight:700">✅ ${entry.notes.filter(n=>n._type==='pos').length}</span>
-            <span style="font-size:6.5pt;padding:2px 6px;border-radius:8px;background:#fee2e2;color:#991b1b;font-weight:700">⚠ ${entry.notes.filter(n=>n._type==='neg').length}</span>
-          </div>
-        </td>`;
-
-      notes.forEach((n, i) => {
+      const ini   = c ? c.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase() : '&#10022;';
+      const notes = entry.notes;
+      const posCount = notes.filter(function(n){return n._type==='pos';}).length;
+      const negCount = notes.filter(function(n){return n._type==='neg';}).length;
+      const nameCell =
+        '<td rowspan="'+notes.length+'" style="padding:8px 10px;border:1px solid #e2e8f0;border-left:4px solid '+color+';vertical-align:middle;background:#fafbfc;width:155px">'
+        +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">'
+        +'<div style="width:28px;height:28px;border-radius:6px;background:'+color+'22;color:'+color+';display:flex;align-items:center;justify-content:center;font-size:9pt;font-weight:800;flex-shrink:0">'+ini+'</div>'
+        +'<div><div style="font-size:8pt;font-weight:700;color:#0f172a;line-height:1.2">'+name+'</div>'
+        +(role ? '<div style="font-size:6pt;color:#64748b">'+role+'</div>' : '')
+        +'</div></div>'
+        +'<div style="display:flex;gap:4px">'
+        +'<span style="font-size:6pt;padding:1px 5px;border-radius:6px;background:#d1fae5;color:#065f46;font-weight:700">&#10003; '+posCount+'</span>'
+        +'<span style="font-size:6pt;padding:1px 5px;border-radius:6px;background:#fee2e2;color:#991b1b;font-weight:700">&#9888; '+negCount+'</span>'
+        +'</div></td>';
+      notes.forEach(function(n, i) {
         const isPos = n._type === 'pos';
-        const typeDot  = isPos
-          ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#00c896;margin-right:6px;flex-shrink:0;margin-top:3px"></span>'
-          : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:6px;flex-shrink:0;margin-top:3px"></span>';
-        const typeLabel = isPos
-          ? `<span style="font-size:6pt;font-weight:700;color:#065f46;background:#d1fae5;padding:1px 6px;border-radius:8px;white-space:nowrap">${isAr?'إيجابي':'Positive'}</span>`
-          : `<span style="font-size:6pt;font-weight:700;color:#991b1b;background:#fee2e2;padding:1px 6px;border-radius:8px;white-space:nowrap">${isAr?'تحسين':'Improve'}</span>`;
-        const dateSpan = n.date ? `<span style="font-size:6pt;color:#94a3b8;white-space:nowrap">${n.date}</span>` : '';
-        const prio = prioBadge(n.priority||'normal');
-        // alternating row shade between colleagues
         const noteBg = isPos ? '#f0fdf4' : '#fff5f5';
-        // separator between colleague blocks
-        const topBorder = (i===0 && k !== keys[0]) ? 'border-top:2px solid #cbd5e1;' : '';
-
-        tableRows += `<tr style="border-top:${i===0?'2px solid #cbd5e1':'1px solid #f1f5f9'}">
-          ${i===0 ? nameCell : ''}
-          <td style="padding:7px 10px;border:1px solid #e2e8f0;vertical-align:top;width:60px;text-align:center">${typeLabel}</td>
-          <td style="padding:7px 12px;border:1px solid #e2e8f0;vertical-align:top;background:${noteBg}">
-            <div style="font-size:8pt;color:#1e293b;line-height:1.5">${n.text}${prio}</div>
-            ${dateSpan ? `<div style="margin-top:3px">${dateSpan}</div>` : ''}
-          </td>
-        </tr>`;
+        const typeLabel = isPos
+          ? '<span style="font-size:6pt;font-weight:700;padding:2px 7px;border-radius:8px;background:#d1fae5;color:#065f46;white-space:nowrap">'+(isAr?'إيجابي':'Positive')+'</span>'
+          : '<span style="font-size:6pt;font-weight:700;padding:2px 7px;border-radius:8px;background:#fee2e2;color:#991b1b;white-space:nowrap">'+(isAr?'تحسين':'Improve')+'</span>';
+        const prio = prioBadge(n.priority||'normal');
+        const dateStr = n.date ? '<div style="font-size:5.5pt;color:#94a3b8;margin-top:2px">'+n.date+'</div>' : '';
+        const topBdr = i===0 ? '2px solid #cbd5e1' : '1px solid #f1f5f9';
+        tableRows +=
+          '<tr style="border-top:'+topBdr+'">'
+          +(i===0 ? nameCell : '')
+          +'<td style="padding:6px 8px;border:1px solid #e2e8f0;vertical-align:middle;text-align:center;width:65px">'+typeLabel+'</td>'
+          +'<td style="padding:6px 10px;border:1px solid #e2e8f0;vertical-align:top;background:'+noteBg+'">'
+          +'<div style="font-size:7.5pt;color:#1e293b;line-height:1.5">'+n.text+prio+'</div>'
+          +dateStr+'</td></tr>';
       });
     });
-
     const totalPos = pos.length, totalNeg = neg.length;
-    const dateStr = new Date().toLocaleDateString(isAr?'ar-SA':'en-GB',{day:'numeric',month:'long',year:'numeric'});
-
-    return `<div class="report-block">
-<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:14px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
-  <div>
-    <div style="font-size:15pt;font-weight:800;color:#f0f9ff">${isAr?'ملاحظات الفريق':'Team Notes'}</div>
-    <div style="font-size:8pt;color:#00d4ff;margin-top:3px;font-family:monospace">
-      ▸ ${periodLabel(curMonth)} &nbsp;·&nbsp;
-      <span style="color:#6ee7b7">${totalPos} ${isAr?'إيجابية':'positive'}</span> &nbsp;·&nbsp;
-      <span style="color:#fca5a5">${totalNeg} ${isAr?'للتحسين':'improvement'}</span>
-    </div>
-  </div>
-  <div style="text-align:right;font-size:7pt;color:rgba(148,197,232,0.5);font-family:monospace">RxPerform Pro<br>${dateStr}</div>
-</div>
-<table style="border-collapse:collapse;width:100%;table-layout:fixed;font-size:8pt;font-family:system-ui,sans-serif">
-  <colgroup>
-    <col style="width:170px">
-    <col style="width:72px">
-    <col>
-  </colgroup>
-  <thead>
-    <tr style="background:#0f2244;color:#fff">
-      <th style="padding:8px 12px;border:1px solid #1e3a5f;text-align:left;font-size:8pt">${isAr?'الزميل':'Colleague'}</th>
-      <th style="padding:8px 10px;border:1px solid #1e3a5f;text-align:center;font-size:8pt">${isAr?'النوع':'Type'}</th>
-      <th style="padding:8px 12px;border:1px solid #1e3a5f;text-align:left;font-size:8pt">${isAr?'الملاحظة':'Note'}</th>
-    </tr>
-  </thead>
-  <tbody>${tableRows}</tbody>
-</table>
-<div style="margin-top:10px;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;display:flex;align-items:center;justify-content:space-between;font-size:7pt;color:#64748b">
-  <span>${isAr?'الزملاء':'Colleagues'}: <strong style="color:#1e293b">${keys.filter(k=>k!==teamKey).length}</strong> &nbsp;·&nbsp; ${isAr?'إجمالي الملاحظات':'Total notes'}: <strong style="color:#1e293b">${totalPos+totalNeg}</strong></span>
-  <span style="color:#00d4ff">RxPerform Pro · Confidential</span>
-  <span>${isAr?'طُبع في':'Printed'}: ${dateStr}</span>
-</div>
-</div>`;
+    const dateStr2 = new Date().toLocaleDateString(isAr?'ar-SA':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+    return '<div class="report-block">'
+      +'<div style="background:linear-gradient(135deg,#070c14 0%,#0f1f38 60%,#162035 100%);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">'
+      +'<div><div style="font-size:14pt;font-weight:800;color:#f0f9ff">'+(isAr?'ملاحظات الفريق':'Team Notes')+'</div>'
+      +'<div style="font-size:7.5pt;color:#00d4ff;margin-top:3px;font-family:monospace">&#9658; '+periodLabel(curMonth)+' &nbsp;&middot;&nbsp;'
+      +'<span style="color:#6ee7b7">'+totalPos+' '+(isAr?'إيجابية':'positive')+'</span> &nbsp;&middot;&nbsp;'
+      +'<span style="color:#fca5a5">'+totalNeg+' '+(isAr?'للتحسين':'improvement')+'</span>'
+      +'</div></div>'
+      +'<div style="text-align:right;font-size:6.5pt;color:rgba(148,197,232,0.5);font-family:monospace">RxPerform Pro<br>'+dateStr2+'</div>'
+      +'</div>'
+      +'<table style="border-collapse:collapse;width:100%;table-layout:fixed;font-family:system-ui,sans-serif">'
+      +'<colgroup><col style="width:155px"><col style="width:68px"><col></colgroup>'
+      +'<thead><tr style="background:#0f2244;color:#fff">'
+      +'<th style="padding:6px 10px;border:1px solid #1e3a5f;text-align:left;font-size:7.5pt">'+(isAr?'الزميل':'Colleague')+'</th>'
+      +'<th style="padding:6px 8px;border:1px solid #1e3a5f;text-align:center;font-size:7.5pt">'+(isAr?'النوع':'Type')+'</th>'
+      +'<th style="padding:6px 10px;border:1px solid #1e3a5f;text-align:left;font-size:7.5pt">'+(isAr?'الملاحظة':'Note')+'</th>'
+      +'</tr></thead>'
+      +'<tbody>'+tableRows+'</tbody></table>'
+      +'<div style="margin-top:8px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:flex;align-items:center;justify-content:space-between;font-size:6pt;color:#64748b">'
+      +'<span>'+(isAr?'الزملاء':'Colleagues')+': <strong style="color:#1e293b">'+keys.filter(function(k){return k!==teamKey;}).length+'</strong>'
+      +' &nbsp;&middot;&nbsp; '+(isAr?'إجمالي الملاحظات':'Total notes')+': <strong style="color:#1e293b">'+(totalPos+totalNeg)+'</strong></span>'
+      +'<span style="color:#00d4ff">RxPerform Pro &middot; Confidential</span>'
+      +'<span>'+(isAr?'طُبع في':'Printed')+': '+dateStr2+'</span>'
+      +'</div></div>';
   }
-
   // ── Build charts page (bar + trend data as table since canvas can't print) ──
   function buildChartsPage(month) {
     const mLabel = periodLabel(month);
@@ -4344,38 +4050,29 @@ function executePrint() {
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 @page { size:${paper}; margin:8mm 10mm; }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-html,body{background:#ffffff!important;color:#1e293b!important;font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;font-size:9pt;}
-.report-block{page-break-after:always;page-break-inside:avoid;padding-bottom:4px;}
-.report-block:last-child{page-break-after:auto;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#fff;color:#1e293b;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9pt;}
+.report-block { page-break-after:always; page-break-inside:avoid; padding-bottom:4px; }
+.report-block:last-child { page-break-after:auto; }
 </style>
 </head><body>${pages.join('')}</body></html>`;
 
-  // ── Body-swap print: replace page with white content, restore after ──
-  const _origHTML = document.documentElement.innerHTML;
-
-  // Build standalone white page
-  const _isAr2 = (typeof appLang !== 'undefined') && appLang === 'ar';
-  const _printDoc = '<!DOCTYPE html><html lang="' + (_isAr2?'ar':'en') + '" dir="' + (_isAr2?'rtl':'ltr') + '">'
-    + '<head><meta charset="UTF-8">'
-    + '<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">'
-    + '<style>'
-    + '*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}'
-    + 'html,body{background:#ffffff!important;color:#1e293b!important;font-family:' + (_isAr2?"'Cairo'":'Syne') + ',system-ui,sans-serif;font-size:9pt;}'
-    + '.report-block{page-break-after:always;page-break-inside:avoid;}'
-    + '.report-block:last-child{page-break-after:auto;}'
-    + '</style></head><body>' + pages.join('') + '</body></html>';
-
-  // Replace entire document
-  document.open();
-  document.write(_printDoc);
-  document.close();
-
-  // Print then reload to restore app
-  setTimeout(function() {
-    window.print();
-    setTimeout(function() { location.reload(); }, 2000);
-  }, 500);
+  let iframe = document.getElementById('rxp-print-frame');
+  if(iframe) iframe.remove();
+  iframe = document.createElement('iframe');
+  iframe.id = 'rxp-print-frame';
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;z-index:-1';
+  document.body.appendChild(iframe);
+  try {
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(html_out);
+    iframe.contentDocument.close();
+    setTimeout(()=>{
+      try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e){ window.print(); }
+      setTimeout(()=>{ if(iframe.parentNode) iframe.remove(); },3000);
+    },900);
+    toast(isAr?'جاري فتح نافذة الطباعة…':'Opening print dialog…');
+  } catch(e){ window.print(); }
 }
 
 /* ════════════════════════════════════════════
@@ -4796,7 +4493,8 @@ function applyLang() {
 
   // ── Re-render notes lists ──
   populateNoteSelects();
-  renderUnifiedNotes();
+  renderNotesList('positive');
+  renderNotesList('negative');
 
 
   // ── Translate static UI elements ──
@@ -4851,157 +4549,8 @@ function renderNotesView() {
     sel.innerHTML = '<option value="">All periods</option>'
       + months.map(m=>`<option value="${m}"${m===cur?' selected':''}>${periodLabel(m)}</option>`).join('');
   }
-  renderUnifiedNotes();
-}
-
-function addUnifiedNote() {
-  if(role !== 'admin') return;
-  const type = document.getElementById('noteTypeSelect').value;
-  // sync hidden selects
-  const colSel = document.getElementById('posColSel');
-  document.getElementById('negColSel').value = colSel.value;
-  const dateInp = document.getElementById('posDateInp');
-  document.getElementById('negDateInp').value = dateInp.value;
-  const textInp = document.getElementById('posTextInp');
-  document.getElementById('negTextInp').value = textInp.value;
-  const priSel = document.getElementById('posPriority');
-  document.getElementById('negPriority').value = priSel.value;
-  addNote(type);
-  // clear
-  textInp.value = '';
-  dateInp.value = '';
-  priSel.value = 'normal';
-}
-
-function renderUnifiedNotes() {
-  const listEl = document.getElementById('unifiedNotesList');
-  if(!listEl) return;
-
-  const allPos = (db.notes&&db.notes.positive)||[];
-  const allNeg = (db.notes&&db.notes.negative)||[];
-  const filterMonth    = document.getElementById('notesMonthFilter')?.value || '';
-  const searchQ        = (document.getElementById('notesSearch')?.value || '').toLowerCase().trim();
-  const filterPriority = document.getElementById('notesPriorityFilter')?.value || '';
-
-  const filter = n => {
-    if(filterMonth    && (n.month||'') !== filterMonth) return false;
-    if(filterPriority && (n.priority||'normal') !== filterPriority) return false;
-    if(searchQ) {
-      const col = n.colId ? (db.colleagues.find(c=>c.id===n.colId)?.name||'').toLowerCase() : '';
-      if(!(n.text||'').toLowerCase().includes(searchQ) && !col.includes(searchQ)) return false;
-    }
-    return true;
-  };
-
-  const pos = allPos.filter(filter);
-  const neg = allNeg.filter(filter);
-  const t = appLang==='ar' ? AR : EN;
-  const isAdmin = role === 'admin';
-
-  // Update hidden counters for AR translation compatibility
-  const posCnt = document.getElementById('posCnt'); if(posCnt) posCnt.textContent = pos.length;
-  const negCnt = document.getElementById('negCnt'); if(negCnt) negCnt.textContent = neg.length;
-
-  if(!pos.length && !neg.length) {
-    listEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3);font-size:13px">${t.noNotes||'No notes yet.'}</div>`;
-    updateTopBar(); return;
-  }
-
-  // Merge all notes, tag type and original index
-  const mergedPos = pos.map(n => ({...n, _type:'positive', _realIdx: allPos.indexOf(n)}));
-  const mergedNeg = neg.map(n => ({...n, _type:'negative', _realIdx: allNeg.indexOf(n)}));
-  const allMerged = [...mergedPos, ...mergedNeg];
-
-  // Group by period, then by colleague
-  const teamKey = '__team__';
-  const periodGroups = {};
-  allMerged.forEach(n => {
-    const mKey = n.month || 'unknown';
-    const cKey = n.colId || teamKey;
-    if(!periodGroups[mKey]) periodGroups[mKey] = {};
-    if(!periodGroups[mKey][cKey]) periodGroups[mKey][cKey] = [];
-    periodGroups[mKey][cKey].push(n);
-  });
-
-  const sortedPeriods = Object.keys(periodGroups).sort().reverse();
-
-  listEl.innerHTML = sortedPeriods.map(mKey => {
-    const mLabel = mKey !== 'unknown' ? periodLabel(mKey) : 'No period';
-
-    // Sort colleague keys: team-wide last
-    const cKeys = Object.keys(periodGroups[mKey]).sort((a,b) => {
-      if(a===teamKey) return 1; if(b===teamKey) return -1;
-      const ia = db.colleagues.findIndex(c=>c.id===a);
-      const ib = db.colleagues.findIndex(c=>c.id===b);
-      return ia - ib;
-    });
-
-    const colBlocks = cKeys.map(cKey => {
-      const colleague = cKey !== teamKey ? db.colleagues.find(c=>c.id===cKey) : null;
-      const colName   = colleague ? colleague.name : (t.allTeam||'All Team');
-      const colRole   = colleague ? colleague.role : '';
-      const colColor  = colleague ? colleague.color : 'var(--text3)';
-      const ini       = colleague ? colleague.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '✦';
-      const notes     = periodGroups[mKey][cKey];
-      const posNotes  = notes.filter(n=>n._type==='positive');
-      const negNotes  = notes.filter(n=>n._type==='negative');
-
-      const noteCards = notes.map(n => {
-        const isPos = n._type === 'positive';
-        const accent = isPos ? 'var(--emerald)' : 'var(--rose)';
-        const prio = n.priority || 'normal';
-        const prioBorder = prio==='critical'?'#ff4d6d':prio==='high'?'#ffb340':accent;
-        const prioBg     = prio==='critical'?'rgba(255,77,109,0.05)':prio==='high'?'rgba(255,179,64,0.04)':'';
-        const prioLabel  = prio==='critical'?'🔥 Critical':prio==='high'?'⭐ High':'';
-        const prioColor  = prio==='critical'?'#ff4d6d':prio==='high'?'#ffb340':'';
-        const typePill   = isPos
-          ? `<span style="font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(0,200,150,0.12);color:var(--emerald);font-weight:700">✅ ${appLang==='ar'?'إيجابي':'Positive'}</span>`
-          : `<span style="font-size:9px;padding:1px 7px;border-radius:10px;background:rgba(255,77,109,0.10);color:var(--rose);font-weight:700">⚠ ${appLang==='ar'?'تحسين':'Improve'}</span>`;
-        const safeText = n.text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        return `<div style="padding:9px 11px;border-radius:9px;border:1px solid var(--line2);border-left:3px solid ${prioBorder};background:${prioBg||'var(--ink3)'};position:relative;margin-bottom:6px">
-          ${isAdmin ? `<button onclick="deleteNote('${n._type}',${n._realIdx})" title="Delete"
-            style="position:absolute;top:6px;right:6px;background:none;border:none;color:var(--text3);cursor:pointer;font-size:11px;padding:2px 5px;border-radius:4px;line-height:1" onmouseover="this.style.color='var(--rose)'" onmouseout="this.style.color='var(--text3)'">✕</button>` : ''}
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap">
-            ${typePill}
-            ${prioLabel ? `<span style="font-size:9px;padding:1px 7px;border-radius:10px;background:${prioBorder}18;color:${prioColor};font-weight:700">${prioLabel}</span>` : ''}
-            ${n.date ? `<span style="font-size:10px;color:var(--text3)">${n.date}</span>` : ''}
-            ${isAdmin ? `<button onclick="toggleNotePriority('${n._type}',${n._realIdx})"
-              style="font-size:9px;padding:1px 7px;border-radius:10px;border:1px solid var(--line2);background:var(--ink4);color:var(--text3);cursor:pointer;font-family:inherit;margin-left:auto">⚑ priority</button>` : ''}
-          </div>
-          <div style="font-size:12px;color:var(--text);line-height:1.5">${safeText}</div>
-        </div>`;
-      }).join('');
-
-      return `<div style="background:var(--ink2);border:1px solid var(--line2);border-radius:12px;overflow:hidden;margin-bottom:10px">
-        <!-- Colleague header -->
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--ink1);border-bottom:1px solid var(--line2)">
-          <div style="width:34px;height:34px;border-radius:9px;background:${colColor}22;color:${colColor};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;border:1.5px solid ${colColor}44">${ini}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:var(--white)">${colName}</div>
-            ${colRole ? `<div style="font-size:10px;color:var(--text3)">${colRole}</div>` : ''}
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,200,150,0.12);color:var(--emerald);font-weight:700">✅ ${posNotes.length}</span>
-            <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,77,109,0.10);color:var(--rose);font-weight:700">⚠ ${negNotes.length}</span>
-          </div>
-        </div>
-        <!-- Notes -->
-        <div style="padding:10px 14px">
-          ${noteCards}
-        </div>
-      </div>`;
-    }).join('');
-
-    return `<div style="margin-bottom:18px">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--cyan);padding:4px 0 6px;margin-bottom:8px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:6px">
-        <span>📅</span> ${mLabel}
-        <span style="font-size:9px;color:var(--text3);font-weight:400;letter-spacing:0">(${Object.keys(periodGroups[mKey]).length} ${appLang==='ar'?'زملاء':'colleagues'})</span>
-      </div>
-      ${colBlocks}
-    </div>`;
-  }).join('');
-
-  updateTopBar();
+  renderNotesList('positive');
+  renderNotesList('negative');
 }
 
 function renderNotesList(type) {
@@ -5099,7 +4648,6 @@ function renderNotesList(type) {
       ${colSections}
     </div>`;
   }).join('');
-  updateTopBar();
 }
 
 function toggleNotePriority(type, idx) {
@@ -5110,7 +4658,7 @@ function toggleNotePriority(type, idx) {
   notes[idx].priority = cycle[notes[idx].priority||'normal'] || 'normal';
   SFX.tap();
   save();
-  renderUnifiedNotes();
+  renderNotesList(type);
 }
 
 function updateCharCount(prefix, val) {
@@ -5138,7 +4686,7 @@ function addNote(type) {
   document.getElementById(isPos ? 'posTextInp' : 'negTextInp').value = '';
   document.getElementById(isPos ? 'posDateInp' : 'negDateInp').value = '';
   SFX.note();
-  renderUnifiedNotes();
+  renderNotesList(type);
   toast(isPos ? 'Positive note added' : 'Improvement note added');
 }
 
@@ -5149,7 +4697,7 @@ function deleteNote(type, idx) {
   db.notes[type].splice(idx, 1);
   snapshotForUndo();
   save();
-  renderUnifiedNotes();
+  renderNotesList(type);
 }
 
 function exportNotesExcel() {
@@ -5251,75 +4799,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── Print mode: swap to light theme before browser renders print ──
-// Override window.print to always apply light mode first
-var _nativePrint = window.print.bind(window);
-window.print = function() {
-  applyPrintMode();
-  setTimeout(function() {
-    _nativePrint();
-    setTimeout(removePrintMode, 100);
-  }, 50);
-};
-
-function applyPrintMode() {
-  document.body.classList.add('print-mode');
-  var s = document.documentElement.style;
-  s.setProperty('--ink','#ffffff');
-  s.setProperty('--ink1','#f8fafc');
-  s.setProperty('--ink2','#f1f5f9');
-  s.setProperty('--ink3','#e2e8f0');
-  s.setProperty('--ink4','#cbd5e1');
-  s.setProperty('--ink5','#94a3b8');
-  s.setProperty('--line','rgba(0,0,0,0.10)');
-  s.setProperty('--line2','rgba(0,0,0,0.15)');
-  s.setProperty('--line3','rgba(0,0,0,0.22)');
-  s.setProperty('--text','#0f172a');
-  s.setProperty('--text2','#334155');
-  s.setProperty('--text3','#64748b');
-  s.setProperty('--white','#0f172a');
-  s.setProperty('--cyan','#0077b6');
-  s.setProperty('--emerald','#047857');
-  s.setProperty('--amber','#b45309');
-  s.setProperty('--rose','#b91c1c');
-  s.setProperty('--glow','none');
-  s.setProperty('--glow2','none');
-}
-function removePrintMode() {
-  document.body.classList.remove('print-mode');
-  var s = document.documentElement.style;
-  ['--ink','--ink1','--ink2','--ink3','--ink4','--ink5',
-   '--line','--line2','--line3','--text','--text2','--text3',
-   '--white','--cyan','--emerald','--amber','--rose','--glow','--glow2'
-  ].forEach(function(p){ s.removeProperty(p); });
-}
-
-window.addEventListener('beforeprint', function() {
-  document.body.classList.add('print-mode');
-  // Also force all CSS custom properties to light values
-  var s = document.documentElement.style;
-  s.setProperty('--ink','#ffffff');
-  s.setProperty('--ink1','#f8fafc');
-  s.setProperty('--ink2','#f1f5f9');
-  s.setProperty('--ink3','#e2e8f0');
-  s.setProperty('--ink4','#cbd5e1');
-  s.setProperty('--ink5','#94a3b8');
-  s.setProperty('--line','rgba(0,0,0,0.10)');
-  s.setProperty('--line2','rgba(0,0,0,0.15)');
-  s.setProperty('--line3','rgba(0,0,0,0.22)');
-  s.setProperty('--text','#0f172a');
-  s.setProperty('--text2','#334155');
-  s.setProperty('--text3','#64748b');
-  s.setProperty('--white','#0f172a');
-  s.setProperty('--cyan','#0077b6');
-  s.setProperty('--emerald','#047857');
-  s.setProperty('--amber','#b45309');
-  s.setProperty('--rose','#b91c1c');
-  s.setProperty('--glow','none');
-  s.setProperty('--glow2','none');
-});
-window.addEventListener('afterprint', removePrintMode);
-
 loadAndInit(); // loads local first, then syncs from cloud
 
 // Re-sync when tab/app becomes visible again (e.g. switching from mobile)
@@ -5339,16 +4818,44 @@ document.addEventListener('visibilitychange', () => {
    PWA — SERVICE WORKER + INSTALL PROMPT
 ════════════════════════════════════════════ */
 
-// Service worker disabled — unregister any old ones to prevent stale cache
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(regs => {
-    regs.forEach(r => r.unregister());
-  });
-}
-if('caches' in window) {
-  caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
-}
+// Register inline service worker for offline support
+(function registerSW() {
+  if(!('serviceWorker' in navigator)) return;
+  const swCode = `
+const CACHE = 'rxperform-v1';
+const ASSETS = []; // app is single-file, nothing extra to cache
 
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  clients.claim();
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+});
+
+// Network first, cache fallback — keeps data fresh from Supabase
+self.addEventListener('fetch', e => {
+  if(e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      })
+      .catch(() => caches.match(e.request))
+  );
+});
+`;
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  const url  = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(() => {});
+})();
 
 // Install prompt (Android Chrome shows "Add to home screen" banner)
 let _installPrompt = null;
@@ -6343,14 +5850,6 @@ function toggleUserMenu() {
   if(ico) ico.textContent = appMode==='night' ? '☀' : '☾';
 }
 
-function toggleMoreMenu() {
-  const m = document.getElementById('moreMenu');
-  if(!m) return;
-  m.style.display = m.style.display === 'none' ? 'block' : 'none';
-}
-function closeMoreMenu() {
-  const m = document.getElementById('moreMenu'); if(m) m.style.display='none';
-}
 function closeUserMenu() {
   const m = document.getElementById('userMenu'); if(m) m.style.display='none';
 }
@@ -6358,7 +5857,6 @@ function closeViewerMenu() {
   const m = document.getElementById('viewerMenu'); if(m) m.style.display='none';
 }
 document.addEventListener('click', function(e) {
-  if(!e.target.closest('#moreMenuBtn') && !e.target.closest('#moreMenu')) closeMoreMenu();
   if(!e.target.closest('#userChip') && !e.target.closest('#userMenu')) closeUserMenu();
     if(!e.target.closest('#userChip') && !e.target.closest('#viewerMenu')) closeViewerMenu();
 });
