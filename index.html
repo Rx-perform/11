@@ -1255,7 +1255,13 @@ body.lang-ar .note-del { right:auto; left:8px; }
 
         <!-- STATS VIEW -->
         <div class="view" id="view-stats">
-          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)" id="statsViewTitle">Team Statistics</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px">
+            <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)" id="statsViewTitle">Team Statistics</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--text3)">Period:</span>
+              <select id="statsPeriodSel" onchange="onStatsPeriodChange()" style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--white);font-size:12px;padding:5px 10px;font-family:'Syne',sans-serif;cursor:pointer;outline:none"></select>
+            </div>
+          </div>
           <div class="insight-card" id="insightCard" style="display:none"></div>
           <div class="stat-grid" id="statsGrid"></div>
           <div class="card">
@@ -1271,7 +1277,13 @@ body.lang-ar .note-del { right:auto; left:8px; }
 
         <!-- CHARTS VIEW -->
         <div class="view" id="view-charts">
-          <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)">Performance Charts</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px">
+            <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white)">Performance Charts</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--text3)">Period:</span>
+              <select id="chartsPeriodSel" onchange="onChartsPeriodChange()" style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--white);font-size:12px;padding:5px 10px;font-family:'Syne',sans-serif;cursor:pointer;outline:none"></select>
+            </div>
+          </div>
           <div class="chart-grid" id="chartsGrid"></div>
         </div>
 
@@ -1733,7 +1745,9 @@ const CAT_COLORS = {
 let db = { colleagues: [], criteria: [], scores: {}, notes: { positive: [], negative: [] }, settings: { cycleStart: 16, adminDisplayName: 'Abdullah Tharwat' } };
 let appLang = localStorage.getItem('rxp_lang') || 'en';
 let appMode = localStorage.getItem('rxp_mode') || 'night';
-let role = 'viewer'; // 'admin' | 'viewer'
+let role = 'viewer'; // 'admin'
+let statsViewMonth  = null; // null = use curMonth
+let chartsViewMonth = null;
 let selRole = 'admin';
 let curColId = null;
 let curMonth = null;
@@ -2087,6 +2101,29 @@ function initApp() {
 /* ════════════════════════════════════════════
    VIEW SWITCHING
 ════════════════════════════════════════════ */
+function populateViewPeriodSel(selId, currentVal) {
+  const sel = document.getElementById(selId);
+  if(!sel) return;
+  const months = availMonths();
+  sel.innerHTML = months.map(m =>
+    `<option value="${m}"${m===(currentVal||curMonth)?' selected':''}>${periodLabel(m)}</option>`
+  ).join('');
+}
+
+function onStatsPeriodChange() {
+  const sel = document.getElementById('statsPeriodSel');
+  if(!sel) return;
+  statsViewMonth = sel.value;
+  renderStats();
+}
+
+function onChartsPeriodChange() {
+  const sel = document.getElementById('chartsPeriodSel');
+  if(!sel) return;
+  chartsViewMonth = sel.value;
+  renderAllCharts();
+}
+
 function setView(v) {
   ['entry','stats','charts','filter','notes','compare'].forEach(x=>{
     const el=document.getElementById(`view-${x}`);
@@ -2094,8 +2131,16 @@ function setView(v) {
     const tb=document.getElementById(`tb-${x}`);
     if(tb) tb.classList.toggle('t-active', x===v);
   });
-  if(v==='stats') renderStats();
-  if(v==='charts') renderAllCharts();
+  if(v==='stats') {
+    statsViewMonth = statsViewMonth || curMonth;
+    populateViewPeriodSel('statsPeriodSel', statsViewMonth);
+    renderStats();
+  }
+  if(v==='charts') {
+    chartsViewMonth = chartsViewMonth || curMonth;
+    populateViewPeriodSel('chartsPeriodSel', chartsViewMonth);
+    renderAllCharts();
+  }
   if(v==='filter') populateFilterDropdowns();
   if(v==='notes') renderNotesView();
   if(v==='compare') renderCompareView();
@@ -2900,12 +2945,13 @@ function deleteCriterion() {
    STATISTICS
 ════════════════════════════════════════════ */
 function renderInsightCard() {
+  const _sm = statsViewMonth || _sm;
   const card = document.getElementById('insightCard');
   if(!card) return;
   const cols = db.colleagues;
   if(!cols.length) { card.style.display='none'; return; }
 
-  const avgs = cols.map(c => ({ c, avg: colMonthAvg(c.id, curMonth) })).filter(x => x.avg > 0);
+  const avgs = cols.map(c => ({ c, avg: colMonthAvg(c.id, _sm) })).filter(x => x.avg > 0);
   if(!avgs.length) { card.style.display='none'; return; }
 
   avgs.sort((a,b) => b.avg - a.avg);
@@ -2919,7 +2965,7 @@ function renderInsightCard() {
   let improved  = null, improvedDelta = 0;
   if(prevM) {
     cols.forEach(c => {
-      const curr = colMonthAvg(c.id, curMonth);
+      const curr = colMonthAvg(c.id, _sm);
       const prev = colMonthAvg(c.id, prevM);
       if(curr > 0 && prev > 0) {
         const delta = curr - prev;
@@ -2933,7 +2979,7 @@ function renderInsightCard() {
   db.criteria.forEach(cr => {
     let s=0, n=0;
     cols.forEach(c => {
-      const sc = db.scores[c.id]?.[curMonth]?.[cr.id] || {};
+      const sc = db.scores[c.id]?.[_sm]?.[cr.id] || {};
       Object.values(sc).forEach(e => { if(e.score){ s+=e.score; n++; } });
     });
     const avg = n ? s/n : 0;
@@ -2941,20 +2987,20 @@ function renderInsightCard() {
   });
 
   const lines = [];
-  const pLabel = periodLabel(curMonth);
+  const pLabel = periodLabel(_sm);
 
   // Team performance summary
   const teamRank = rankInfo(teamAvg);
   const _ia = appLang==='ar';
   if(_ia) {
     lines.push(`<div class="insight-line"><span class="insight-icon">${teamRank.icon}</span><span>متوسط الفريق هذه الفترة (<b style="color:var(--cyan)">${pLabel}</b>) هو <b style="color:${teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'}">${teamAvg.toFixed(2)}/10</b> — مستوى <b>${teamRank.label}</b>.</span></div>`);
-    if(top) { const streak=calcStreak(top.c.id,curMonth).streak; lines.push(`<div class="insight-line"><span class="insight-icon">🏆</span><span>الأفضل أداءً: <b style="color:${top.c.color}">${top.c.name}</b> بمتوسط <b style="color:var(--emerald)">${top.avg.toFixed(2)}/10</b>${streak>=2?` وسلسلة <b style="color:#ff9520">🔥${streak} أيام</b>`:''} .</span></div>`); }
+    if(top) { const streak=calcStreak(top.c.id,_sm).streak; lines.push(`<div class="insight-line"><span class="insight-icon">🏆</span><span>الأفضل أداءً: <b style="color:${top.c.color}">${top.c.name}</b> بمتوسط <b style="color:var(--emerald)">${top.avg.toFixed(2)}/10</b>${streak>=2?` وسلسلة <b style="color:#ff9520">🔥${streak} أيام</b>`:''} .</span></div>`); }
     if(improved&&improvedDelta>0.2) lines.push(`<div class="insight-line"><span class="insight-icon">📈</span><span>الأكثر تحسناً عن الفترة السابقة: <b style="color:${improved.color}">${improved.name}</b> (+${improvedDelta.toFixed(2)} نقطة).</span></div>`);
     if(weakCr&&weakVal<8) lines.push(`<div class="insight-line"><span class="insight-icon">⚠️</span><span>المعيار الأضعف: <b style="color:var(--amber)">${weakCr.name}</b> (متوسط <b style="color:var(--rose)">${weakVal.toFixed(2)}/10</b>) — يُنصح بالتدريب المركّز.</span></div>`);
     if(bottom&&top&&(top.avg-bottom.avg)>1.5) lines.push(`<div class="insight-line"><span class="insight-icon">💡</span><span><b style="color:${bottom.c.color}">${bottom.c.name}</b> يسجّل <b style="color:var(--rose)">${bottom.avg.toFixed(2)}/10</b> — فجوة <b>${(top.avg-bottom.avg).toFixed(2)} نقطة</b> عن الأول. مراجعة فردية قد تفيد.</span></div>`);
   } else {
     lines.push(`<div class="insight-line"><span class="insight-icon">${teamRank.icon}</span><span>Team average this period (<b style="color:var(--cyan)">${pLabel}</b>) is <b style="color:${teamAvg>=8?'var(--emerald)':teamAvg>=6?'var(--amber)':'var(--rose)'}">${teamAvg.toFixed(2)}/10</b> — <b>${teamRank.label}</b> performance.</span></div>`);
-    if(top) { const streak=calcStreak(top.c.id,curMonth).streak; lines.push(`<div class="insight-line"><span class="insight-icon">🏆</span><span>Top performer is <b style="color:${top.c.color}">${top.c.name}</b> with <b style="color:var(--emerald)">${top.avg.toFixed(2)}/10</b>${streak>=2?` and a <b style="color:#ff9520">🔥${streak}-day streak</b>`:''} .</span></div>`); }
+    if(top) { const streak=calcStreak(top.c.id,_sm).streak; lines.push(`<div class="insight-line"><span class="insight-icon">🏆</span><span>Top performer is <b style="color:${top.c.color}">${top.c.name}</b> with <b style="color:var(--emerald)">${top.avg.toFixed(2)}/10</b>${streak>=2?` and a <b style="color:#ff9520">🔥${streak}-day streak</b>`:''} .</span></div>`); }
     if(improved&&improvedDelta>0.2) lines.push(`<div class="insight-line"><span class="insight-icon">📈</span><span>Most improved from last period: <b style="color:${improved.color}">${improved.name}</b> (+${improvedDelta.toFixed(2)} pts).</span></div>`);
     if(weakCr&&weakVal<8) lines.push(`<div class="insight-line"><span class="insight-icon">⚠️</span><span>Area needing attention: <b style="color:var(--amber)">${weakCr.name}</b> (avg <b style="color:var(--rose)">${weakVal.toFixed(2)}/10</b>) — consider focused coaching.</span></div>`);
     if(bottom&&top&&(top.avg-bottom.avg)>1.5) lines.push(`<div class="insight-line"><span class="insight-icon">💡</span><span><b style="color:${bottom.c.color}">${bottom.c.name}</b> is scoring <b style="color:var(--rose)">${bottom.avg.toFixed(2)}/10</b> this period — a <b>${(top.avg-bottom.avg).toFixed(2)}-point gap</b> from the top. A 1-on-1 review may help.</span></div>`);
@@ -2971,16 +3017,21 @@ function renderInsightCard() {
 function renderStats() {
   const cols = db.colleagues;
   const months = availMonths();
-  const prevMonth = months[1] || null;
+  const _sm = statsViewMonth || curMonth;
+  const smIdx = months.indexOf(_sm);
+  const prevMonth = smIdx >= 0 && months[smIdx+1] ? months[smIdx+1] : (months[1] || null);
+
+  // Update dropdown to reflect current
+  populateViewPeriodSel('statsPeriodSel', _sm);
 
   // per-colleague stats
   const colStats = cols.map(c => {
-    const avg = colMonthAvg(c.id, curMonth);
-    const cnt = countScores(c.id, curMonth);
+    const avg = colMonthAvg(c.id, _sm);
+    const cnt = countScores(c.id, _sm);
     const prevAvg = prevMonth ? colMonthAvg(c.id, prevMonth) : 0;
     const delta = (avg > 0 && prevAvg > 0) ? +(avg - prevAvg).toFixed(2) : null;
     const vals = [];
-    const sc = db.scores[c.id]?.[curMonth] || {};
+    const sc = db.scores[c.id]?.[_sm] || {};
     getActiveCriteria(c.id).forEach(cr => {
       Object.values(sc[cr.id] || {}).forEach(e => { if(e.score) vals.push(e.score); });
     });
@@ -2988,7 +3039,7 @@ function renderStats() {
     const stddev = vals.length > 1
       ? +Math.sqrt(vals.map(v=>(v-mean)**2).reduce((a,b)=>a+b,0)/vals.length).toFixed(2)
       : 0;
-    const dim = periodDayCount(curMonth);
+    const dim = periodDayCount(_sm);
     let absentDays=0, busyDays=0;
     for(let d=1;d<=dim;d++){
       const cr0 = getActiveCriteria(c.id)[0]; if(!cr0) continue;
@@ -3110,9 +3161,9 @@ let analyticsEl = document.getElementById('statsAnalytics');
   }
   if(analyticsEl) {
     // ── A: Period Completion ── % of days with at least one score
-    const dim = periodDayCount(curMonth);
+    const dim = periodDayCount(_sm);
     const completionRows = cols.map(c => {
-      const sc = db.scores[c.id]?.[curMonth] || {};
+      const sc = db.scores[c.id]?.[_sm] || {};
       const filled = new Set();
       getActiveCriteria(c.id).forEach(cr => {
         Object.keys(sc[cr.id]||{}).forEach(d => { if(sc[cr.id][d]?.score) filled.add(d); });
@@ -3135,7 +3186,7 @@ let analyticsEl = document.getElementById('statsAnalytics');
     const spotRows = cols.map(c => {
       const crAvgs = getActiveCriteria(c.id).map(cr => {
         let s=0, n=0;
-        const sc = db.scores[c.id]?.[curMonth]||{};
+        const sc = db.scores[c.id]?.[_sm]||{};
         Object.values(sc[cr.id]||{}).forEach(e => { if(e?.score){s+=e.score;n++;} });
         return {name:cr.name, avg:n?s/n:0};
       }).filter(x=>x.avg>0);
@@ -3268,6 +3319,8 @@ function sparklineData(colId, periodKey) {
 function destroyChart(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
 
 function renderAllCharts() {
+  const _cm = chartsViewMonth || curMonth;
+  populateViewPeriodSel('chartsPeriodSel', _cm);
   const g=document.getElementById('chartsGrid');
   g.innerHTML=`
     <div class="chart-card"><div class="chart-card-title">${appLang==='ar'?AR.chartTeamComparison:'Team Comparison'}</div><div class="chart-card-sub">${appLang==='ar'?AR.chartTeamSub:'Current period — average score per colleague'}</div><div class="chart-wrap"><canvas id="chTeam"></canvas></div></div>
@@ -3275,10 +3328,11 @@ function renderAllCharts() {
     <div class="chart-card"><div class="chart-card-title">${appLang==='ar'?AR.chartMonthlyTrend:'Monthly Trend'}</div><div class="chart-card-sub">${appLang==='ar'?AR.chartMonthlyTrendSub:'Average score trajectory — all colleagues'}</div><div class="chart-wrap"><canvas id="chTrend"></canvas></div></div>
     <div class="chart-card"><div class="chart-card-title">${appLang==='ar'?AR.chartScoreSpread:'Score Spread'}</div><div class="chart-card-sub">${appLang==='ar'?AR.chartScoreSpreadSub:'How scores are distributed across the team this period'}</div><div class="chart-wrap"><canvas id="chSpread"></canvas></div></div>
   `;
-  setTimeout(()=>{ buildChTeam(); buildChCriteria(); buildChTrend(); buildChSpread(); },30);
+  setTimeout(()=>{ buildChTeam(_cm); buildChCriteria(_cm); buildChTrend(); buildChSpread(_cm); },30);
 }
 
-function buildChTeam() {
+function buildChTeam(viewMonth) {
+  const _bm = viewMonth || chartsViewMonth || _bm;
   destroyChart('chTeam');
   charts['chTeam']=new Chart(document.getElementById('chTeam'),{
     type:'bar',
@@ -3286,7 +3340,7 @@ function buildChTeam() {
       labels:db.colleagues.map(c=>c.name.split(' ').slice(-1)[0]),
       datasets:[{
         label:'Monthly Avg',
-        data:db.colleagues.map(c=>colMonthAvg(c.id,curMonth)||0),
+        data:db.colleagues.map(c=>colMonthAvg(c.id,_bm)||0),
         backgroundColor:db.colleagues.map(c=>c.color+'bb'),
         borderRadius:8, borderSkipped:false
       }]
@@ -3295,12 +3349,13 @@ function buildChTeam() {
   });
 }
 
-function buildChCriteria() {
+function buildChCriteria(viewMonth) {
+  const _bm = viewMonth || chartsViewMonth || _bm;
   destroyChart('chCriteria');
   const rawData = db.criteria.map(cr => {
     let s=0, n=0;
     db.colleagues.forEach(c => {
-      const sc = db.scores[c.id]?.[curMonth]?.[cr.id] || {};
+      const sc = db.scores[c.id]?.[_bm]?.[cr.id] || {};
       Object.values(sc).forEach(e => { if(e.score){ s+=e.score; n++; } });
     });
     return { name: cr.name.length>22 ? cr.name.slice(0,22)+'…' : cr.name, avg: n?parseFloat((s/n).toFixed(2)):0 };
@@ -3346,14 +3401,15 @@ function buildChTrend() {
   });
 }
 
-function buildChSpread() {
+function buildChSpread(viewMonth) {
+  const _bm = viewMonth || chartsViewMonth || _bm;
   destroyChart('chSpread');
   const labels = db.colleagues.map(c => c.name.split(' ').slice(-1)[0]);
   // For each colleague: avg, best day, worst day this period
-  const avgData = db.colleagues.map(c => colMonthAvg(c.id, curMonth) || 0);
+  const avgData = db.colleagues.map(c => colMonthAvg(c.id, _bm) || 0);
   const bestData = db.colleagues.map(c => {
-    const sc = db.scores[c.id]?.[curMonth]||{};
-    const dim = periodDayCount(curMonth);
+    const sc = db.scores[c.id]?.[_bm]||{};
+    const dim = periodDayCount(_bm);
     let best = 0;
     for(let d=1;d<=dim;d++){
       let s=0,n=0;
@@ -3363,8 +3419,8 @@ function buildChSpread() {
     return +best.toFixed(2);
   });
   const worstData = db.colleagues.map(c => {
-    const sc = db.scores[c.id]?.[curMonth]||{};
-    const dim = periodDayCount(curMonth);
+    const sc = db.scores[c.id]?.[_bm]||{};
+    const dim = periodDayCount(_bm);
     let worst = 11;
     let found = false;
     for(let d=1;d<=dim;d++){
