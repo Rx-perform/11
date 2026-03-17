@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RxPerform Pro — Pharmacy Performance System</title>
+<title>RxPerform Pro — Pharmacy Performance System v2</title>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -821,29 +821,47 @@ table.ptbl {
 /* ── PRINT ── */
 @media print {
   @page { size: A4 landscape; margin: 10mm; }
+  /* Hide all live UI — only show the performance content */
   .sidebar, .topbar, .toolbar, .no-print, .sb-overlay,
   .compare-bar, .month-actions, .col-hdr-actions,
-  .sb-foot, .t-divider, .tb-ctrl { display:none!important; }
-  html, body { height:auto!important; overflow:visible!important; background:#fff!important; color:#000!important; }
+  .sb-foot, .t-divider, .tb-ctrl,
+  #todayDashboard, .month-pills, #colCharts,
+  .col-hdr-actions, .notes-add-box { display:none!important; }
+  /* Reset backgrounds to white */
+  html, body, #app, .main, .body-row, .main-pad { background:#ffffff!important; }
+  html, body { height:auto!important; overflow:visible!important; color:#1e293b!important; }
   .main { overflow:visible!important; height:auto!important; }
   .body-row { overflow:visible!important; height:auto!important; }
   .main-pad { overflow:visible!important; height:auto!important; padding:0!important; }
   #app { display:block!important; overflow:visible!important; height:auto!important; }
   .view { display:none!important; }
   .view.v-on { display:block!important; }
-  .card { border:1px solid #ccc!important; break-inside:avoid; box-shadow:none!important; }
-  .ptbl { width:100%; border-collapse:collapse; font-size:8pt; }
-  .ptbl th, .ptbl td { border:1px solid #999!important; padding:3px 4px!important; }
-  .ptbl-cr-hdr { min-width:80px!important; max-width:110px!important; font-size:8pt!important; }
-  .ptbl-cr-hdr .cr-name-lbl { color:#000!important; }
+  /* Force all element backgrounds to white */
+  div, section, .card, .col-hdr, .stat-card, .chart-card, .note-card {
+    background:#ffffff!important; color:#1e293b!important; box-shadow:none!important;
+  }
+  .card { border:1px solid #ccc!important; break-inside:avoid; }
+  /* Performance table */
+  .ptbl { width:100%; border-collapse:collapse; font-size:8pt; table-layout:fixed!important; }
+  .ptbl th, .ptbl td { border:1px solid #999!important; padding:3px 4px!important; color:#1e293b!important; }
+  .ptbl th { background:#f1f5f9!important; }
+  .ptbl-cr-hdr { min-width:60px!important; max-width:90px!important; font-size:6pt!important; white-space:normal!important; word-break:break-word!important; }
+  .ptbl-cr-hdr .cr-name-lbl { color:#1e293b!important; font-size:6pt!important; white-space:normal!important; word-break:break-word!important; }
   .ptbl-cr-hdr .cr-edit-btn, .cr-edit-btn { display:none!important; }
-  .sc-dot { border:1px solid #999!important; font-size:8pt!important; }
+  .perf-scroll { overflow:visible!important; }
+  .sc-dot { border:1px solid #999!important; font-size:7pt!important; background:#f8fafc!important; color:#1e293b!important; }
+  /* Scores keep their colors */
+  .sc-hi { background:rgba(0,200,150,0.2)!important; color:#047857!important; }
+  .sc-md { background:rgba(255,179,64,0.2)!important; color:#b45309!important; }
+  .sc-lo { background:rgba(255,77,109,0.2)!important; color:#b91c1c!important; }
   .stat-grid { grid-template-columns:repeat(3,1fr)!important; }
-  .stat-card { border:1px solid #ccc!important; box-shadow:none!important; }
-  .rtbl th, .rtbl td { border:1px solid #ccc!important; }
+  .stat-card { border:1px solid #ccc!important; }
+  .rtbl th, .rtbl td { border:1px solid #ccc!important; color:#1e293b!important; }
+  .rtbl th { background:#f1f5f9!important; }
   .chart-grid { grid-template-columns:1fr 1fr!important; }
-  .col-hdr { flex-wrap:wrap!important; }
-  .month-pills { display:none!important; }
+  .col-hdr { flex-wrap:wrap!important; background:#f8fafc!important; border:1px solid #e2e8f0!important; }
+  .col-hdr-name, .col-hdr-role { color:#1e293b!important; }
+  span, p, td, th, label, h1, h2, h3, h4 { color:#1e293b!important; }
   * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; color-adjust:exact!important; }
 }
 
@@ -1057,6 +1075,30 @@ body.lang-ar .note-del { right:auto; left:8px; }
 </style>
 </head>
 <body>
+<script>
+(function(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(r){
+      r.forEach(function(x){x.unregister();});
+    });
+  }
+  if('caches' in window){
+    caches.keys().then(function(keys){
+      Promise.all(keys.map(function(k){return caches.delete(k);})).then(function(){
+        if(!sessionStorage.getItem('rxp_v3')){
+          sessionStorage.setItem('rxp_v3','1');
+          location.reload(true);
+        }
+      });
+    });
+  } else {
+    if(!sessionStorage.getItem('rxp_v3')){
+      sessionStorage.setItem('rxp_v3','1');
+      location.reload(true);
+    }
+  }
+})();
+</script>
 
 <!-- ═══════ LOGIN SCREEN ═══════ -->
 <div id="loginScreen">
@@ -4057,22 +4099,24 @@ body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#ff
 </style>
 </head><body>${pages.join('')}</body></html>`;
 
-  let iframe = document.getElementById('rxp-print-frame');
-  if(iframe) iframe.remove();
-  iframe = document.createElement('iframe');
-  iframe.id = 'rxp-print-frame';
-  iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;opacity:0;pointer-events:none;z-index:-1';
-  document.body.appendChild(iframe);
-  try {
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html_out);
-    iframe.contentDocument.close();
-    setTimeout(()=>{
-      try { iframe.contentWindow.focus(); iframe.contentWindow.print(); } catch(e){ window.print(); }
-      setTimeout(()=>{ if(iframe.parentNode) iframe.remove(); },3000);
-    },900);
-    toast(isAr?'جاري فتح نافذة الطباعة…':'Opening print dialog…');
-  } catch(e){ window.print(); }
+  // Open in new tab — the tab is fully white, Android always prints it correctly
+  const _win = window.open('', '_blank');
+  if(_win) {
+    _win.document.open();
+    _win.document.write(html_out);
+    _win.document.close();
+    _win.focus();
+    setTimeout(function(){ _win.print(); }, 800);
+    toast(isAr ? 'جاري فتح نافذة الطباعة…' : 'Opening print dialog…');
+  } else {
+    // Fallback if popup blocked
+    const _blob = new Blob([html_out], {type:'text/html'});
+    const _url = URL.createObjectURL(_blob);
+    const _a = document.createElement('a');
+    _a.href = _url; _a.target = '_blank'; _a.click();
+    setTimeout(function(){ URL.revokeObjectURL(_url); }, 5000);
+    toast(isAr ? 'افتح الصفحة واطبع منها' : 'Open the page and print from it');
+  }
 }
 
 /* ════════════════════════════════════════════
