@@ -1577,6 +1577,13 @@ body.lang-ar .note-del { right:auto; left:8px; }
       <label class="form-lbl" style="margin-bottom:6px">Select colleagues:</label>
       <div id="crColleagueChecks" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;padding:10px;background:var(--ink2);border-radius:8px;border:1px solid var(--line2)"></div>
     </div>
+    <div class="form-g" id="crPeriodWrap">
+      <label class="form-lbl" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Active Periods</span>
+        <span style="font-size:10px;color:var(--text3)">leave empty = all periods</span>
+      </label>
+      <div id="crPeriodChecks" style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;padding:10px;background:var(--ink2);border-radius:8px;border:1px solid var(--line2)"></div>
+    </div>
     <div class="m-actions">
       <button class="btn" onclick="closeModal('mCriterion')" id="btn_crCancel">Cancel</button>
       <button class="btn btn-danger admin-only" id="mCrDeleteBtn" onclick="deleteCriterion()" style="display:none">Delete</button>
@@ -2864,6 +2871,18 @@ function openCriterionModal(id) {
   // Delete button only when editing
   const delBtn = document.getElementById('mCrDeleteBtn');
   if(delBtn) delBtn.style.display = id ? '' : 'none';
+  // Populate period checkboxes
+  const months = availMonths();
+  const crPeriods = id ? (db.criteria.find(x=>x.id===id)?.activePeriods || []) : [];
+  const pcDiv = document.getElementById('crPeriodChecks');
+  if(pcDiv) {
+    pcDiv.innerHTML = months.map(m => {
+      const checked = crPeriods.length === 0 || crPeriods.includes(m) ? 'checked' : '';
+      return `<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);cursor:pointer">
+        <input type="checkbox" value="${m}" ${checked} style="accent-color:var(--cyan);width:14px;height:14px"> ${periodLabel(m)}
+      </label>`;
+    }).join('');
+  }
   openModal('mCriterion');
 }
 function saveCriterion() {
@@ -2873,14 +2892,18 @@ function saveCriterion() {
   const colleagueIds = scope === 'specific'
     ? [...document.querySelectorAll('#crColleagueChecks input:checked')].map(el=>el.value)
     : [];
+  // Collect active periods — empty array means all periods
+  const allMonths = availMonths();
+  const checkedPeriods = [...document.querySelectorAll('#crPeriodChecks input:checked')].map(el=>el.value);
+  const activePeriods = checkedPeriods.length === allMonths.length ? [] : checkedPeriods;
   if(!name){ toast('⚠ Name required','#ffb340'); return; }
   if(editCrId) {
     const cr=db.criteria.find(x=>x.id===editCrId);
-    cr.name=name; cr.weight=weight; cr.scope=scope; cr.colleagueIds=colleagueIds;
+    cr.name=name; cr.weight=weight; cr.scope=scope; cr.colleagueIds=colleagueIds; cr.activePeriods=activePeriods;
   } else {
-    db.criteria.push({id:'cr'+Date.now(),name,weight,scope,colleagueIds});
+    db.criteria.push({id:'cr'+Date.now(),name,weight,scope,colleagueIds,activePeriods});
   }
-  save(); closeModal('mCriterion');
+  snapshotForUndo(); save(); closeModal('mCriterion');
   if(curColId) renderPerfTable();
   const t=appLang==='ar'?AR:EN;
   toast(editCrId?t.criterionUpdated:t.criterionAdded);
@@ -2936,7 +2959,7 @@ function deleteCriterion() {
     toast(t.criterionDeleted);
   }
 
-  save();
+  snapshotForUndo(); save();
   closeModal('mCriterion');
   if(curColId) renderPerfTable();
 }
@@ -4214,8 +4237,13 @@ body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#ff
 ════════════════════════════════════════════ */
 // Returns criteria visible to this colleague:
 // global criteria + criteria scoped only to this colleague
-function getActiveCriteria(colId) {
+function getActiveCriteria(colId, month) {
+  const m = month || curMonth;
   return db.criteria.filter(cr => {
+    // Check period filter
+    const ap = cr.activePeriods || [];
+    if(ap.length > 0 && !ap.includes(m)) return false;
+    // Check colleague scope
     const s = cr.scope || 'global';
     if(s === 'global') return true;
     if(s === 'specific') {
