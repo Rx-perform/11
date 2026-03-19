@@ -2997,7 +2997,7 @@ function deleteCriterion() {
    STATISTICS
 ════════════════════════════════════════════ */
 function renderInsightCard() {
-  const _sm = statsViewMonth || _sm;
+  const _sm = statsViewMonth || curMonth;
   const card = document.getElementById('insightCard');
   if(!card) return;
   const cols = db.colleagues;
@@ -3384,7 +3384,7 @@ function renderAllCharts() {
 }
 
 function buildChTeam(viewMonth) {
-  const _bm = viewMonth || chartsViewMonth || _bm;
+  const _bm = viewMonth || chartsViewMonth || curMonth;
   destroyChart('chTeam');
   charts['chTeam']=new Chart(document.getElementById('chTeam'),{
     type:'bar',
@@ -3402,7 +3402,7 @@ function buildChTeam(viewMonth) {
 }
 
 function buildChCriteria(viewMonth) {
-  const _bm = viewMonth || chartsViewMonth || _bm;
+  const _bm = viewMonth || chartsViewMonth || curMonth;
   destroyChart('chCriteria');
   const rawData = db.criteria.map(cr => {
     let s=0, n=0;
@@ -3454,7 +3454,7 @@ function buildChTrend() {
 }
 
 function buildChSpread(viewMonth) {
-  const _bm = viewMonth || chartsViewMonth || _bm;
+  const _bm = viewMonth || chartsViewMonth || curMonth;
   destroyChart('chSpread');
   const labels = db.colleagues.map(c => c.name.split(' ').slice(-1)[0]);
   // For each colleague: avg, best day, worst day this period
@@ -3633,22 +3633,41 @@ function doExport() {
   toast('Data exported');
 }
 function doImport() {
-  const inp=document.createElement('input');
-  inp.type='file'; inp.accept='.json';
-  inp.onchange=e=>{
-    const f=e.target.files[0]; if(!f) return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      try{
-        const d=JSON.parse(ev.target.result);
-        if(!d.colleagues||!d.criteria) throw new Error();
-        db=d; save(); renderSidebar(); renderStats();
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json,.txt';
+  inp.onchange = function(e) {
+    const f = e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = function(ev) {
+      try {
+        const raw = ev.target.result;
+        const d = JSON.parse(raw);
+        // Accept if it has colleagues array (criteria can be missing in old exports)
+        if(!d.colleagues || !Array.isArray(d.colleagues)) {
+          toast('⚠ Invalid file: missing colleagues data', '#ff4d6d');
+          return;
+        }
+        // Merge with defaults for any missing fields
+        db = d;
+        if(!db.criteria)  db.criteria  = [];
+        if(!db.scores)    db.scores    = {};
+        if(!db.notes)     db.notes     = { positive:[], negative:[] };
+        if(!db.settings)  db.settings  = { cycleStart:16 };
+        if(!db.settings.crExclusions) db.settings.crExclusions = {};
+        if(!db.settings.pips) db.settings.pips = [];
+        save();
+        renderSidebar();
+        renderStats();
         if(curColId) renderColleagueView();
         populateFilterDropdowns();
-        toast('Data imported successfully');
-      } catch{ toast('⚠ Invalid file format','#ff4d6d'); }
+        toast('✅ Data imported — ' + db.colleagues.length + ' colleagues, ' + db.criteria.length + ' criteria');
+      } catch(err) {
+        toast('⚠ Invalid file format — ' + (err.message || 'parse error'), '#ff4d6d');
+      }
     };
-    r.readAsText(f);
+    r.readAsText(f, 'UTF-8');
   };
   inp.click();
 }
