@@ -3,8 +3,9 @@
   renderInsightCard(); lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="version" content="1773907684">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RxPerform Pro — Pharmacy Performance System</title>
+<title>RxPerform Pro v1773907684 — Pharmacy Performance System</title>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2897,72 +2898,100 @@ function saveCriterion() {
   const checkedPeriods = [...document.querySelectorAll('#crPeriodChecks input:checked')].map(el=>el.value);
   const activePeriods = checkedPeriods.length === allMonths.length ? [] : checkedPeriods;
   if(!name){ toast('⚠ Name required','#ffb340'); return; }
+  snapshotForUndo(); // snapshot BEFORE change
   if(editCrId) {
     const cr=db.criteria.find(x=>x.id===editCrId);
     cr.name=name; cr.weight=weight; cr.scope=scope; cr.colleagueIds=colleagueIds; cr.activePeriods=activePeriods;
   } else {
     db.criteria.push({id:'cr'+Date.now(),name,weight,scope,colleagueIds,activePeriods});
   }
-  snapshotForUndo(); save(); closeModal('mCriterion');
+  save(); closeModal('mCriterion');
   if(curColId) renderPerfTable();
   const t=appLang==='ar'?AR:EN;
   toast(editCrId?t.criterionUpdated:t.criterionAdded);
 }
 function deleteCriterion() {
   if(!editCrId) return;
-  const cr = db.criteria.find(x=>x.id===editCrId);
+  const cr = db.criteria.find(x => x.id === editCrId);
   if(!cr) return;
-  const t = appLang==='ar' ? AR : EN;
+  const isAr = appLang === 'ar';
+  const t = isAr ? AR : EN;
 
-  // If we're viewing a specific colleague, remove only for them
-  if(curColId) {
+  // Ensure exclusions map exists
+  if(!db.settings.crExclusions) db.settings.crExclusions = {};
+
+  const hasPeriods = availMonths().length > 1;
+  const hasColleague = !!curColId;
+  const colName = hasColleague ? (db.colleagues.find(c => c.id === curColId)?.name || '') : '';
+
+  // Build confirm message based on context
+  let msg;
+  if(hasColleague && hasPeriods) {
+    msg = isAr
+      ? ('ماذا تريد؟\n\n[موافق] حذف المعيار "' + cr.name + '" لـ ' + colName + ' في الفترة الحالية فقط\n[إلغاء] حذف لكل الزملاء في كل الفترات')
+      : ('What do you want?\n\nOK = Remove "' + cr.name + '" for ' + colName + ' in current period only\nCancel = Delete for ALL colleagues in ALL periods');
+  } else if(hasColleague) {
+    msg = isAr
+      ? ('حذف "' + cr.name + '" لـ ' + colName + ' فقط؟')
+      : ('Delete "' + cr.name + '" for ' + colName + ' only?');
+  } else {
+    msg = isAr
+      ? ('حذف "' + cr.name + '" لكل الزملاء؟')
+      : ('Delete "' + cr.name + '" for ALL colleagues?');
+  }
+
+  const currentOnly = confirm(msg);
+
+  snapshotForUndo();
+
+  if(currentOnly && hasColleague && hasPeriods) {
+    // ── Add exclusion for this colleague + this period only ──
+    const key = curColId + ':' + editCrId + ':' + curMonth;
+    db.settings.crExclusions[key] = true;
+    toast(isAr
+      ? '"' + cr.name + '" مخفي لـ ' + colName + ' في الفترة الحالية فقط'
+      : '"' + cr.name + '" hidden for ' + colName + ' in current period only');
+
+  } else if(currentOnly && hasColleague && !hasPeriods) {
+    // ── Remove for this colleague across all periods (scope change) ──
     const scope = cr.scope || 'global';
-    const allColIds = db.colleagues.map(c=>c.id);
-
+    const allColIds = db.colleagues.map(c => c.id);
     if(scope === 'global') {
-      // Convert to specific: keep everyone EXCEPT this colleague
       const keep = allColIds.filter(id => id !== curColId);
       if(keep.length === 0) {
-        // Only one colleague — fully delete
-        if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
-        db.criteria = db.criteria.filter(x=>x.id !== editCrId);
-        toast(t.criterionDeleted);
+        db.criteria = db.criteria.filter(x => x.id !== editCrId);
       } else {
-        if(!confirm('Remove "' + cr.name + '" from ' + (db.colleagues.find(c=>c.id===curColId)?.name||'this colleague') + ' only?')) return;
         cr.scope = 'specific';
         cr.colleagueIds = keep;
-        toast(t.criterionDeleted + ' (for this colleague only)');
       }
     } else if(scope === 'specific') {
-      const ids = cr.colleagueIds || [];
-      const newIds = ids.filter(id => id !== curColId);
+      const newIds = (cr.colleagueIds || []).filter(id => id !== curColId);
       if(newIds.length === 0) {
-        // No one left — fully delete
-        if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
-        db.criteria = db.criteria.filter(x=>x.id !== editCrId);
-        toast(t.criterionDeleted);
+        db.criteria = db.criteria.filter(x => x.id !== editCrId);
       } else {
-        if(!confirm('Remove "' + cr.name + '" from ' + (db.colleagues.find(c=>c.id===curColId)?.name||'this colleague') + ' only?')) return;
         cr.colleagueIds = newIds;
-        toast(t.criterionDeleted + ' (for this colleague only)');
       }
     } else {
-      // Legacy single-colleague scope — just delete
-      if(!confirm(t.deleteCriterion + ': "' + cr.name + '"?')) return;
-      db.criteria = db.criteria.filter(x=>x.id !== editCrId);
-      toast(t.criterionDeleted);
+      db.criteria = db.criteria.filter(x => x.id !== editCrId);
     }
-  } else {
-    // No colleague selected — delete globally (from criteria manager)
-    if(!confirm(t.deleteCriterion + ': "' + cr.name + '" for ALL colleagues?')) return;
-    db.criteria = db.criteria.filter(x=>x.id !== editCrId);
+    toast(t.criterionDeleted + ' (' + colName + ')');
+
+  } else if(!currentOnly) {
+    // ── Cancel = delete for ALL colleagues, ALL periods ──
+    if(!confirm(isAr ? ('حذف "' + cr.name + '" من كل الزملاء وكل الفترات؟') : ('Delete "' + cr.name + '" from ALL colleagues and ALL periods?'))) return;
+    db.criteria = db.criteria.filter(x => x.id !== editCrId);
+    // Also clean up any exclusions for this criterion
+    Object.keys(db.settings.crExclusions).forEach(function(k) {
+      if(k.indexOf(':' + editCrId + ':') !== -1) delete db.settings.crExclusions[k];
+    });
     toast(t.criterionDeleted);
   }
 
-  snapshotForUndo(); save();
+  save();
   closeModal('mCriterion');
   if(curColId) renderPerfTable();
 }
+
 
 /* ════════════════════════════════════════════
    STATISTICS
@@ -4239,8 +4268,11 @@ body{font-family:${isAr?"'Cairo'":"'Syne'"}, system-ui,sans-serif;background:#ff
 // global criteria + criteria scoped only to this colleague
 function getActiveCriteria(colId, month) {
   const m = month || curMonth;
+  const excl = (db.settings && db.settings.crExclusions) || {};
   return db.criteria.filter(cr => {
-    // Check period filter
+    // Check per-colleague-per-period exclusion
+    if(excl[colId + ':' + cr.id + ':' + m]) return false;
+    // Check period filter (global disable for all colleagues)
     const ap = cr.activePeriods || [];
     if(ap.length > 0 && !ap.includes(m)) return false;
     // Check colleague scope
